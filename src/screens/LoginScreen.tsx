@@ -48,7 +48,7 @@ export default function LoginScreen() {
       setError("Please enter a valid 10-digit mobile number");
       return;
     }
-    
+
     // Starts with 6/7/8/9
     if (!/^[6-9]/.test(phone)) {
       setError("Enter a valid Indian mobile number starting with 6-9");
@@ -114,7 +114,11 @@ export default function LoginScreen() {
             {/* Header / Logo */}
             <View className="items-center mb-12">
               <View className="w-20 h-20 bg-primary/10 rounded-3xl items-center justify-center mb-4">
-                <MaterialCommunityIcons name="bus-side" size={48} color={Colors.primary} />
+                <MaterialCommunityIcons
+                  name="bus-side"
+                  size={48}
+                  color={Colors.primary}
+                />
               </View>
               <Text className="text-3xl font-jakarta-extrabold text-primary">
                 MyTripGuide
@@ -142,7 +146,9 @@ export default function LoginScreen() {
                     <View className="flex-row items-center bg-background-input border border-border-light rounded-xl px-4 h-14">
                       <View className="flex-row items-center border-r border-border-light pr-3 mr-3">
                         <Text className="text-lg mr-1">🇮🇳</Text>
-                        <Text className="text-base font-jakarta-bold text-text-primary">+91</Text>
+                        <Text className="text-base font-jakarta-bold text-text-primary">
+                          +91
+                        </Text>
                       </View>
                       <TextInput
                         className="flex-1 text-lg font-jakarta-medium text-text-primary"
@@ -172,24 +178,39 @@ export default function LoginScreen() {
                     fullWidth
                     loading={isSendingOtp}
                     disabled={phone.length < 10}
-                    rightIcon={<MaterialIcons name="arrow-forward" size={20} color="#fff" />}
+                    rightIcon={
+                      <MaterialIcons
+                        name="arrow-forward"
+                        size={20}
+                        color="#fff"
+                      />
+                    }
                   />
                 </View>
               ) : (
                 <View>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setShowOtp(false)}
                     className="flex-row items-center mb-6"
                   >
-                    <MaterialIcons name="arrow-back" size={20} color={Colors.primary} />
-                    <Text className="text-primary font-jakarta-bold ml-1">Change Number</Text>
+                    <MaterialIcons
+                      name="arrow-back"
+                      size={20}
+                      color={Colors.primary}
+                    />
+                    <Text className="text-primary font-jakarta-bold ml-1">
+                      Change Number
+                    </Text>
                   </TouchableOpacity>
 
                   <Text className="text-2xl font-jakarta-bold text-text-primary mb-2">
                     Verify Code
                   </Text>
                   <Text className="text-text-secondary font-jakarta-regular mb-8">
-                    We've sent a 6-digit code to <Text className="font-jakarta-bold text-text-primary">+91 {phone}</Text>
+                    We've sent a 6-digit code to{" "}
+                    <Text className="font-jakarta-bold text-text-primary">
+                      +91 {phone}
+                    </Text>
                   </Text>
 
                   <View className="mb-8">
@@ -219,11 +240,13 @@ export default function LoginScreen() {
                     <Text className="text-text-secondary font-jakarta-medium mb-2">
                       Didn't receive code?
                     </Text>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       onPress={handleResend}
                       disabled={!canResend}
                     >
-                      <Text className={`font-jakarta-extrabold ${canResend ? "text-primary underline" : "text-text-muted"}`}>
+                      <Text
+                        className={`font-jakarta-extrabold ${canResend ? "text-primary underline" : "text-text-muted"}`}
+                      >
                         {canResend ? "Resend OTP" : `Resend in ${timer}s`}
                       </Text>
                     </TouchableOpacity>
@@ -235,7 +258,11 @@ export default function LoginScreen() {
             <View className="items-center pb-8 mt-auto">
               <Text className="text-text-muted text-xs font-jakarta-medium text-center">
                 By continuing, you agree to MyTripGuide's{"\n"}
-                <Text className="text-primary underline">Terms of Service</Text> and <Text className="text-primary underline">Privacy Policy</Text>
+                <Text className="text-primary underline">
+                  Terms of Service
+                </Text>{" "}
+                and{" "}
+                <Text className="text-primary underline">Privacy Policy</Text>
               </Text>
             </View>
           </SafeAreaView>
@@ -244,8 +271,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
-
-
-

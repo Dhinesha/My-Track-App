@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, Text, View, Platform } from "react-native";
 import { useOffline } from "../../hooks/useOffline";
 import { useSyncStore } from "../../store/syncStore";
 
@@ -49,11 +49,15 @@ export function OfflineBanner() {
     <Animated.View
       style={{
         transform: [{ translateY: slideAnim }],
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 10,
+        ...(Platform.OS === "web"
+          ? { boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)" }
+          : {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: 10,
+            }),
       }}
       className={`absolute top-0 left-0 right-0 z-[100] h-14 items-center justify-center pt-4
         ${status === "offline" ? "bg-amber-500" : "bg-emerald-600"}`}
@@ -68,4 +72,3 @@ export function OfflineBanner() {
     </Animated.View>
   );
 }
-

@@ -15,7 +15,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
-import { View, ActivityIndicator, Platform, StyleSheet, Text } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  Text,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Colors } from "./src/theme/colors";
 
@@ -37,8 +43,8 @@ import { StoreTestPanel } from "./src/components/shared/StoreTestPanel";
 import { OfflineBanner } from "./src/components/offline";
 
 // Stores for initialization
-import { useAuthStore } from './src/store/authStore';
-import { useTripStore } from './src/store/tripStore';
+import { useAuthStore } from "./src/store/authStore";
+import { useTripStore } from "./src/store/tripStore";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -74,16 +80,16 @@ function AppNavigator() {
   const { setActiveTrip } = useTripStore();
 
   useEffect(() => {
-    // Initialize demo data for web
-    if (Platform.OS === 'web') {
-      setUser({
-        id: 'demo-user-1',
-        name: 'Dhinesha Gnanavel',
-        mobile: '+91 98765 43210',
-        role: 'traveler'
-      });
-      setActiveTrip('demo-trip-kyoto', 'Kyoto Spring Tour');
-    }
+    // Initialize demo data for web - COMMENTED OUT TO SHOW LOGIN SCREEN
+    // if (Platform.OS === "web") {
+    //   setUser({
+    //     id: "demo-user-1",
+    //     name: "Dhinesha Gnanavel",
+    //     mobile: "+91 98765 43210",
+    //     role: "traveler",
+    //   });
+    //   setActiveTrip("demo-trip-kyoto", "Kyoto Spring Tour");
+    // }
 
     const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
@@ -100,14 +106,20 @@ function AppNavigator() {
         }}
       >
         <ActivityIndicator color="#fff" size="large" />
-        <Text style={{ color: 'white', marginTop: 20, fontFamily: 'PlusJakartaSans-Bold' }}>
+        <Text
+          style={{
+            color: "white",
+            marginTop: 20,
+            fontFamily: "PlusJakartaSans-Bold",
+          }}
+        >
           Loading Premium Experience...
         </Text>
       </View>
     );
   }
 
-  const Stack = Platform.OS === 'web' ? JSStack : NativeStack;
+  const Stack = Platform.OS === "web" ? JSStack : NativeStack;
 
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
@@ -299,11 +311,15 @@ const styles = StyleSheet.create({
     borderColor: "#1e3a5f",
     overflow: "hidden",
     // Blue glow shadow
-    shadowColor: "#2b8cee",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 40,
-    elevation: 40,
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0 0 40px rgba(43, 140, 238, 0.5)" }
+      : {
+          shadowColor: "#2b8cee",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.5,
+          shadowRadius: 40,
+          elevation: 40,
+        }),
   },
 
   /* Top status bar */

@@ -4,6 +4,7 @@ import {
   TextInput,
   TextInputKeyPressEventData,
   View,
+  Platform,
 } from "react-native";
 
 interface OTPInputProps {
@@ -59,11 +60,19 @@ export function OTPInput({ onChange }: OTPInputProps) {
           style={{
             textAlign: "center",
             textAlignVertical: "center",
-            shadowColor: val ? "#0D9488" : "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: val ? 0.2 : 0.05,
-            shadowRadius: 4,
-            elevation: 2,
+            ...(Platform.OS === "web"
+              ? {
+                  boxShadow: val
+                    ? "0 2px 4px rgba(13, 148, 136, 0.2)"
+                    : "0 2px 4px rgba(0, 0, 0, 0.05)",
+                }
+              : {
+                  shadowColor: val ? "#0D9488" : "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: val ? 0.2 : 0.05,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }),
           }}
           className={`w-12 h-16 text-center text-2xl font-bold rounded-2xl border-2
             ${val ? "border-teal-600 bg-teal-50 text-teal-900" : "border-gray-200 bg-white text-gray-400"}`}

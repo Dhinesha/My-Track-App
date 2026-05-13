@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -14,11 +15,20 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RootStackParamList } from "../../App";
 import { Colors } from "../theme/colors";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Typography, Radius, Spacing } from "../theme/typography";
 
 import { SelfCheckInSection } from "../components/attendance/SelfCheckInSection";
-import { DayPill, StatusSummaryRow, QuickActionsRow, TripProgressBar, TripCountdownWidget, WhatsHappeningNowCard, TodaySummaryCard, SmartCheckInBanner } from "../components/trips";
+import {
+  DayPill,
+  StatusSummaryRow,
+  QuickActionsRow,
+  TripProgressBar,
+  TripCountdownWidget,
+  WhatsHappeningNowCard,
+  TodaySummaryCard,
+  SmartCheckInBanner,
+} from "../components/trips";
 import { EmergencyFAB } from "../components/common";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -94,7 +104,12 @@ export default function TripDetailScreen() {
       sub: "What to carry",
       icon: "bag-personal",
       color: "#009688",
-      onPress: () => navigation.navigate("PackingChecklist", { tripId, tripName, tripType: 'family' }),
+      onPress: () =>
+        navigation.navigate("PackingChecklist", {
+          tripId,
+          tripName,
+          tripType: "family",
+        }),
     },
     {
       id: "budget",
@@ -102,7 +117,8 @@ export default function TripDetailScreen() {
       sub: "Track expenses",
       icon: "wallet",
       color: "#FF5722",
-      onPress: () => navigation.navigate("BudgetTracker", { tripId, totalDays: 5 }),
+      onPress: () =>
+        navigation.navigate("BudgetTracker", { tripId, totalDays: 5 }),
     },
     {
       id: "feedback",
@@ -118,7 +134,6 @@ export default function TripDetailScreen() {
         }),
     },
   ];
-
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -138,8 +153,6 @@ export default function TripDetailScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-
-
         {/* Hero Section */}
         <View style={styles.heroContainer}>
           <Image
@@ -157,10 +170,10 @@ export default function TripDetailScreen() {
                 <View style={styles.dayBadge}>
                   <Text style={styles.dayBadgeText}>Day 2 of 5</Text>
                 </View>
-                <TripCountdownWidget 
-                  startDate="2023-10-12" 
-                  endDate="2023-10-20" 
-                  status="ongoing" 
+                <TripCountdownWidget
+                  startDate="2023-10-12"
+                  endDate="2023-10-20"
+                  status="ongoing"
                 />
               </View>
               <Text style={styles.heroTitle}>{tripName}</Text>
@@ -168,11 +181,18 @@ export default function TripDetailScreen() {
                 <MaterialIcons name="location-on" size={16} color="#fff" />
                 <Text style={styles.locText}>Kyoto, Japan</Text>
               </View>
-              <View style={{ marginTop: 12, backgroundColor: 'rgba(255,255,255,0.15)', padding: 12, borderRadius: 12 }}>
-                <TripProgressBar 
-                  startDate="2023-10-12" 
-                  endDate="2023-10-20" 
-                  status="ongoing" 
+              <View
+                style={{
+                  marginTop: 12,
+                  backgroundColor: "rgba(255,255,255,0.15)",
+                  padding: 12,
+                  borderRadius: 12,
+                }}
+              >
+                <TripProgressBar
+                  startDate="2023-10-12"
+                  endDate="2023-10-20"
+                  status="ongoing"
                 />
               </View>
             </View>
@@ -255,10 +275,10 @@ export default function TripDetailScreen() {
             ))}
           </View>
         </View>
-          <View style={{ height: 100 }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      <EmergencyFAB onPress={() => navigation.navigate('Emergency')} />
+      <EmergencyFAB onPress={() => navigation.navigate("Emergency")} />
     </SafeAreaView>
   );
 }

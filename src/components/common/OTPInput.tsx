@@ -74,7 +74,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
           onChangeText={(text) => handleTextChange(text, index)}
           onKeyPress={(e) => handleKeyPress(e, index)}
           keyboardType="number-pad"
-          maxLength={index === 0 ? length : 1} // Support paste on first box
+          maxLength={1}
           selectTextOnFocus
         />
       ))}
