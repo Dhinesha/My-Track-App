@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "TrackMyTrip",
-    "slug": "TrackMyTrip",
+    "name": "My Trip Guide",
+    "slug": "my-trip-guide",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.trackmytrip.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +26,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "01f6a8e8-b219-4985-ae1c-945c5fc4bf95"
+      }
+    },
+    "owner": "dhinesha"
   }
 }

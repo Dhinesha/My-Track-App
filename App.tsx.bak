@@ -1,0 +1,381 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { useFonts } from "expo-font";
+import * as SplashScreenNative from "expo-splash-screen";
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
+} from "@expo-google-fonts/plus-jakarta-sans";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "expo-status-bar";
+import { View, ActivityIndicator, Platform, StyleSheet } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Colors } from "./src/theme/colors";
+
+// Screens
+import SplashScreen from "./src/screens/SplashScreen";
+import LoginScreen from "./src/screens/LoginScreen";
+import { OnboardingScreen } from "./src/screens/auth/OnboardingScreen";
+import MainTabNavigator from "./src/navigation/MainTabNavigator";
+import TripDetailScreen from "./src/screens/TripDetailScreen";
+import ItineraryScreen from "./src/screens/ItineraryScreen";
+import HotelScreen from "./src/screens/HotelScreen";
+import VehicleAttendanceScreen from "./src/screens/VehicleAttendanceScreen";
+import FamilyMembersScreen from "./src/screens/FamilyMembersScreen";
+import NotificationsScreen from "./src/screens/NotificationsScreen";
+import AdminDashboardScreen from "./src/screens/AdminDashboardScreen";
+import EmergencyScreen from "./src/screens/emergency/EmergencyScreen";
+import FeedbackScreen from "./src/screens/feedback/FeedbackScreen";
+import { StoreTestPanel } from "./src/components/shared/StoreTestPanel";
+import { OfflineBanner } from "./src/components/offline";
+
+export type RootStackParamList = {
+  Splash: undefined;
+  Login: undefined;
+  Onboarding: undefined;
+  Main: undefined;
+  TripDetail: { tripId: string; tripName: string };
+  Itinerary: { tripId: string; tripName: string };
+  Hotel: { tripId: string };
+  VehicleAttendance: { tripId: string };
+  FamilyMembers: { tripId: string };
+  Notifications: undefined;
+  AdminDashboard: undefined;
+  Emergency: undefined;
+  Feedback: { tripId: string; tripName: string; paxId: string };
+};
+
+const NativeStack = createNativeStackNavigator<RootStackParamList>();
+const JSStack = createStackNavigator<RootStackParamList>();
+
+function AppNavigator() {
+  const [fontsLoaded] = useFonts({
+    "PlusJakartaSans-Regular": PlusJakartaSans_400Regular,
+    "PlusJakartaSans-Medium": PlusJakartaSans_500Medium,
+    "PlusJakartaSans-SemiBold": PlusJakartaSans_600SemiBold,
+    "PlusJakartaSans-Bold": PlusJakartaSans_700Bold,
+    "PlusJakartaSans-ExtraBold": PlusJakartaSans_800ExtraBold,
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading || !fontsLoaded) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Colors.primary,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator color="#fff" size="large" />
+      </View>
+    );
+  }
+
+  const Stack = Platform.OS === 'web' ? JSStack : NativeStack;
+
+  return (
+    <SafeAreaProvider>
+      <StatusBar style="auto" />
+      <OfflineBanner />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Splash"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+          <Stack.Screen name="Main" component={MainTabNavigator} />
+          <Stack.Screen name="TripDetail" component={TripDetailScreen} />
+          <Stack.Screen name="Itinerary" component={ItineraryScreen} />
+          <Stack.Screen name="Hotel" component={HotelScreen} />
+          <Stack.Screen
+            name="VehicleAttendance"
+            component={VehicleAttendanceScreen}
+          />
+          <Stack.Screen name="FamilyMembers" component={FamilyMembersScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen
+            name="AdminDashboard"
+            component={AdminDashboardScreen}
+          />
+          <Stack.Screen name="Emergency" component={EmergencyScreen} />
+          <Stack.Screen name="Feedback" component={FeedbackScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
+
+export default function App() {
+  if (Platform.OS === "web") {
+    return (
+      <View style={styles.webBg}>
+        {/* Background glow blobs */}
+        <View style={styles.blob1} />
+        <View style={styles.blob2} />
+        <View style={styles.blob3} />
+
+        {/* Phone mockup */}
+        <View style={styles.phoneOuter}>
+          {/* Physical side buttons */}
+          <View style={styles.btnVolUp} />
+          <View style={styles.btnVolDown} />
+          <View style={styles.btnPower} />
+
+          {/* Phone body */}
+          <View style={styles.phoneBody}>
+            {/* Status bar / notch area */}
+            <View style={styles.topBar}>
+              <View style={styles.topBarLeft}>
+                <View style={styles.timeBlock} />
+              </View>
+              <View style={styles.dynamicIsland}>
+                <View style={styles.islandCamera} />
+              </View>
+              <View style={styles.topBarRight}>
+                <View style={styles.sigIcon} />
+                <View style={styles.wifiIcon} />
+                <View style={styles.battIcon} />
+              </View>
+            </View>
+
+            {/* App Screen */}
+            <View style={styles.screen}>
+              <AppNavigator />
+            </View>
+
+            {/* Home indicator */}
+            <View style={styles.homeBar}>
+              <View style={styles.homeBar_pill} />
+            </View>
+          </View>
+        </View>
+
+        {/* Brand watermark */}
+        <View style={styles.watermark}>
+          <View style={styles.wmDot} />
+          <View style={styles.wmLine} />
+          <View style={styles.wmDot} />
+        </View>
+
+        <StoreTestPanel />
+      </View>
+    );
+  }
+
+  return <AppNavigator />;
+}
+
+const PW = 390; // phone width
+const PH = 844; // phone height
+
+const styles = StyleSheet.create({
+  webBg: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#080c14",
+    minHeight: "100vh" as any,
+    overflow: "hidden" as any,
+  },
+
+  /* Glowing background orbs */
+  blob1: {
+    position: "absolute",
+    width: 600,
+    height: 600,
+    borderRadius: 300,
+    backgroundColor: "#2b8cee",
+    opacity: 0.07,
+    top: -200,
+    left: -200,
+  },
+  blob2: {
+    position: "absolute",
+    width: 500,
+    height: 500,
+    borderRadius: 250,
+    backgroundColor: "#7c3aed",
+    opacity: 0.07,
+    bottom: -150,
+    right: -120,
+  },
+  blob3: {
+    position: "absolute",
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "#06b6d4",
+    opacity: 0.05,
+    top: "30%" as any,
+    right: "10%" as any,
+  },
+
+  /* Outer frame (holds side buttons too) */
+  phoneOuter: {
+    width: PW + 24,
+    height: PH + 40,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+
+  /* Physical buttons on left side */
+  btnVolUp: {
+    position: "absolute",
+    left: 0,
+    top: 130,
+    width: 4,
+    height: 34,
+    borderRadius: 2,
+    backgroundColor: "#1e3a5f",
+  },
+  btnVolDown: {
+    position: "absolute",
+    left: 0,
+    top: 176,
+    width: 4,
+    height: 34,
+    borderRadius: 2,
+    backgroundColor: "#1e3a5f",
+  },
+  /* Power button on right */
+  btnPower: {
+    position: "absolute",
+    right: 0,
+    top: 156,
+    width: 4,
+    height: 64,
+    borderRadius: 2,
+    backgroundColor: "#1e3a5f",
+  },
+
+  /* Phone body/shell */
+  phoneBody: {
+    width: PW,
+    height: PH,
+    borderRadius: 52,
+    backgroundColor: "#0d1b2e",
+    borderWidth: 2.5,
+    borderColor: "#1e3a5f",
+    overflow: "hidden",
+    // Blue glow shadow
+    shadowColor: "#2b8cee",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 40,
+    elevation: 40,
+  },
+
+  /* Top status bar */
+  topBar: {
+    height: 48,
+    backgroundColor: "#000",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  topBarLeft: { flex: 1 },
+  timeBlock: {
+    width: 44,
+    height: 10,
+    borderRadius: 3,
+    backgroundColor: "#fff",
+    opacity: 0.75,
+  },
+  dynamicIsland: {
+    width: 126,
+    height: 34,
+    borderRadius: 20,
+    backgroundColor: "#111",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#1a1a2e",
+  },
+  islandCamera: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#1c1c1e",
+    borderWidth: 1.5,
+    borderColor: "#2b8cee33",
+  },
+  topBarRight: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 5,
+  },
+  sigIcon: {
+    width: 12,
+    height: 10,
+    borderRadius: 2,
+    backgroundColor: "#fff",
+    opacity: 0.65,
+  },
+  wifiIcon: {
+    width: 14,
+    height: 10,
+    borderRadius: 2,
+    backgroundColor: "#fff",
+    opacity: 0.65,
+  },
+  battIcon: {
+    width: 22,
+    height: 11,
+    borderRadius: 3,
+    borderWidth: 1.5,
+    borderColor: "#ffffff88",
+    backgroundColor: "#2b8cee",
+    opacity: 0.9,
+  },
+
+  /* Scrollable app screen */
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff",
+    overflow: "hidden" as any,
+  },
+
+  /* Home indicator at bottom */
+  homeBar: {
+    height: 30,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  homeBar_pill: {
+    width: 134,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#64748b",
+    opacity: 0.5,
+  },
+
+  /* Bottom decorative watermark */
+  watermark: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 18,
+    opacity: 0.2,
+  },
+  wmDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#2b8cee" },
+  wmLine: { width: 60, height: 1, backgroundColor: "#475569" },
+});

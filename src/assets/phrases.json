@@ -1,0 +1,20 @@
+{
+  "Tamil Nadu": [
+    { "en": "Hello", "local": "வணக்கம் (Vanakkam)", "phonetic": "वणक्कम" },
+    { "en": "How much?", "local": "எவ்வளவு? (Evvalavu?)", "phonetic": "एव्वलवु" },
+    { "en": "Thank you", "local": "நன்றி (Nandri)", "phonetic": "नंड्री" },
+    { "en": "Where is the bus stand?", "local": "பஸ் ஸ்டாண்ட் எங்கே? (Bus stand enge?)", "phonetic": "बस स्टैंड एंगे?" },
+    { "en": "I need water", "local": "தண்ணீர் வேண்டும் (Thanneer vendum)", "phonetic": "तण्णीर वेंडुम" }
+  ],
+  "Karnataka": [
+    { "en": "Hello", "local": "ನಮಸ್ಕಾರ (Namaskara)", "phonetic": "नमस्कारा" },
+    { "en": "How much?", "local": "ಎಷ್ಟು? (Eshtu?)", "phonetic": "एष्टु?" },
+    { "en": "Thank you", "local": "ಧನ್ಯವಾದಗಳು (Dhanyavadagalu)", "phonetic": "धन्यवादगलु" },
+    { "en": "I don't speak Kannada", "local": "ನನಗೆ ಕನ್ನಡ ಗೊತ್ತಿಲ್ಲ (Nanage Kannada gottilla)", "phonetic": "ननगे कन्नड गोत्तिल्ला" }
+  ],
+  "Goa": [
+    { "en": "Hello", "local": "Dev boro dis dium", "phonetic": "देव बोरो दीस दिउम" },
+    { "en": "Thank you", "local": "Dev borem korum", "phonetic": "देव बोरेम कोरम" },
+    { "en": "How much?", "local": "Kitlem?", "phonetic": "कितलेम?" }
+  ]
+}
