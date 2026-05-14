@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TravelSync Splash Screen</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseText: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.4' },
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'pulse-text': 'pulseText 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Ensuring full height on mobile viewports */
+        html, body {
+            height: 100%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased overflow-hidden selection:bg-primary/30">
+<div class="relative flex h-full w-full flex-col items-center justify-between group/design-root">
+<!-- Background Element: Subtle Map Texture -->
+<div class="absolute inset-0 z-0 opacity-[0.04] dark:opacity-[0.02] pointer-events-none mix-blend-multiply dark:mix-blend-lighten" data-alt="Abstract minimal world map outline pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAloAsQHB3QFkpnOBtXzmGig1eyVmRSRL_TLppC8XIjWF2D0VPJCPAdnWMdmQTEuQD3K85WB6o6b1jL_lTyo_ar4JRdJlnRXs8nWLvu3PR2SUORsRnoTC3XzF26NkVy1uqqkFVqyK_yjU-ANu7ZgmlbHCwpNxpfThsK1UA8zSof1-2UsLOYY4HtteRARGzgkRQlOL1w7O_XXv3nSmrcXov7lGbaL0VYYZLtEevnDQf7AXdSagtRk3G6MiP3899G9o_fHYJJuW5moOE'); background-size: cover; background-position: center;">
+</div>
+<!-- Spacer for vertical centering (Top) -->
+<div class="flex-1"></div>
+<!-- Main Content Area -->
+<div class="relative z-10 flex flex-col items-center justify-center w-full px-6 animate-fade-in">
+<!-- Logo Icon -->
+<div class="mb-6 flex items-center justify-center">
+<div class="flex items-center justify-center w-24 h-24 rounded-3xl bg-white dark:bg-slate-800 shadow-xl shadow-primary/10 ring-1 ring-slate-100 dark:ring-slate-700">
+<span class="material-symbols-outlined text-primary text-[48px]">connecting_airports</span>
+</div>
+</div>
+<!-- Headline: App Name -->
+<h1 class="text-primary tracking-tight text-4xl font-extrabold leading-tight text-center pb-2 pt-2">
+                TravelSync
+            </h1>
+<!-- Title/Tagline -->
+<h2 class="text-slate-500 dark:text-slate-400 text-lg font-medium leading-tight tracking-wide text-center px-4">
+                Sync Your Journey
+            </h2>
+</div>
+<!-- Spacer for vertical centering (Bottom) -->
+<div class="flex-1"></div>
+<!-- Loading Indicator Area -->
+<div class="relative z-10 flex flex-col items-center justify-end pb-16 w-full">
+<p class="text-slate-400 dark:text-slate-600 text-xs font-semibold tracking-[0.2em] uppercase animate-pulse-text">
+                Loading...
+            </p>
+</div>
+</div>
+</body></html>

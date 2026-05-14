@@ -4,7 +4,7 @@
     "module": "ESNext",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "ignoreDeprecations": "6.0",
+    // "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],

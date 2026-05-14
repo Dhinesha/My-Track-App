@@ -14,7 +14,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
 import { RootStackParamList } from "../../App";
 import { Colors } from "../theme/colors";
 import { useAuthStore } from "../store/authStore";
@@ -113,15 +114,18 @@ export default function LoginScreen() {
           <SafeAreaView className="flex-1 px-8 pt-10">
             {/* Header / Logo */}
             <View className="items-center mb-12">
-              <View className="w-20 h-20 bg-primary/10 rounded-3xl items-center justify-center mb-4">
-                <MaterialCommunityIcons
-                  name="bus-side"
-                  size={48}
-                  color={Colors.primary}
-                />
+              <View
+                className="w-24 h-24 rounded-3xl items-center justify-center mb-4"
+                style={{
+                  backgroundColor: "#f0fafb",
+                  borderColor: "#d0eef2",
+                  borderWidth: 1,
+                }}
+              >
+                <TrackMyTripLogo size={68} />
               </View>
               <Text className="text-3xl font-jakarta-extrabold text-primary">
-                MyTripGuide
+                TrackMyTrip
               </Text>
               <Text className="text-text-secondary font-jakarta-medium text-sm mt-1">
                 Your journey, simplified
