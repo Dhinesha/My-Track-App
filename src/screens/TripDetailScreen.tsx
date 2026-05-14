@@ -2,29 +2,22 @@ import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Image,
-  Platform,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons, Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RootStackParamList } from "../../App";
-import { Colors } from "../theme/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Typography, Radius, Spacing } from "../theme/typography";
 
-import { SelfCheckInSection } from "../components/attendance/SelfCheckInSection";
 import {
-  DayPill,
-  StatusSummaryRow,
   QuickActionsRow,
   TripProgressBar,
-  TripCountdownWidget,
   WhatsHappeningNowCard,
   TodaySummaryCard,
   SmartCheckInBanner,
@@ -54,7 +47,7 @@ export default function TripDetailScreen() {
       label: "Itinerary",
       sub: "View today's plan",
       icon: "calendar-clock",
-      color: "#2196F3",
+      color: "#3B82F6",
       onPress: () => navigation.navigate("Itinerary", { tripId, tripName }),
     },
     {
@@ -62,7 +55,7 @@ export default function TripDetailScreen() {
       label: "Vehicle",
       sub: "Bus #2 - 12/15 here",
       icon: "bus",
-      color: "#FF9800",
+      color: "#F59E0B",
       onPress: () => navigation.navigate("VehicleAttendance", { tripId }),
     },
     {
@@ -70,7 +63,7 @@ export default function TripDetailScreen() {
       label: "Family",
       sub: "Manage Group",
       icon: "account-group",
-      color: "#4CAF50",
+      color: "#10B981",
       onPress: () => navigation.navigate("FamilyMembers", { tripId }),
     },
     {
@@ -78,7 +71,7 @@ export default function TripDetailScreen() {
       label: "Hotel Details",
       sub: "Hotel Granvia",
       icon: "office-building",
-      color: "#9C27B0",
+      color: "#8B5CF6",
       onPress: () => navigation.navigate("Hotel", { tripId }),
     },
     {
@@ -86,45 +79,23 @@ export default function TripDetailScreen() {
       label: "Notifications",
       sub: "2 New",
       icon: "bell",
-      color: "#F44336",
+      color: "#EF4444",
       badge: 2,
       onPress: () => navigation.navigate("Notifications"),
     },
     {
-      id: "help",
+      id: "emergency",
       label: "Emergency",
       sub: "SOS & Help",
       icon: "lifebuoy",
-      color: "#E91E63",
+      color: "#EC4899",
       onPress: () => navigation.navigate("Emergency"),
-    },
-    {
-      id: "packing",
-      label: "Packing List",
-      sub: "What to carry",
-      icon: "bag-personal",
-      color: "#009688",
-      onPress: () =>
-        navigation.navigate("PackingChecklist", {
-          tripId,
-          tripName,
-          tripType: "family",
-        }),
-    },
-    {
-      id: "budget",
-      label: "Daily Budget",
-      sub: "Track expenses",
-      icon: "wallet",
-      color: "#FF5722",
-      onPress: () =>
-        navigation.navigate("BudgetTracker", { tripId, totalDays: 5 }),
     },
     {
       id: "feedback",
       label: "Feedback",
       sub: "Rate your trip",
-      icon: "star-circle",
+      icon: "star",
       color: "#F59E0B",
       onPress: () =>
         navigation.navigate("Feedback", {
@@ -136,329 +107,150 @@ export default function TripDetailScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons
-            name="arrow-back"
-            size={24}
-            color={Colors.text.primary}
-          />
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-6 py-4 bg-white">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="w-10 h-10 items-center justify-center">
+          <Feather name="arrow-left" size={24} color="#1E293B" />
         </TouchableOpacity>
-        <Text style={Typography.screenTitle}>Trip Dashboard</Text>
-        <View style={{ width: 24 }} />
+        <Text className="text-xl font-jakarta-bold text-[#1E293B]">Trip Dashboard</Text>
+        <View className="w-10" />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        className="flex-1 px-6"
       >
         {/* Hero Section */}
-        <View style={styles.heroContainer}>
+        <View className="mt-4 rounded-[32px] overflow-hidden shadow-2xl shadow-black/20 h-72">
           <Image
             source={{
-              uri: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80",
+              uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuAF3zCS6btqNZMelf0lJdzX-H_fJ9p6fdz5_CS7se8XKtsDOlN7JfSb7tD-o_X9RCgeWMHN48QmoY3DcAzd3u01NIffCACoUdjhjWpxJkjVNMkXRaewwYmdMVEZi1K8gDmp52Z9Au96Li8xUYqHT_7-2Jw9EQqOLjpnBNHOdU3voC2IPBPdu3gNb475ulRAXJ-WHy7Po4Kzptiqz_FgwBdYdfOV_qt4wdtFsW4YzBr59LP0K3-wo7U7NPD48IxJ04iEp0ZetTbg8fM",
             }}
-            style={styles.heroImage}
+            className="absolute inset-0 w-full h-full"
           />
           <LinearGradient
             colors={["transparent", "rgba(0,0,0,0.8)"]}
-            style={styles.heroOverlay}
-          >
-            <View style={styles.heroContent}>
-              <View style={styles.heroTopRow}>
-                <View style={styles.dayBadge}>
-                  <Text style={styles.dayBadgeText}>Day 2 of 5</Text>
-                </View>
-                <TripCountdownWidget
-                  startDate="2023-10-12"
-                  endDate="2023-10-20"
-                  status="ongoing"
-                />
-              </View>
-              <Text style={styles.heroTitle}>{tripName}</Text>
-              <View style={styles.locRow}>
-                <MaterialIcons name="location-on" size={16} color="#fff" />
-                <Text style={styles.locText}>Kyoto, Japan</Text>
-              </View>
-              <View
-                style={{
-                  marginTop: 12,
-                  backgroundColor: "rgba(255,255,255,0.15)",
-                  padding: 12,
-                  borderRadius: 12,
-                }}
-              >
-                <TripProgressBar
-                  startDate="2023-10-12"
-                  endDate="2023-10-20"
-                  status="ongoing"
-                />
-              </View>
+            className="absolute inset-0"
+          />
+          <View className="absolute inset-0 p-6 flex-col justify-end">
+            <View className="bg-[#3B82F6] self-start px-4 py-1.5 rounded-full mb-3">
+              <Text className="text-white text-[10px] font-jakarta-extrabold">Day 2 of 5</Text>
             </View>
-          </LinearGradient>
+            <Text className="text-white text-3xl font-jakarta-extrabold mb-1">Family Kyoto Retreat</Text>
+            <View className="flex-row items-center mb-6">
+              <MaterialIcons name="location-on" size={16} color="white" />
+              <Text className="text-white/90 font-jakarta-medium text-sm ml-1">Kyoto, Japan</Text>
+            </View>
+            
+            <View className="mb-2">
+              <TripProgressBar
+                startDate="2023-10-12"
+                endDate="2023-10-20"
+                status="ongoing"
+              />
+              <Text className="text-white/60 text-[10px] font-jakarta-bold mt-2 uppercase tracking-widest">Day 2 of 9</Text>
+            </View>
+          </View>
         </View>
 
-        <View style={{ paddingHorizontal: 20, marginTop: -20, gap: 12 }}>
+        {/* Dynamic Banners */}
+        <View className="mt-6 gap-4">
           <SmartCheckInBanner />
           <WhatsHappeningNowCard />
           <TodaySummaryCard />
         </View>
 
-        {/* Quick Actions Row */}
+        {/* Quick Actions */}
         <QuickActionsRow isSelfCheckedIn={isSelfCheckedIn} />
 
-        {/* Self Check-In Section - Prominently placed right below the hero image */}
-        <View style={styles.checkInWrapper}>
-          <View style={styles.checkInHeader}>
-            <Text style={styles.checkInTitle}>Self Check-In</Text>
+        {/* Self Check-In Section */}
+        <View className="mt-8 mb-6">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-xl font-jakarta-extrabold text-slate-900">Self Check-In</Text>
             {isSelfCheckedIn && (
-              <View style={styles.checkInStatusBadge}>
-                <MaterialIcons name="check-circle" size={14} color="#059669" />
-                <Text style={styles.checkInStatusText}>COMPLETED</Text>
+              <View className="bg-emerald-50 px-3 py-1 rounded-full flex-row items-center border border-emerald-100">
+                <MaterialIcons name="check-circle" size={12} color="#10B981" />
+                <Text className="text-[#10B981] text-[10px] font-jakarta-bold ml-1 uppercase">Completed</Text>
               </View>
             )}
           </View>
-          <SelfCheckInSection
-            paxId={"demo-pax-1"}
-            vehicleId={"demo-veh-1"}
-            tripId={tripId}
-            onCheckInSuccess={() => setIsSelfCheckedIn(true)}
-          />
+          
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            className={`w-full py-5 rounded-[24px] items-center justify-center shadow-lg ${isSelfCheckedIn ? 'bg-slate-100' : 'bg-[#0F6E56]'}`}
+            onPress={async () => {
+              if (!isSelfCheckedIn) {
+                await AsyncStorage.setItem(`checkin_${tripId}`, 'true');
+                setIsSelfCheckedIn(true);
+              }
+            }}
+          >
+            <Text className={`text-lg font-jakarta-bold ${isSelfCheckedIn ? 'text-slate-400' : 'text-white'}`}>
+              {isSelfCheckedIn ? 'Already Checked In' : 'Check In'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.gridContainer}>
-          {/* Status Pills */}
-          <View style={styles.statusSection}>
-            <DayPill
-              startDate={new Date().toISOString()}
-              endDate={new Date(Date.now() + 7 * 86400000).toISOString()}
-            />
-            <View style={{ height: 12 }} />
-            <StatusSummaryRow
-              selfCheckedIn={isSelfCheckedIn}
-              familyCheckedIn={2}
-              familyTotal={4}
-              hotelCheckedIn={false}
-            />
+        {/* Status Section */}
+        <View className="mb-8">
+          <View className="bg-[#EFF6FF] self-start px-4 py-2 rounded-full mb-4 border border-blue-100">
+            <Text className="text-[#3B82F6] text-xs font-jakarta-bold">Day 1 of 8 — Wednesday 13 May</Text>
           </View>
-
-          {/* Menu Grid */}
-          <View style={styles.grid}>
-            {menuItems.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.gridItem}
-                onPress={item.onPress}
-                activeOpacity={0.7}
-              >
-                <View
-                  style={[
-                    styles.iconWrap,
-                    { backgroundColor: item.color + "15" },
-                  ]}
-                >
-                  <MaterialCommunityIcons
-                    name={item.icon as any}
-                    size={30}
-                    color={item.color}
-                  />
-                  {item.badge && (
-                    <View style={styles.itemBadge}>
-                      <Text style={styles.itemBadgeText}>{item.badge}</Text>
-                    </View>
-                  )}
-                </View>
-                <Text style={styles.itemLabel}>{item.label}</Text>
-                <Text style={styles.itemSub}>{item.sub}</Text>
-              </TouchableOpacity>
-            ))}
+          
+          <View className="flex-row gap-3">
+            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
+              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
+              <Text className="text-[#92400E] text-xs font-jakarta-bold">My Check-in</Text>
+            </View>
+            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
+              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
+              <Text className="text-[#92400E] text-xs font-jakarta-bold">Family 2/4</Text>
+            </View>
+            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
+              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
+              <Text className="text-[#92400E] text-xs font-jakarta-bold">Hotel</Text>
+            </View>
           </View>
         </View>
-        <View style={{ height: 100 }} />
+
+        {/* Menu Grid */}
+        <View className="flex-row flex-wrap justify-between">
+          {menuItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.8}
+              onPress={item.onPress}
+              className="w-[47%] bg-white rounded-[32px] p-6 mb-5 border border-slate-50 shadow-xl shadow-black/5 items-center"
+            >
+              <View className="w-16 h-16 rounded-full items-center justify-center mb-4 relative" style={{ backgroundColor: item.color + '10' }}>
+                <MaterialCommunityIcons name={item.icon as any} size={30} color={item.color} />
+                {item.badge && (
+                  <View className="absolute top-0 right-0 bg-red-500 w-5 h-5 rounded-full items-center justify-center border-2 border-white">
+                    <Text className="text-white text-[8px] font-jakarta-bold">{item.badge}</Text>
+                  </View>
+                )}
+              </View>
+              <Text className="text-slate-900 font-jakarta-extrabold text-[15px] mb-1">{item.label}</Text>
+              <Text className="text-slate-400 font-jakarta-medium text-[11px] text-center">{item.sub}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
 
-      <EmergencyFAB onPress={() => navigation.navigate("Emergency")} />
+      <View className="absolute bottom-10 right-6">
+        <TouchableOpacity 
+          onPress={() => navigation.navigate("Emergency")}
+          className="w-16 h-16 bg-[#EF4444] rounded-full items-center justify-center shadow-2xl shadow-red-500/50 border-4 border-white"
+        >
+          <MaterialCommunityIcons name="alert-decagram" size={30} color="white" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8FAFC",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  heroContainer: {
-    width: "100%",
-    height: 220,
-    backgroundColor: "#000",
-  },
-  heroImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  heroOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: "70%",
-    justifyContent: "flex-end",
-    padding: 20,
-  },
-  heroContent: {
-    gap: 4,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 4,
-  },
-  dayBadge: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.full,
-  },
-  dayBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-  weatherBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.full,
-    gap: 4,
-  },
-  weatherText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-  heroTitle: {
-    fontSize: 24,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#FFFFFF",
-  },
-  locRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  locText: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans-Regular",
-    color: "#FFFFFF",
-    opacity: 0.9,
-  },
-  checkInWrapper: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
-  },
-  checkInHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  checkInTitle: {
-    fontSize: 18,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#0F172A",
-  },
-  checkInStatusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ECFDF5",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    gap: 4,
-  },
-  checkInStatusText: {
-    color: "#059669",
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-  gridContainer: {
-    padding: 20,
-  },
-  statusSection: {
-    marginBottom: 24,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: 16,
-  },
-  gridItem: {
-    width: "47.5%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: Radius.lg,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#F1F5F9",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 1,
-  },
-  iconWrap: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-    position: "relative",
-  },
-  itemBadge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: Colors.status.error,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  itemBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 8,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-  itemLabel: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: Colors.text.primary,
-    marginBottom: 4,
-  },
-  itemSub: {
-    fontSize: 11,
-    fontFamily: "PlusJakartaSans-Regular",
-    color: Colors.text.secondary,
-    textAlign: "center",
-  },
-});
+const styles = {}; // Removed old styles as we use NativeWind

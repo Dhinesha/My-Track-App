@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { useAuthStore } from '../../store/authStore';
@@ -14,7 +15,6 @@ export function WhatsHappeningNowCard() {
   const db = usePowerSync();
   const { activeTripId } = useTripStore();
   const [message, setMessage] = useState('');
-  const [icon, setIcon] = useState('⚡');
 
   const compute = async () => {
     if (!activeTripId) return;
@@ -29,7 +29,7 @@ export function WhatsHappeningNowCard() {
     const dayNum = differenceInDays(now, parseISO(trip.start_date)) + 1;
     if (dayNum < 1) {
       const daysLeft = Math.abs(dayNum) + 1;
-      setIcon('🗓️'); setMessage(`Trip begins in ${daysLeft} day${daysLeft !== 1 ? 's' : ''} — check your itinerary to prepare`);
+      setMessage(`Trip begins in ${daysLeft} day${daysLeft !== 1 ? 's' : ''} — check your itinerary to prepare`);
       return;
     }
 
@@ -38,11 +38,11 @@ export function WhatsHappeningNowCard() {
        WHERE trip_id=? AND day=? ORDER BY start_time`,
       [activeTripId, dayNum]
     );
-    if (!activities.length) { setIcon('☀️'); setMessage('No activities scheduled today'); return; }
+    if (!activities.length) { setMessage('No activities scheduled today'); return; }
 
     // Check if any is delayed
     const delayed = activities.find((a) => a.status === 'delayed');
-    if (delayed) { setIcon('⚠️'); setMessage(`Delayed — Organiser updated departure time`); return; }
+    if (delayed) { setMessage(`Delayed — Organiser updated departure time`); return; }
 
     // Find in-progress
     const inProgress = activities.find((a) => {
@@ -50,7 +50,7 @@ export function WhatsHappeningNowCard() {
       const startMins = h * 60 + m;
       return nowMins >= startMins && nowMins < startMins + (a.duration_mins ?? 60);
     });
-    if (inProgress) { setIcon('📍'); setMessage(`Now at ${inProgress.place_name} — expected stay: ${Math.round((inProgress.duration_mins ?? 60) / 60)} hr`); return; }
+    if (inProgress) { setMessage(`Now at ${inProgress.place_name} — until ${format(new Date(new Date().setHours(new Date().getHours() + 1)), 'h:mm a')}`); return; }
 
     // Find next upcoming
     const next = activities.find((a) => {
@@ -62,13 +62,13 @@ export function WhatsHappeningNowCard() {
       const nextDate = new Date();
       nextDate.setHours(h, m);
       const timeStr = format(nextDate, 'h:mm a');
-      setIcon('🕐'); setMessage(`Next activity at ${timeStr} — ${next.place_name}`);
+      setMessage(`Next activity at ${timeStr} — ${next.place_name}`);
       return;
     }
 
     // All done for today
     const tomorrow = activities[0]?.start_time ?? '7:00';
-    setIcon('🌙'); setMessage(`Today's schedule complete. Tomorrow starts at ${tomorrow}`);
+    setMessage(`Today's schedule complete. Tomorrow starts at ${tomorrow}`);
   };
 
   useEffect(() => {
@@ -80,11 +80,13 @@ export function WhatsHappeningNowCard() {
   if (!message) return null;
 
   return (
-    <View className="bg-white border border-gray-100 border-l-4 border-l-teal-500 rounded-xl px-4 py-3 mx-4 my-2 flex-row gap-3 items-start">
-      <Text className="text-xl mt-0.5">{icon}</Text>
+    <View className="bg-white border border-slate-100 border-l-[6px] border-l-[#10B981] rounded-2xl px-5 py-5 flex-row gap-4 items-center shadow-sm">
+      <View className="w-12 h-12 bg-[#F0FDF4] rounded-full items-center justify-center">
+        <MaterialIcons name="location-on" size={24} color="#10B981" />
+      </View>
       <View className="flex-1">
-        <Text className="text-xs font-semibold text-teal-700 uppercase tracking-wide mb-0.5">Right Now</Text>
-        <Text className="text-sm text-gray-800 leading-5">{message}</Text>
+        <Text className="text-[10px] font-jakarta-bold text-[#10B981] uppercase tracking-[2px] mb-1">Right Now</Text>
+        <Text className="text-[15px] font-jakarta-semibold text-slate-800 leading-6">{message}</Text>
       </View>
     </View>
   );

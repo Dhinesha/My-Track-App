@@ -108,7 +108,7 @@ export default function TripsListScreen() {
             <TouchableOpacity
               key={trip.id}
               activeOpacity={0.9}
-              onPress={() => navigation.navigate('MainTabs', { screen: 'Dashboard' })}
+              onPress={() => navigation.navigate('Main', { screen: 'Home' })}
               className="bg-white rounded-[32px] mb-6 overflow-hidden shadow-xl shadow-black/5 border border-border-light"
             >
               <View className="h-44 relative">

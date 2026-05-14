@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,265 +9,257 @@ import {
   ScrollView,
   ActivityIndicator,
   StatusBar,
-  Image,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MaterialIcons } from "@expo/vector-icons";
-import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
 import { RootStackParamList } from "../../App";
-import { Colors } from "../theme/colors";
 import { useAuthStore } from "../store/authStore";
-import { Button, OTPInput } from "../components/common";
+import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
+
+const PRIMARY = "#2b8cee";
+const CORRECT_OTP = "1234";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Login">;
 
 export default function LoginScreen() {
   const navigation = useNavigation<Nav>();
+  console.log("LoginScreen: Rendering component...");
+
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [showOtp, setShowOtp] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
+  const otpRefs = [
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+  ];
+
+  // Countdown timer after OTP sent
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (showOtp && timer > 0) {
-      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-    } else if (timer === 0) {
-      setCanResend(true);
-    }
-    return () => clearInterval(interval);
+    if (!showOtp) return;
+    if (timer <= 0) { setCanResend(true); return; }
+    const id = setInterval(() => setTimer((t) => t - 1), 1000);
+    return () => clearInterval(id);
   }, [showOtp, timer]);
 
   const handleGetOtp = () => {
-    if (phone.length !== 10) {
-      setError("Please enter a valid 10-digit mobile number");
+    if (phone.length < 10) {
+      setError("Enter a valid 10-digit mobile number");
       return;
     }
-
-    // Starts with 6/7/8/9
-    if (!/^[6-9]/.test(phone)) {
-      setError("Enter a valid Indian mobile number starting with 6-9");
-      return;
-    }
-
-    setIsSendingOtp(true);
     setError("");
-
-    // Simulate API call
+    setIsSending(true);
     setTimeout(() => {
-      setIsSendingOtp(false);
+      setIsSending(false);
       setShowOtp(true);
       setTimer(30);
       setCanResend(false);
-      setOtp(Array(6).fill(""));
-    }, 1200);
+      setOtp(["", "", "", ""]);
+      setTimeout(() => otpRefs[0].current?.focus(), 100);
+    }, 900);
   };
 
-  const handleVerifyOtp = (code?: string) => {
-    const fullCode = code || otp.join("");
-    if (fullCode.length !== 6) return;
-
-    setIsValidating(true);
+  const handleOtpChange = (text: string, index: number) => {
+    const digit = text.replace(/[^0-9]/g, "").slice(-1);
+    const next = [...otp];
+    next[index] = digit;
+    setOtp(next);
     setError("");
+    if (digit && index < 3) otpRefs[index + 1].current?.focus();
+    if (digit && index === 3) {
+      const full = next.join("");
+      if (full.length === 4) handleVerify(full);
+    }
+  };
 
-    // Simulate verification
+  const handleKeyPress = (key: string, index: number) => {
+    if (key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs[index - 1].current?.focus();
+    }
+  };
+
+  const handleVerify = (code?: string) => {
+    const full = code ?? otp.join("");
+    if (full.length < 4) return;
+    setIsVerifying(true);
+    setError("");
     setTimeout(() => {
-      setIsValidating(false);
-      if (fullCode === "123456") {
+      setIsVerifying(false);
+      if (full === CORRECT_OTP) {
         useAuthStore.getState().setUser({
           id: "u-101",
           name: "Demo Traveler",
           mobile: phone,
           role: "traveler",
+          onboarding_complete: false,
         });
         navigation.replace("Onboarding");
       } else {
         setError("Incorrect OTP. Please try again.");
-        setOtp(Array(6).fill(""));
+        setOtp(["", "", "", ""]);
+        otpRefs[0].current?.focus();
       }
-    }, 1500);
+    }, 1200);
   };
 
   const handleResend = () => {
     if (!canResend) return;
-    handleGetOtp();
+    setTimer(30);
+    setCanResend(false);
+    setOtp(["", "", "", ""]);
+    setTimeout(() => otpRefs[0].current?.focus(), 100);
   };
 
   return (
-    <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" />
+    <View style={s.root}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <KeyboardAvoidingView
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
           bounces={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <SafeAreaView className="flex-1 px-8 pt-10">
-            {/* Header / Logo */}
-            <View className="items-center mb-12">
-              <View
-                className="w-24 h-24 rounded-3xl items-center justify-center mb-4"
-                style={{
-                  backgroundColor: "#f0fafb",
-                  borderColor: "#d0eef2",
-                  borderWidth: 1,
-                }}
-              >
-                <TrackMyTripLogo size={68} />
-              </View>
-              <Text className="text-3xl font-jakarta-extrabold text-primary">
-                TrackMyTrip
-              </Text>
-              <Text className="text-text-secondary font-jakarta-medium text-sm mt-1">
-                Your journey, simplified
-              </Text>
+          <SafeAreaView style={s.safe}>
+
+            {/* ── HEADER: logo + app name ── */}
+            <View style={s.header}>
+              <TrackMyTripLogo size={52} />
+              <Text style={s.appName}>My Trip Guide</Text>
             </View>
 
-            {/* Content Section */}
-            <View className="flex-1">
-              {!showOtp ? (
-                <View>
-                  <Text className="text-2xl font-jakarta-bold text-text-primary mb-2">
-                    Welcome back!
-                  </Text>
-                  <Text className="text-text-secondary font-jakarta-regular mb-8">
-                    Enter your mobile number to get started.
-                  </Text>
+            {/* ── BODY ── */}
+            <View style={s.body}>
 
-                  <View className="mb-6">
-                    <Text className="text-sm font-jakarta-semibold text-text-primary mb-2">
-                      Mobile Number
-                    </Text>
-                    <View className="flex-row items-center bg-background-input border border-border-light rounded-xl px-4 h-14">
-                      <View className="flex-row items-center border-r border-border-light pr-3 mr-3">
-                        <Text className="text-lg mr-1">🇮🇳</Text>
-                        <Text className="text-base font-jakarta-bold text-text-primary">
-                          +91
-                        </Text>
-                      </View>
-                      <TextInput
-                        className="flex-1 text-lg font-jakarta-medium text-text-primary"
-                        placeholder="00000 00000"
-                        placeholderTextColor={Colors.text.muted}
-                        keyboardType="phone-pad"
-                        value={phone}
-                        onChangeText={(val) => {
-                          setPhone(val.replace(/[^0-9]/g, "").slice(0, 10));
-                          if (error) setError("");
-                        }}
-                        maxLength={10}
-                      />
-                    </View>
-                    {error ? (
-                      <Text className="text-status-error text-xs font-jakarta-medium mt-2 ml-1">
-                        {error}
-                      </Text>
-                    ) : null}
-                  </View>
+              {/* Title */}
+              <Text style={s.heading}>Login</Text>
+              <Text style={s.subheading}>Enter your details to access your trips</Text>
 
-                  <Button
-                    label="Get Verification Code"
-                    onPress={handleGetOtp}
-                    variant="teal"
-                    size="lg"
-                    fullWidth
-                    loading={isSendingOtp}
-                    disabled={phone.length < 10}
-                    rightIcon={
-                      <MaterialIcons
-                        name="arrow-forward"
-                        size={20}
-                        color="#fff"
-                      />
-                    }
-                  />
+              {/* ── Mobile Number ── */}
+              <Text style={s.label}>Mobile Number</Text>
+              <View style={s.phoneRow}>
+                {/* Country code */}
+                <View style={s.countryBox}>
+                  <Text style={s.flagEmoji}>🇮🇳</Text>
+                  <Text style={s.countryCode}>+91</Text>
                 </View>
-              ) : (
-                <View>
-                  <TouchableOpacity
-                    onPress={() => setShowOtp(false)}
-                    className="flex-row items-center mb-6"
-                  >
-                    <MaterialIcons
-                      name="arrow-back"
-                      size={20}
-                      color={Colors.primary}
-                    />
-                    <Text className="text-primary font-jakarta-bold ml-1">
-                      Change Number
-                    </Text>
-                  </TouchableOpacity>
+                {/* Phone input */}
+                <TextInput
+                  style={s.phoneInput}
+                  placeholder="Enter mobile number"
+                  placeholderTextColor="#94a3b8"
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={(v) => {
+                    setPhone(v.replace(/[^0-9]/g, "").slice(0, 10));
+                    if (error) setError("");
+                  }}
+                  maxLength={10}
+                  returnKeyType="done"
+                  onSubmitEditing={handleGetOtp}
+                  editable={!showOtp}
+                />
+              </View>
 
-                  <Text className="text-2xl font-jakarta-bold text-text-primary mb-2">
-                    Verify Code
-                  </Text>
-                  <Text className="text-text-secondary font-jakarta-regular mb-8">
-                    We've sent a 6-digit code to{" "}
-                    <Text className="font-jakarta-bold text-text-primary">
-                      +91 {phone}
-                    </Text>
-                  </Text>
+              {/* Error (phone step) */}
+              {!showOtp && !!error && (
+                <Text style={s.errorText}>{error}</Text>
+              )}
 
-                  <View className="mb-8">
-                    <OTPInput
-                      value={otp}
-                      onChange={setOtp}
-                      onComplete={handleVerifyOtp}
-                    />
-                    {error ? (
-                      <Text className="text-status-error text-center text-sm font-jakarta-medium mt-4">
-                        {error}
-                      </Text>
-                    ) : null}
+              {/* ── GET OTP BUTTON (step 1 only) ── */}
+              {!showOtp && (
+                <TouchableOpacity
+                  style={[s.btn, phone.length < 10 && s.btnDisabled]}
+                  onPress={handleGetOtp}
+                  disabled={phone.length < 10 || isSending}
+                  activeOpacity={0.85}
+                >
+                  {isSending
+                    ? <ActivityIndicator color="#fff" />
+                    : <Text style={s.btnText}>Get OTP →</Text>
+                  }
+                </TouchableOpacity>
+              )}
+
+              {/* ── VERIFICATION SECTION (step 2) ── */}
+              {showOtp && (
+                <>
+                  {/* ── VERIFICATION divider ── */}
+                  <View style={s.divRow}>
+                    <View style={s.divLine} />
+                    <Text style={s.divLabel}>VERIFICATION</Text>
+                    <View style={s.divLine} />
                   </View>
 
-                  <Button
-                    label="Verify and Continue"
-                    onPress={() => handleVerifyOtp()}
-                    variant="teal"
-                    size="lg"
-                    fullWidth
-                    loading={isValidating}
-                    disabled={otp.join("").length < 6}
-                  />
+                  {/* OTP label */}
+                  <Text style={s.otpLabel}>Enter Verification Code</Text>
 
-                  <View className="items-center mt-8">
-                    <Text className="text-text-secondary font-jakarta-medium mb-2">
-                      Didn't receive code?
-                    </Text>
-                    <TouchableOpacity
-                      onPress={handleResend}
-                      disabled={!canResend}
-                    >
-                      <Text
-                        className={`font-jakarta-extrabold ${canResend ? "text-primary underline" : "text-text-muted"}`}
-                      >
-                        {canResend ? "Resend OTP" : `Resend in ${timer}s`}
+                  {/* ── 4 OTP BOXES ── */}
+                  <View style={s.otpRow}>
+                    {otp.map((digit, i) => (
+                      <View key={i} style={s.otpWrapper}>
+                        <TextInput
+                          ref={otpRefs[i]}
+                          style={[s.otpBox, digit ? s.otpBoxActive : s.otpBoxEmpty]}
+                          value={digit}
+                          onChangeText={(t) => handleOtpChange(t, i)}
+                          onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, i)}
+                          keyboardType="numeric"
+                          maxLength={1}
+                          textAlign="center"
+                          selectTextOnFocus
+                          caretHidden
+                        />
+                      </View>
+                    ))}
+                  </View>
+
+                  {/* Sent to / Resend row */}
+                  <View style={s.metaRow}>
+                    <Text style={s.sentTo}>Sent to {phone}</Text>
+                    <TouchableOpacity onPress={handleResend} disabled={!canResend}>
+                      <Text style={[s.resend, !canResend && s.resendDisabled]}>
+                        Resend Code ({timer}s)
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-              )}
-            </View>
 
-            <View className="items-center pb-8 mt-auto">
-              <Text className="text-text-muted text-xs font-jakarta-medium text-center">
-                By continuing, you agree to MyTripGuide's{"\n"}
-                <Text className="text-primary underline">
-                  Terms of Service
-                </Text>{" "}
-                and{" "}
-                <Text className="text-primary underline">Privacy Policy</Text>
-              </Text>
+                  {/* Error (OTP step) */}
+                  {!!error && (
+                    <Text style={[s.errorText, { textAlign: "center", marginBottom: 12 }]}>
+                      {error}
+                    </Text>
+                  )}
+
+                  {/* ── VERIFY OTP BUTTON ── */}
+                  <TouchableOpacity
+                    style={[s.btn, (otp.join("").length < 4 || isVerifying) && s.btnDisabled]}
+                    onPress={() => handleVerify()}
+                    disabled={otp.join("").length < 4 || isVerifying}
+                    activeOpacity={0.85}
+                  >
+                    {isVerifying
+                      ? <ActivityIndicator color="#fff" />
+                      : <Text style={s.btnText}>Verify OTP 🔒</Text>
+                    }
+                  </TouchableOpacity>
+
+                  {/* Footer note */}
+                  <Text style={s.footerNote}>Only primary traveller can login</Text>
+                </>
+              )}
             </View>
           </SafeAreaView>
         </ScrollView>
@@ -275,3 +267,229 @@ export default function LoginScreen() {
     </View>
   );
 }
+
+/* ─── Styles ─────────────────────────────────────── */
+const s = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  safe: {
+    flex: 1,
+  },
+
+  /* Header */
+  header: {
+    alignItems: "center",
+    paddingTop: 36,
+    paddingBottom: 4,
+  },
+  appName: {
+    marginTop: 10,
+    fontSize: 28,
+    fontWeight: "800",
+    color: PRIMARY,
+    fontFamily: "PlusJakartaSans-ExtraBold",
+    letterSpacing: -0.3,
+  },
+
+  /* Body */
+  body: {
+    flex: 1,
+    paddingHorizontal: 22,
+    paddingTop: 24,
+    paddingBottom: 32,
+  },
+
+  /* Login title */
+  heading: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#0f172a",
+    fontFamily: "PlusJakartaSans-ExtraBold",
+    marginBottom: 4,
+  },
+  subheading: {
+    fontSize: 14,
+    color: "#64748b",
+    fontFamily: "PlusJakartaSans-Regular",
+    marginBottom: 24,
+  },
+
+  /* Phone label */
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1e293b",
+    fontFamily: "PlusJakartaSans-SemiBold",
+    marginBottom: 10,
+  },
+
+  /* Phone row */
+  phoneRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 20,
+  },
+  countryBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f1f5f9",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 54,
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: "#e2e8f0",
+  },
+  flagEmoji: {
+    fontSize: 20,
+    lineHeight: 24,
+  },
+  countryCode: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1e293b",
+    fontFamily: "PlusJakartaSans-Bold",
+  },
+  phoneInput: {
+    flex: 1,
+    height: 54,
+    backgroundColor: "#f1f5f9",
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#e2e8f0",
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: "#0f172a",
+    fontFamily: "PlusJakartaSans-Medium",
+  },
+
+  /* Primary button */
+  btn: {
+    backgroundColor: PRIMARY,
+    borderRadius: 14,
+    height: 54,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: PRIMARY,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
+    marginTop: 4,
+  },
+  btnDisabled: {
+    opacity: 0.55,
+  },
+  btnText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "PlusJakartaSans-Bold",
+    letterSpacing: 0.2,
+  },
+
+  /* Divider */
+  divRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    marginBottom: 20,
+    gap: 10,
+  },
+  divLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#e2e8f0",
+  },
+  divLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#94a3b8",
+    fontFamily: "PlusJakartaSans-SemiBold",
+    letterSpacing: 2.5,
+  },
+
+  /* OTP */
+  otpLabel: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1e293b",
+    fontFamily: "PlusJakartaSans-Bold",
+    marginBottom: 14,
+  },
+  otpRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
+  /* flex:1 lives on the wrapper View — TextInput fills it 100% */
+  otpWrapper: {
+    flex: 1,
+    height: 72,
+  },
+  otpBox: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+    fontSize: 28,
+    fontWeight: "700",
+    fontFamily: "PlusJakartaSans-Bold",
+    color: "#0f172a",
+    textAlignVertical: "center",
+    textAlign: "center",
+  },
+  otpBoxEmpty: {
+    backgroundColor: "#ffffff",
+    borderWidth: 1.5,
+    borderColor: "#e2e8f0",
+  },
+  otpBoxActive: {
+    backgroundColor: "#ffffff",
+    borderWidth: 2,
+    borderColor: PRIMARY,
+  },
+
+  /* Meta row */
+  metaRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingHorizontal: 2,
+  },
+  sentTo: {
+    fontSize: 12,
+    color: "#64748b",
+    fontFamily: "PlusJakartaSans-Regular",
+  },
+  resend: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: PRIMARY,
+    fontFamily: "PlusJakartaSans-SemiBold",
+  },
+  resendDisabled: {
+    color: "#94a3b8",
+  },
+
+  /* Footer */
+  footerNote: {
+    textAlign: "center",
+    marginTop: 16,
+    fontSize: 13,
+    color: "#94a3b8",
+    fontFamily: "PlusJakartaSans-Regular",
+  },
+
+  /* Error */
+  errorText: {
+    color: "#ef4444",
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans-Medium",
+    marginBottom: 10,
+    marginLeft: 2,
+  },
+});

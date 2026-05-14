@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
@@ -80,23 +81,26 @@ export function SmartCheckInBanner() {
   if (!bannerType) return null;
 
   const configMap: Record<string, any> = {
-    urgent:  { bg: 'bg-red-50 border-red-400',   text: 'text-red-800', msg: `⚠️ Bus departs in ${minsLeft} min — please check in immediately`, btn: true },
-    warning: { bg: 'bg-amber-50 border-amber-300', text: 'text-amber-800', msg: `🚌 Bus departs in ${minsLeft} min — check in now to confirm your seat`, btn: true },
-    family:  { bg: 'bg-amber-50 border-amber-300', text: 'text-amber-800', msg: `${familyCount} family member${familyCount > 1 ? 's' : ''} still not checked in — do it now before departure`, btn: true },
+    urgent:  { bg: 'bg-[#FFFBEB] border-[#FEF3C7]', text: 'text-[#92400E]', msg: `⚠️ Bus departs in ${minsLeft} min — please check in immediately`, btn: true },
+    warning: { bg: 'bg-[#FFFBEB] border-[#FEF3C7]', text: 'text-[#92400E]', msg: `Bus departs in ${minsLeft} min — check in now to confirm your seat`, btn: true },
+    family:  { bg: 'bg-[#FFFBEB] border-[#FEF3C7]', text: 'text-[#92400E]', msg: `${familyCount} family member${familyCount > 1 ? 's' : ''} still not checked in — do it now before departure`, btn: true },
     missed:  { bg: 'bg-gray-50 border-gray-300',  text: 'text-gray-600', msg: `You didn't check in for today's departure. Contact your organiser.`, btn: false },
   };
   
   const configs = configMap[bannerType];
 
   return (
-    <View className={`border rounded-xl px-4 py-3 flex-row items-center gap-3 my-2 ${configs.bg}`}>
-      <Text className={`flex-1 text-sm font-medium ${configs.text}`}>{configs.msg}</Text>
+    <View className={`border-2 rounded-[24px] px-5 py-4 flex-row items-center gap-4 my-2 shadow-sm ${configs.bg}`}>
+      <View className="w-10 h-10 bg-white/50 rounded-full items-center justify-center">
+        <MaterialCommunityIcons name="bus" size={24} color="#92400E" />
+      </View>
+      <Text className={`flex-1 text-[13px] font-jakarta-medium leading-5 ${configs.text}`}>{configs.msg}</Text>
       {configs.btn && (
         <TouchableOpacity
           onPress={() => navigation.navigate('VehicleAttendance')}
-          className="bg-teal-600 px-3 py-1.5 rounded-lg"
+          className="bg-[#0F6E56] px-4 py-2.5 rounded-xl shadow-md"
         >
-          <Text className="text-white text-xs font-semibold">Check In</Text>
+          <Text className="text-white text-xs font-jakarta-bold">Check In</Text>
         </TouchableOpacity>
       )}
     </View>

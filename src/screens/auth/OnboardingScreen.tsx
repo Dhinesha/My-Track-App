@@ -1,145 +1,258 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   FlatList,
   Dimensions,
-  Image,
+  TouchableOpacity,
   Pressable,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Colors } from "../../theme/colors";
-import { Button } from "../../components/common";
+  StatusBar,
+  StyleSheet,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+import { useAuthStore } from '../../store/authStore';
 
+// Illustrations
+import Slide1Illustration from '../../components/onboarding/Slide1Illustration';
+import Slide2Illustration from '../../components/onboarding/Slide2Illustration';
+import Slide3Illustration from '../../components/onboarding/Slide3Illustration';
+
+const PRIMARY = '#2b8cee';
+const GRAY = '#888';
+const LIGHT_GRAY = '#D3D1C7';
 
 const SLIDES = [
   {
-    id: "1",
-    color: "#E0F2F1",
-    heading: "Your trip, on your phone",
-    sub: "Itinerary, hotel room, and emergency contacts are available even offline.",
-    image: require("../../../assets/onboarding/itinerary.jpg"),
+    id: '1',
+    title: 'Your trip, on your phone',
+    subtitle: 'Itinerary, hotel room, and emergency\ncontacts are available offline.',
+    illustrationBg: '#F0FFF8',
+    Illustration: Slide1Illustration,
   },
   {
-    id: "2",
-    color: "#E3F2FD",
-    heading: "Check in with one tap",
-    sub: "Check in yourself and your whole family from a single screen instantly.",
-    image: require("../../../assets/onboarding/checkin.jpg"),
+    id: '2',
+    title: 'Check in with one tap',
+    subtitle: 'Check in yourself and your whole\nfamily from a single screen.',
+    illustrationBg: '#F0F7FF',
+    Illustration: Slide2Illustration,
   },
   {
-    id: "3",
-    color: "#F3E5F5",
-    heading: "Get updates instantly",
-    sub: "Your organiser can reach you in seconds with important announcements.",
-    image: require("../../../assets/onboarding/updates.jpg"),
+    id: '3',
+    title: 'Get updates instantly',
+    subtitle: 'Your organiser can reach you in\nseconds with important announcements.',
+    illustrationBg: '#FFF9F0',
+    Illustration: Slide3Illustration,
   },
 ];
 
+const Dot = ({ index, currentIndex }: { index: number; currentIndex: Animated.SharedValue<number> }) => {
+  const animatedStyle = useAnimatedStyle(() => {
+    const isActive = Math.round(currentIndex.value) === index;
+    return {
+      width: withTiming(isActive ? 24 : 8, { duration: 300 }),
+      backgroundColor: isActive ? PRIMARY : LIGHT_GRAY,
+    };
+  });
+
+  return <Animated.View style={[{ height: 8, borderRadius: 4, marginHorizontal: 4 }, animatedStyle]} />;
+};
+
 export default function OnboardingScreen() {
+  const [containerWidth, setContainerWidth] = useState(Dimensions.get('window').width);
   const [index, setIndex] = useState(0);
-  const [layoutWidth, setLayoutWidth] = useState(Dimensions.get("window").width);
+  const currentIndex = useSharedValue(0);
   const listRef = useRef<FlatList>(null);
   const navigation = useNavigation<any>();
 
-  const complete = () => {
-    navigation.replace("Main");
+  const complete = async () => {
+    const user = useAuthStore.getState().user;
+    if (user) {
+      useAuthStore.getState().setUser({
+        ...user,
+        onboarding_complete: true,
+      });
+    }
+    navigation.replace('Main');
   };
 
   const handleNext = () => {
     if (index < SLIDES.length - 1) {
-      const nextIndex = index + 1;
-      setIndex(nextIndex);
-      listRef.current?.scrollToIndex({
-        index: nextIndex,
-        animated: true,
-      });
+      const nextIdx = index + 1;
+      listRef.current?.scrollToIndex({ index: nextIdx, animated: true });
+      setIndex(nextIdx);
+      currentIndex.value = nextIdx;
     } else {
       complete();
     }
   };
 
-  return (
-    <View 
-      className="flex-1 bg-white"
-      onLayout={(e) => {
-        const { width: w } = e.nativeEvent.layout;
-        if (w > 0) setLayoutWidth(w);
-      }}
-    >
-      <Pressable 
-        onPress={complete} 
-        className="absolute top-14 right-6 z-10 px-4 py-2"
-        hitSlop={20}
-      >
-        <Text className="text-text-muted font-jakarta-bold text-sm">Skip</Text>
-      </Pressable>
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const newIdx = Math.round(offsetX / containerWidth);
+    if (newIdx !== index) {
+      setIndex(newIdx);
+      currentIndex.value = newIdx;
+    }
+  };
 
-      <FlatList
-        ref={listRef}
-        data={SLIDES}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        onMomentumScrollEnd={(e) => {
-          const newIndex = Math.round(e.nativeEvent.contentOffset.x / layoutWidth);
-          setIndex(newIndex);
-        }}
-        getItemLayout={(_, i) => ({
-          length: layoutWidth,
-          offset: layoutWidth * i,
-          index: i,
-        })}
-        renderItem={({ item }) => (
-          <View style={{ width: layoutWidth }} className="flex-1 items-center justify-center px-10">
-            <View 
-              style={{ backgroundColor: item.color }} 
-              className="w-72 h-72 rounded-[48px] items-center justify-center mb-10 overflow-hidden shadow-sm"
-            >
-              <Image
-                source={item.image}
-                className="w-4/5 h-4/5"
-                resizeMode="contain"
-              />
-            </View>
-            <View className="items-center">
-              <Text className="text-3xl font-jakarta-extrabold text-text-primary text-center mb-4 leading-9">
-                {item.heading}
-              </Text>
-              <Text className="text-base text-text-secondary text-center font-jakarta-medium leading-6">
-                {item.sub}
-              </Text>
-            </View>
-          </View>
-        )}
-      />
+  const onLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    if (width > 0 && width !== containerWidth) {
+      setContainerWidth(width);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       
-      <View className="px-8 pb-12 items-center">
-        {/* Pagination Dots */}
-        <View className="flex-row mb-8">
+      {/* 1. Skip Button */}
+      <View style={styles.topRow}>
+        <TouchableOpacity onPress={complete} style={styles.skipBtn}>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 2. FlatList for Slides */}
+      <View style={styles.listContainer} onLayout={onLayout}>
+        <FlatList
+          ref={listRef}
+          data={SLIDES}
+          horizontal
+          pagingEnabled
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(_, i) => ({
+            length: containerWidth,
+            offset: containerWidth * i,
+            index: i,
+          })}
+          renderItem={({ item }) => (
+            <View style={[styles.slide, { width: containerWidth }]}>
+              {/* Illustration Area */}
+              <View style={[styles.illustrationBox, { backgroundColor: item.illustrationBg }]}>
+                <item.Illustration />
+              </View>
+
+              {/* Text Area */}
+              <View style={styles.textBox}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
+              </View>
+            </View>
+          )}
+        />
+      </View>
+
+      {/* Bottom Area */}
+      <View style={styles.bottomArea}>
+        {/* Dot Indicators */}
+        <View style={styles.dotsRow}>
           {SLIDES.map((_, i) => (
-            <View
-              key={i}
-              className={`h-2 rounded-full mx-1 ${i === index ? "w-8 bg-primary" : "w-2 bg-border-light"}`}
-            />
+            <Dot key={i} index={i} currentIndex={currentIndex} />
           ))}
         </View>
 
-        <Button
-          label={index === SLIDES.length - 1 ? "Get Started" : "Next"}
+        {/* Next / Get Started Button */}
+        <Pressable
           onPress={handleNext}
-          variant="teal"
-          size="lg"
-          fullWidth
-          className="rounded-2xl shadow-xl shadow-primary/20"
-        />
+          style={({ pressed }) => [
+            styles.nextBtn,
+            { transform: [{ scale: pressed ? 0.98 : 1 }] }
+          ]}
+        >
+          <Text style={styles.nextBtnText}>
+            {index === SLIDES.length - 1 ? 'Get Started' : 'Next'}
+          </Text>
+        </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-
-
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  topRow: {
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+  },
+  skipBtn: {
+    padding: 16,
+  },
+  skipText: {
+    color: '#999',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  listContainer: {
+    flex: 1,
+  },
+  slide: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  illustrationBox: {
+    width: 300,
+    height: 300,
+    borderRadius: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40,
+    overflow: 'hidden',
+  },
+  textBox: {
+    paddingHorizontal: 32,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#111',
+    textAlign: 'center',
+    lineHeight: 36,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 24,
+  },
+  bottomArea: {
+    paddingHorizontal: 24,
+    paddingBottom: 48,
+    alignItems: 'center',
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 48,
+  },
+  nextBtn: {
+    backgroundColor: PRIMARY,
+    width: '100%',
+    height: 60,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nextBtnText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+});

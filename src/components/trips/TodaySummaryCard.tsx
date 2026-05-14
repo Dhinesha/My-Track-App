@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { differenceInDays, parseISO, format } from 'date-fns';
@@ -70,19 +71,25 @@ export function TodaySummaryCard() {
   if (!summary) return null;
 
   return (
-    <View className="bg-amber-50 border border-amber-200 rounded-xl overflow-hidden mx-4 my-2">
-      <TouchableOpacity onPress={toggle} className="flex-row items-center justify-between px-4 py-3">
-        <Text className="text-sm font-semibold text-amber-800">☀️ Today at a glance</Text>
-        <Text className="text-amber-600 text-sm">{expanded ? '▲' : '▼'}</Text>
+    <View className="bg-[#FFFBEB] border border-[#FEF3C7] rounded-[24px] overflow-hidden shadow-sm">
+      <TouchableOpacity onPress={toggle} className="flex-row items-center justify-between px-5 py-4">
+        <View className="flex-row items-center gap-3">
+          <View className="w-10 h-10 bg-[#FEF3C7] rounded-xl items-center justify-center">
+            <MaterialCommunityIcons name="weather-sunny" size={24} color="#92400E" />
+          </View>
+          <Text className="text-[15px] font-jakarta-bold text-[#92400E]">Today at a glance</Text>
+        </View>
+        <Feather name={expanded ? "chevron-up" : "chevron-down"} size={24} color="#92400E" />
       </TouchableOpacity>
-      <Animated.View style={{ maxHeight }} className="px-4 pb-3 gap-1.5">
-        <Text className="text-sm text-gray-700">📍 Destinations today: <Text className="font-semibold">{summary.count} places</Text></Text>
+      <Animated.View style={{ maxHeight }} className="px-5 pb-5 gap-3">
+        <View className="h-[1px] bg-[#FEF3C7] w-full mb-1" />
+        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">📍 Destinations today: <Text className="font-jakarta-bold text-[#92400E]">{summary.count} places</Text></Text>
         {summary.firstName && (
-          <Text className="text-sm text-gray-700">⏰ Day starts at <Text className="font-semibold">{summary.firstTime}</Text> — {summary.firstName}</Text>
+          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">⏰ Day starts at <Text className="font-jakarta-bold text-[#92400E]">{summary.firstTime}</Text> — {summary.firstName}</Text>
         )}
-        <Text className="text-sm text-gray-700">💰 Entry fees: <Text className="font-semibold">{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text></Text>
+        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">💰 Entry fees: <Text className="font-jakarta-bold text-[#92400E]">{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text></Text>
         {summary.note && (
-          <Text className="text-sm text-gray-700">📌 <Text className="italic">{summary.note}</Text></Text>
+          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium italic">📌 {summary.note}</Text>
         )}
       </Animated.View>
     </View>

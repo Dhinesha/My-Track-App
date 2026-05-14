@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useEffect, useState } from 'react';
 import { useTripStore } from '../../store/tripStore';
@@ -32,37 +33,38 @@ export function QuickActionsRow({ isSelfCheckedIn }: Props) {
 
   const actions = [
     {
-      icon: isSelfCheckedIn ? '✓' : '🚌',
-      label: isSelfCheckedIn ? 'Checked In' : 'Check In',
-      color: isSelfCheckedIn ? 'bg-green-100' : 'bg-teal-50',
-      textColor: isSelfCheckedIn ? 'text-green-700' : 'text-teal-700',
+      icon: <MaterialCommunityIcons name="bus-clock" size={26} color="#3B82F6" />,
+      label: 'Check In',
+      color: 'bg-[#EFF6FF]',
+      textColor: 'text-[#3B82F6]',
       onPress: () => navigation.navigate('VehicleAttendance'),
     },
     {
-      icon: '📅',
+      icon: <MaterialCommunityIcons name="calendar-month" size={26} color="#3B82F6" />,
       label: 'View Today',
-      color: 'bg-blue-50',
-      textColor: 'text-blue-700',
+      color: 'bg-[#EFF6FF]',
+      textColor: 'text-[#3B82F6]',
       onPress: () => navigation.navigate('Itinerary', { scrollToToday: true }),
     },
     {
-      icon: '📞',
+      icon: <MaterialIcons name="call" size={26} color="#F59E0B" />,
       label: 'Call Driver',
-      color: driverPhone ? 'bg-orange-50' : 'bg-gray-50',
-      textColor: driverPhone ? 'text-orange-700' : 'text-gray-400',
+      color: 'bg-[#FFF7ED]',
+      textColor: 'text-[#F59E0B]',
       onPress: () => driverPhone && Linking.openURL(`tel:${driverPhone}`),
     },
   ];
 
   return (
-    <View className="flex-row gap-3 justify-between px-4 my-3">
+    <View className="flex-row gap-4 justify-between my-4">
       {actions.map((a, i) => (
         <TouchableOpacity
           key={i} onPress={a.onPress}
-          className={`flex-1 items-center gap-1.5 py-3 rounded-2xl ${a.color}`}
+          activeOpacity={0.8}
+          className={`flex-1 items-center gap-2.5 py-5 rounded-[24px] shadow-sm border border-slate-50 ${a.color}`}
         >
-          <Text className="text-2xl">{a.icon}</Text>
-          <Text className={`text-xs font-semibold ${a.textColor}`}>{a.label}</Text>
+          <View className="mb-1">{a.icon}</View>
+          <Text className={`text-[13px] font-jakarta-bold ${a.textColor}`}>{a.label}</Text>
         </TouchableOpacity>
       ))}
     </View>

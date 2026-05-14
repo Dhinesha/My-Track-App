@@ -10,6 +10,8 @@ import { TripHomeScreen } from "../screens/home/TripHomeScreen";
 import TripsListScreen from "../screens/TripsListScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
+import { useTripStore } from "../store/tripStore";
+
 const Tab = createBottomTabNavigator();
 
 function TabIcon({ name, color }: { name: string; color: string }) {
@@ -21,6 +23,8 @@ function TabIcon({ name, color }: { name: string; color: string }) {
 }
 
 export default function MainTabNavigator() {
+  const { activeTripId, activeTripName } = useTripStore();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -44,6 +48,19 @@ export default function MainTabNavigator() {
       <Tab.Screen
         name="My Trips"
         component={TripsListScreen}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            if (activeTripId) {
+              // Prevent default action
+              e.preventDefault();
+              // Navigate to TripDetail instead
+              navigation.navigate("TripDetail", {
+                tripId: activeTripId,
+                tripName: activeTripName,
+              });
+            }
+          },
+        })}
         options={{
           tabBarLabel: ({ color }) => (
             <Text style={[styles.tabLabel, { color }]}>My Trips</Text>

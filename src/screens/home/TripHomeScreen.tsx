@@ -13,279 +13,235 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
 import { format, differenceInDays, parseISO } from 'date-fns';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { usePowerSync } from '../../core/powersync-mock';
 import { useAuthStore } from '../../store/authStore';
+import { useTripStore } from '../../store/tripStore';
 import { useSyncStore } from '../../store/syncStore';
 import { Colors } from '../../theme/colors';
 import { EmergencyFAB } from '../../components/common';
-import { 
-  TripProgressBar, 
-  TripCountdownWidget, 
-  WhatsHappeningNowCard, 
-  TodaySummaryCard, 
-  SmartCheckInBanner 
-} from '../../components/trips';
 
-
-interface ActionTileProps {
-  icon: any;
-  label: string;
-  onPress: () => void;
-  color: string;
-  bgColor: string;
-}
-
-const ActionTile = ({ icon, label, onPress, color, bgColor }: ActionTileProps) => (
-  <TouchableOpacity 
-    onPress={onPress}
-    activeOpacity={0.7}
-    className="w-[30%] aspect-square items-center justify-center mb-6"
-  >
-    <View 
-      style={{ backgroundColor: bgColor }} 
-      className="w-16 h-16 rounded-3xl items-center justify-center mb-2 shadow-sm"
-    >
-      <MaterialCommunityIcons name={icon} size={28} color={color} />
-    </View>
-    <Text className="text-[11px] font-jakarta-bold text-text-primary text-center">
-      {label}
-    </Text>
-  </TouchableOpacity>
-);
 
 export const TripHomeScreen = () => {
   const { user } = useAuthStore();
-  const { lastSyncedAt, isOnline, setLastSynced } = useSyncStore();
-  const db = usePowerSync();
   const navigation = useNavigation<any>();
+  const { setActiveTrip, activeTripId } = useTripStore();
   
-  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [ongoingTrip, setOngoingTrip] = useState<any>(null);
 
-  const fetchData = useCallback(async () => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const ongoing = await db.getAll(
-        "SELECT * FROM trips WHERE status = 'ongoing' AND id IN (SELECT trip_id FROM pax WHERE user_id = ?) LIMIT 1",
-        [user.id]
-      );
-      
-      if (ongoing && ongoing.length > 0) {
-        const trip = ongoing[0] as any;
-        const start = parseISO(trip.start_date);
-        const end = parseISO(trip.end_date);
-        const today = new Date();
-        const total = differenceInDays(end, start) + 1;
-        const current = differenceInDays(today, start) + 1;
-        const progress = Math.min(Math.max((current / total) * 100, 0), 100);
-        
-        setOngoingTrip({
-          ...trip,
-          current_day: Math.min(Math.max(current, 1), total),
-          total_days: total,
-          progress: progress,
-        });
-      } else {
-        setOngoingTrip(null);
-      }
-    } catch (error) {
-      console.error("Error fetching home data:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [user, db]);
+  const initials = user?.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "DT";
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const trip = {
+      id: 'kyoto-1',
+      name: 'Kyoto Spring Adventure',
+      departure_city: 'Osaka',
+      destination_city: 'Kyoto',
+      current_day: 9,
+      total_days: 9,
+      progress: 100,
+      image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAF3zCS6btqNZMelf0lJdzX-H_fJ9p6fdz5_CS7se8XKtsDOlN7JfSb7tD-o_X9RCgeWMHN48QmoY3DcAzd3u01NIffCACoUdjhjWpxJkjVNMkXRaewwYmdMVEZi1K8gDmp52Z9Au96Li8xUYqHT_7-2Jw9EQqOLjpnBNHOdU3voC2IPBPdu3gNb475ulRAXJ-WHy7Po4Kzptiqz_FgwBdYdfOV_qt4wdtFsW4YzBr59LP0K3-wo7U7NPD48IxJ04iEp0ZetTbg8fM',
+    };
+    setOngoingTrip(trip);
+    
+    // Sync ongoing trip to store so tab navigation works
+    if (!activeTripId) {
+      setActiveTrip(trip.id, trip.name);
+    }
+    
+    setLoading(false);
+  }, []);
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchData();
-    setLastSynced();
-  };
-
-  const initials = user?.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "MTG";
-
-  if (loading) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color={Colors.primary} />
-        <Text className="mt-4 text-text-muted font-jakarta-bold">Syncing your journey...</Text>
-      </View>
-    );
-  }
+  if (loading || !ongoingTrip) return null;
 
   return (
-    <View className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView className="flex-1" edges={["top"]}>
-        {/* Header */}
-        <View className="flex-row items-center justify-between px-6 py-4">
-          <View>
-            <Text className="text-2xl font-jakarta-extrabold text-primary">
-              MyTripGuide
-            </Text>
-          </View>
-          <View className="flex-row items-center">
-            <TouchableOpacity onPress={() => navigation.navigate('Notifications')} className="mr-4 relative">
-              <Feather name="bell" size={24} color={Colors.text.primary} />
-              <View className="absolute top-0 right-0 w-2.5 h-2.5 bg-status-error rounded-full border-2 border-white" />
+      
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-6 py-4 bg-white">
+        <Text className="text-2xl font-jakarta-extrabold text-[#0F6E56]">
+          MyTripGuide
+        </Text>
+        <View className="flex-row items-center gap-4">
+          <TouchableOpacity className="w-10 h-10 items-center justify-center">
+            <Feather name="bell" size={24} color="#1E293B" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('Profile')} 
+            className="w-10 h-10 rounded-full border border-slate-100 overflow-hidden"
+          >
+            <Image 
+              source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' }} 
+              className="w-full h-full"
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        className="flex-1"
+      >
+        {/* Quick Actions Row */}
+        <View className="flex-row justify-between px-6 py-6 border-b border-slate-50">
+          {[
+            { id: 'itinerary', label: 'Itinerary', icon: 'calendar-month', color: '#0F6E56' },
+            { id: 'vehicle', label: 'Vehicle', icon: 'bus', color: '#0F6E56' },
+            { id: 'notifications', label: 'Notifications', icon: 'bell', color: '#64748b', count: 2 },
+            { id: 'emergency', label: 'Emergency', icon: 'alert-decagram', color: '#ef4444' },
+          ].map((action) => (
+            <TouchableOpacity 
+              key={action.id}
+              className="items-center"
+              onPress={() => {
+                if (action.id === 'emergency') navigation.navigate('Emergency');
+                else if (action.id === 'itinerary') navigation.navigate('Itinerary', { tripId: ongoingTrip.id, tripName: ongoingTrip.name });
+                else if (action.id === 'vehicle') navigation.navigate('VehicleAttendance', { tripId: ongoingTrip.id });
+                else if (action.id === 'notifications') navigation.navigate('Notifications');
+              }}
+            >
+              <View className="relative w-14 h-14 bg-white rounded-full items-center justify-center border border-slate-100 shadow-sm mb-2">
+                <MaterialCommunityIcons name={action.icon as any} size={26} color={action.color} />
+                {action.count > 0 && (
+                  <View className="absolute -top-1 -right-1 bg-red-500 min-w-[20px] h-5 rounded-full items-center justify-center border-2 border-white px-1">
+                    <Text className="text-white text-[10px] font-jakarta-bold">{action.count}</Text>
+                  </View>
+                )}
+              </View>
+              <Text className="text-slate-500 text-[11px] font-jakarta-bold">{action.label}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')} className="w-10 h-10 bg-primary rounded-full items-center justify-center">
-              <Text className="text-white font-jakarta-bold text-sm">{initials}</Text>
-            </TouchableOpacity>
-          </View>
+          ))}
         </View>
 
-        <ScrollView 
-          className="flex-1" 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.primary]} />
-          }
-        >
-          {/* Welcome Text */}
-          <View className="px-6 mb-6">
-            <Text className="text-text-secondary font-jakarta-medium text-sm">
-              Welcome back,
-            </Text>
-            <Text className="text-2xl font-jakarta-bold text-text-primary">
-              {user?.name || "Traveler"} 👋
-            </Text>
-          </View>
+        {/* Ongoing Trip Hero Card */}
+        <View className="px-6 mt-8">
+          <TouchableOpacity 
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('TripDetail', { tripId: ongoingTrip.id, tripName: ongoingTrip.name })}
+            className="relative w-full h-64 rounded-[32px] overflow-hidden shadow-2xl shadow-black/20"
+          >
+            <Image
+              source={{ uri: ongoingTrip.image_url }}
+              className="absolute inset-0 w-full h-full"
+            />
+            <LinearGradient
+              colors={['transparent', 'rgba(15, 110, 86, 0.9)']}
+              className="absolute inset-0"
+            />
+            <View className="absolute inset-0 p-6 flex-col justify-between">
+              <View>
+                <View className="bg-black/30 self-start px-4 py-1.5 rounded-full backdrop-blur-md mb-4">
+                  <Text className="text-white text-[10px] font-jakarta-extrabold tracking-widest">ONGOING</Text>
+                </View>
+                <Text className="text-white text-3xl font-jakarta-extrabold mb-1">
+                  Kyoto Spring Adventure
+                </Text>
+                <View className="bg-white/20 self-start px-3 py-1 rounded-full backdrop-blur-md mb-6">
+                  <Text className="text-white text-[11px] font-jakarta-bold">Day 9 of 9</Text>
+                </View>
+                <View className="h-0.5 bg-white/40 w-full rounded-full" />
+              </View>
+              
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <Text className="text-white font-jakarta-extrabold text-base">Osaka</Text>
+                  <MaterialIcons name="arrow-right-alt" size={24} color="white" style={{ marginHorizontal: 8 }} />
+                  <Text className="text-white font-jakarta-extrabold text-base">Kyoto</Text>
+                </View>
+                <View className="w-8 h-8 rounded-full bg-white/20 items-center justify-center backdrop-blur-md">
+                  <Feather name="arrow-right" size={18} color="white" />
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-          {/* Hero Section */}
-          <View className="px-6 mb-8">
+        {/* Upcoming Trips Section */}
+        <View className="mt-10">
+          <View className="flex-row items-center justify-between mb-6 px-6">
+            <Text className="text-xl font-jakarta-extrabold text-slate-900">Upcoming Trips</Text>
+            <TouchableOpacity>
+              <Text className="text-[#0F6E56] font-jakarta-bold text-sm">See All ›</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            contentContainerStyle={{ 
+              paddingHorizontal: 24, 
+              paddingBottom: 20,
+              flexDirection: 'row'
+            }}
+            style={{ width: '100%' }}
+            decelerationRate="fast"
+            snapToInterval={272} // card width (256) + margin (16)
+            snapToAlignment="start"
+          >
             <TouchableOpacity 
               activeOpacity={0.9}
-              onPress={() => navigation.navigate('TripDetail', { tripId: ongoingTrip?.id, tripName: ongoingTrip?.name })}
-              className="bg-white rounded-[32px] overflow-hidden shadow-xl shadow-black/10 h-56"
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'kyoto-2', tripName: 'Kyoto Spring Adventure' })}
+              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-4"
             >
-              <Image
-                source={{ uri: ongoingTrip?.image_url || "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80" }}
-                className="w-full h-full"
+              <Image 
+                source={{ uri: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80' }} 
+                className="w-full h-40"
               />
-              <View className="absolute inset-0 bg-black/40 p-6 justify-between">
-                <View className="flex-row justify-between items-start">
-                  <View className="bg-white/20 px-3 py-1 rounded-full border border-white/30 backdrop-blur-sm">
-                    <Text className="text-white text-[10px] font-jakarta-bold uppercase">
-                      {ongoingTrip ? 'Ongoing Trip' : 'Plan a Trip'}
-                    </Text>
-                  </View>
-                  {ongoingTrip && (
-                    <View className="bg-primary px-3 py-1 rounded-full">
-                      <Text className="text-white text-[10px] font-jakarta-bold uppercase">
-                        DAY {ongoingTrip.current_day} OF {ongoingTrip.total_days}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View>
-                  <Text className="text-white text-2xl font-jakarta-bold mb-1">
-                    {ongoingTrip?.name || "Start Your Adventure"}
-                  </Text>
-                  <View className="flex-row items-center mb-4">
-                    <MaterialIcons name="location-on" size={14} color="#fff" style={{ opacity: 0.8 }} />
-                    <Text className="text-white/80 font-jakarta-medium text-sm ml-1">
-                      {ongoingTrip ? `${ongoingTrip.departure_city} → ${ongoingTrip.destination_city}` : "Your group trips await"}
-                    </Text>
-                  </View>
-                  
-                  {ongoingTrip && (
-                    <View className="bg-white/10 p-3 rounded-2xl backdrop-blur-md">
-                      <TripProgressBar 
-                        startDate={ongoingTrip.start_date} 
-                        endDate={ongoingTrip.end_date} 
-                        status="ongoing" 
-                      />
-                      <View className="mt-2 flex-row justify-between items-center">
-                        <TripCountdownWidget 
-                          startDate={ongoingTrip.start_date} 
-                          endDate={ongoingTrip.end_date} 
-                          status="ongoing" 
-                        />
-                      </View>
-                    </View>
-                  )}
+              <View className="p-4">
+                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Kyoto Spring Adventure</Text>
+                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">12 Oct - 20 Oct 2023</Text>
+                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
+                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
                 </View>
               </View>
             </TouchableOpacity>
-          </View>
 
-          {/* Premium Awareness Components */}
-          <View className="px-6 mb-8 gap-y-4">
-            <SmartCheckInBanner />
-            <WhatsHappeningNowCard />
-            <TodaySummaryCard />
-          </View>
-
-          {/* Quick Actions Grid */}
-          <View className="px-6">
-            <Text className="text-lg font-jakarta-bold text-text-primary mb-4">
-              Quick Actions
-            </Text>
-            <View className="flex-row flex-wrap justify-between">
-              <ActionTile 
-                icon="calendar-text" 
-                label="Itinerary" 
-                onPress={() => navigation.navigate("Itinerary", { tripId: ongoingTrip?.id, tripName: ongoingTrip?.name })}
-                color="#0D9488"
-                bgColor="#F0FDFA"
+            <TouchableOpacity 
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'goa-1', tripName: 'Goa Beach Party' })}
+              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-4"
+            >
+              <Image 
+                source={{ uri: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80' }} 
+                className="w-full h-40"
               />
-              <ActionTile 
-                icon="bus-side" 
-                label="Vehicle" 
-                onPress={() => navigation.navigate("VehicleAttendance", { tripId: ongoingTrip?.id })}
-                color="#2563EB"
-                bgColor="#EFF6FF"
+              <View className="p-4">
+                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Goa Beach Party</Text>
+                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">15 Dec - 22 Dec 2023</Text>
+                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
+                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'paris-1', tripName: 'Paris Getaway' })}
+              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-6"
+            >
+              <Image 
+                source={{ uri: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80' }} 
+                className="w-full h-40"
               />
-              <ActionTile 
-                icon="account-check" 
-                label="Attendance" 
-                onPress={() => navigation.navigate("VehicleAttendance", { tripId: ongoingTrip?.id })}
-                color="#7C3AED"
-                bgColor="#F5F3FF"
-              />
-              <ActionTile 
-                icon="office-building-marker" 
-                label="Hotel" 
-                onPress={() => navigation.navigate("Hotel", { tripId: ongoingTrip?.id })}
-                color="#D97706"
-                bgColor="#FFFBEB"
-              />
-              <ActionTile 
-                icon="shield-alert" 
-                label="Emergency" 
-                onPress={() => navigation.navigate("Emergency")}
-                color="#DC2626"
-                bgColor="#FEF2F2"
-              />
-              <ActionTile 
-                icon="account-group" 
-                label="Fellow Group" 
-                onPress={() => navigation.navigate("FamilyMembers", { tripId: ongoingTrip?.id })}
-                color="#4B5563"
-                bgColor="#F3F4F6"
-              />
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-      
-      <EmergencyFAB onPress={() => navigation.navigate('Emergency')} />
-    </View>
+              <View className="p-4">
+                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Paris Getaway</Text>
+                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">05 Jan - 12 Jan 2024</Text>
+                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
+                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
 
 
 

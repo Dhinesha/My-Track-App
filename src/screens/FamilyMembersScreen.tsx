@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, Image, Modal, TextInput, KeyboardAvoidingView, Platform, Alert, StatusBar,
+  View, Text, ScrollView, TouchableOpacity, Image, Modal, TextInput, KeyboardAvoidingView, Platform, Alert, StatusBar, Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -40,10 +40,16 @@ export default function FamilyMembersScreen() {
   };
 
   const removeMember = (id: string) => {
-    Alert.alert("Remove Member", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Remove", style: "destructive", onPress: () => setMembers(members.filter(m => m.id !== id)) }
-    ]);
+    if (Platform.OS === 'web') {
+      if (window.confirm("Are you sure you want to remove this member?")) {
+        setMembers(members.filter(m => m.id !== id));
+      }
+    } else {
+      Alert.alert("Remove Member", "Are you sure?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Remove", style: "destructive", onPress: () => setMembers(members.filter(m => m.id !== id)) }
+      ]);
+    }
   };
 
   return (
@@ -131,53 +137,95 @@ export default function FamilyMembersScreen() {
         </ScrollView>
       </SafeAreaView>
 
-      {/* Add Member Modal */}
-      <Modal visible={isModalVisible} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View className="bg-white rounded-t-[40px] p-8 pb-12">
-              <View className="w-12 h-1 bg-border-light rounded-full self-center mb-8" />
-              <Text className="text-2xl font-jakarta-extrabold text-text-primary mb-6">Add Member</Text>
-              
-              <View className="mb-6">
-                <Text className="text-text-muted font-jakarta-bold text-xs uppercase mb-2 ml-2">Full Name</Text>
-                <TextInput
-                  className="bg-background-input p-4 rounded-2xl font-jakarta-bold text-text-primary"
-                  placeholder="Enter name"
-                  value={newName}
-                  onChangeText={setNewName}
-                />
+      {/* Add Member UI (Modal on native, Absolute View on web to stay inside phone mockup) */}
+      {isModalVisible && (
+        <View 
+          style={Platform.OS === 'web' ? { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, backgroundColor: 'rgba(0,0,0,0.4)' } : { position: 'absolute', width: 0, height: 0 }}
+          className={Platform.OS === 'web' ? "justify-end" : ""}
+        >
+          {Platform.OS !== 'web' ? (
+            <Modal visible={isModalVisible} animationType="slide" transparent statusBarTranslucent>
+              <View className="flex-1 bg-black/40 justify-end">
+                <Pressable className="flex-1" onPress={() => setIsModalVisible(false)} />
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                  <View className="bg-white rounded-t-[32px] p-8 pb-10 shadow-2xl">
+                    <View className="w-12 h-1.5 bg-slate-100 rounded-full self-center mb-8" />
+                    <Text className="text-2xl font-jakarta-extrabold text-[#1E293B] mb-8">Add Member</Text>
+                    <View className="mb-6">
+                      <Text className="text-slate-400 font-jakarta-extrabold text-[10px] uppercase tracking-widest mb-2 ml-1">Full Name</Text>
+                      <TextInput
+                        className="bg-white border-2 border-slate-800 p-4 rounded-xl font-jakarta-bold text-slate-900"
+                        placeholder="Enter name"
+                        placeholderTextColor="#94a3b8"
+                        value={newName}
+                        onChangeText={setNewName}
+                        autoFocus
+                      />
+                    </View>
+                    <View className="mb-10">
+                      <Text className="text-slate-400 font-jakarta-extrabold text-[10px] uppercase tracking-widest mb-2 ml-1">Seat (Optional)</Text>
+                      <TextInput
+                        className="bg-[#F1F5F9] p-4 rounded-xl font-jakarta-bold text-slate-900"
+                        placeholder="e.g. 14A"
+                        placeholderTextColor="#94a3b8"
+                        value={newSeat}
+                        onChangeText={setNewSeat}
+                        autoCapitalize="characters"
+                      />
+                    </View>
+                    <View className="flex-row gap-4">
+                      <TouchableOpacity onPress={() => setIsModalVisible(false)} className="flex-1 bg-slate-50 h-14 rounded-xl items-center justify-center border border-slate-100">
+                        <Text className="text-slate-600 font-jakarta-extrabold text-sm">Cancel</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-[#0F6E56] h-14 rounded-xl items-center justify-center shadow-lg shadow-[#0F6E56]/20">
+                        <Text className="text-white font-jakarta-extrabold text-sm">Add Member</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </KeyboardAvoidingView>
               </View>
-
-              <View className="mb-8">
-                <Text className="text-text-muted font-jakarta-bold text-xs uppercase mb-2 ml-2">Seat (Optional)</Text>
-                <TextInput
-                  className="bg-background-input p-4 rounded-2xl font-jakarta-bold text-text-primary"
-                  placeholder="e.g. 14A"
-                  value={newSeat}
-                  onChangeText={setNewSeat}
-                  autoCapitalize="characters"
-                />
+            </Modal>
+          ) : (
+            <>
+              <Pressable className="flex-1" onPress={() => setIsModalVisible(false)} />
+              <View className="bg-white rounded-t-[32px] p-8 pb-10 shadow-2xl">
+                <View className="w-12 h-1.5 bg-slate-100 rounded-full self-center mb-8" />
+                <Text className="text-2xl font-jakarta-extrabold text-[#1E293B] mb-8">Add Member</Text>
+                <View className="mb-6">
+                  <Text className="text-slate-400 font-jakarta-extrabold text-[10px] uppercase tracking-widest mb-2 ml-1">Full Name</Text>
+                  <TextInput
+                    className="bg-white border-2 border-slate-800 p-4 rounded-xl font-jakarta-bold text-slate-900"
+                    placeholder="Enter name"
+                    placeholderTextColor="#94a3b8"
+                    value={newName}
+                    onChangeText={setNewName}
+                    autoFocus
+                  />
+                </View>
+                <View className="mb-10">
+                  <Text className="text-slate-400 font-jakarta-extrabold text-[10px] uppercase tracking-widest mb-2 ml-1">Seat (Optional)</Text>
+                  <TextInput
+                    className="bg-[#F1F5F9] p-4 rounded-xl font-jakarta-bold text-slate-900"
+                    placeholder="e.g. 14A"
+                    placeholderTextColor="#94a3b8"
+                    value={newSeat}
+                    onChangeText={setNewSeat}
+                    autoCapitalize="characters"
+                  />
+                </View>
+                <View className="flex-row gap-4">
+                  <TouchableOpacity onPress={() => setIsModalVisible(false)} className="flex-1 bg-slate-50 h-14 rounded-xl items-center justify-center border border-slate-100">
+                    <Text className="text-slate-600 font-jakarta-extrabold text-sm">Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-[#0F6E56] h-14 rounded-xl items-center justify-center shadow-lg shadow-[#0F6E56]/20">
+                    <Text className="text-white font-jakarta-extrabold text-sm">Add Member</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-
-              <View className="flex-row gap-4">
-                <TouchableOpacity 
-                  onPress={() => setIsModalVisible(false)}
-                  className="flex-1 bg-background-input h-14 rounded-2xl items-center justify-center"
-                >
-                  <Text className="text-text-primary font-jakarta-bold">Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={addMember}
-                  className="flex-1 bg-primary h-14 rounded-2xl items-center justify-center"
-                >
-                  <Text className="text-white font-jakarta-bold">Add Member</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </KeyboardAvoidingView>
+            </>
+          )}
         </View>
-      </Modal>
+      )}
     </View>
   );
 }
