@@ -10,16 +10,16 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#0F6E56",
-          light: "#E0F2F1",
-          dark: "#004D40",
+          DEFAULT: "#0EA5E9",
+          light: "#E0F2FE",
+          dark: "#0369A1",
         },
         secondary: {
-          DEFAULT: "#2979FF",
-          light: "#E3F2FD",
-          dark: "#1565C0",
+          DEFAULT: "#38BDF8",
+          light: "#F0F9FF",
+          dark: "#075985",
         },
-        accent: "#FF9800",
+        accent: "#F59E0B",
         background: {
           DEFAULT: "#f8fafc",
           card: "#FFFFFF",

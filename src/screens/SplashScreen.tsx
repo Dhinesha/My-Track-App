@@ -15,7 +15,7 @@ import { useAuthStore } from "../store/authStore";
 import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
 
 // Brand colours (matching splashscreen.html)
-const PRIMARY = "#2b8cee";
+const PRIMARY = "#0EA5E9";
 const GRAY = "#94a3b8";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Splash">;

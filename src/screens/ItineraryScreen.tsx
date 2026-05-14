@@ -16,47 +16,145 @@ export default function ItineraryScreen() {
   const [activeDay, setActiveDay] = useState(0);
 
   const days = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"];
-  const activities = [
-    {
-      id: "1",
-      time: "08:00 AM",
-      title: "Breakfast at Hotel",
-      location: "Main Lobby",
-      icon: "restaurant",
-      iconBg: "#DBEAFE",
-      iconColor: "#2563EB",
-      note: "Meet near the concierge desk.",
-    },
-    {
-      id: "2",
-      time: "10:00 AM",
-      title: "Sightseeing Bus Tour",
-      location: "Station A, Pickup Point",
-      icon: "bus",
-      iconBg: "#E0E7FF",
-      iconColor: "#4F46E5",
-      alert: "Note: Bring water bottles & sunscreen.",
-    },
-    {
-      id: "3",
-      time: "01:00 PM",
-      title: "Lunch at Ramen Street",
-      location: "Tokyo Station",
-      icon: "ramen-dining",
-      iconBg: "#FFEDD5",
-      iconColor: "#EA580C",
-    },
-    {
-      id: "4",
-      time: "04:00 PM",
-      title: "Check-in to Ryokan",
-      location: "Hakone",
-      icon: "hotel",
-      iconBg: "#CCFBF1",
-      iconColor: "#0D9488",
-      note: "Booking Ref: #JP-8829",
-    },
-  ];
+  
+  const dailyActivities: Record<number, any[]> = {
+    0: [ // Day 1
+      {
+        id: "1-1",
+        time: "08:00 AM",
+        title: "Breakfast at Hotel",
+        location: "Main Lobby",
+        icon: "restaurant",
+        iconBg: "#DBEAFE",
+        iconColor: "#2563EB",
+        note: "Meet near the concierge desk.",
+      },
+      {
+        id: "1-2",
+        time: "10:00 AM",
+        title: "Sightseeing Bus Tour",
+        location: "Station A, Pickup Point",
+        icon: "bus",
+        iconBg: "#E0E7FF",
+        iconColor: "#4F46E5",
+        alert: "Note: Bring water bottles & sunscreen.",
+      },
+      {
+        id: "1-3",
+        time: "01:00 PM",
+        title: "Lunch at Ramen Street",
+        location: "Tokyo Station",
+        icon: "ramen-dining",
+        iconBg: "#FFEDD5",
+        iconColor: "#EA580C",
+      },
+      {
+        id: "1-4",
+        time: "04:00 PM",
+        title: "Check-in to Ryokan",
+        location: "Hakone",
+        icon: "hotel",
+        iconBg: "#CCFBF1",
+        iconColor: "#0D9488",
+        note: "Booking Ref: #JP-8829",
+      },
+    ],
+    1: [ // Day 2
+      {
+        id: "2-1",
+        time: "09:00 AM",
+        title: "Fushimi Inari Shrine",
+        location: "Kyoto",
+        icon: "map-marker",
+        iconBg: "#FEE2E2",
+        iconColor: "#EF4444",
+        note: "Wear comfortable walking shoes.",
+      },
+      {
+        id: "2-2",
+        time: "12:30 PM",
+        title: "Traditional Kaiseki Lunch",
+        location: "Gion District",
+        icon: "food-variant",
+        iconBg: "#FDF4FF",
+        iconColor: "#D946EF",
+      },
+      {
+        id: "2-3",
+        time: "03:00 PM",
+        title: "Bamboo Forest Walk",
+        location: "Arashiyama",
+        icon: "tree",
+        iconBg: "#F0FDF4",
+        iconColor: "#22C55E",
+      },
+    ],
+    2: [ // Day 3
+      {
+        id: "3-1",
+        time: "10:00 AM",
+        title: "Universal Studios Japan",
+        location: "Osaka",
+        icon: "star",
+        iconBg: "#FEF9C3",
+        iconColor: "#EAB308",
+        alert: "Express Passes are in your digital vault.",
+      },
+      {
+        id: "3-2",
+        time: "07:00 PM",
+        title: "Street Food Tour",
+        location: "Dotonbori",
+        icon: "food-drumstick",
+        iconBg: "#FFEDD5",
+        iconColor: "#F97316",
+      },
+    ],
+    3: [ // Day 4
+      {
+        id: "4-1",
+        time: "09:00 AM",
+        title: "Nara Deer Park",
+        location: "Nara",
+        icon: "heart",
+        iconBg: "#FCE7F3",
+        iconColor: "#EC4899",
+        note: "Purchase deer crackers at the entrance.",
+      },
+      {
+        id: "4-2",
+        time: "01:00 PM",
+        title: "Todai-ji Temple Visit",
+        location: "Nara",
+        icon: "home-variant",
+        iconBg: "#E0F2FE",
+        iconColor: "#0EA5E9",
+      },
+    ],
+    4: [ // Day 5
+      {
+        id: "5-1",
+        time: "08:00 AM",
+        title: "Last Minute Shopping",
+        location: "Shinjuku",
+        icon: "shopping",
+        iconBg: "#F1F5F9",
+        iconColor: "#475569",
+      },
+      {
+        id: "5-2",
+        time: "02:00 PM",
+        title: "Airport Transfer",
+        location: "Narita Airport",
+        icon: "airplane",
+        iconBg: "#EFF6FF",
+        iconColor: "#3B82F6",
+        note: "Flight departs at 05:30 PM",
+      },
+    ],
+  };
+
+  const activities = dailyActivities[activeDay] || [];
 
   return (
     <SafeAreaView className="flex-1 bg-[#f6f7f8]" edges={["top"]}>
@@ -127,7 +225,7 @@ export default function ItineraryScreen() {
         {/* Timeline Section */}
         <View className="px-5 mt-4">
           <Text className="text-[10px] font-jakarta-extrabold uppercase tracking-widest text-slate-400 mb-6 ml-1">
-            OCTOBER 12TH SCHEDULE
+            {activeDay === 0 ? "OCTOBER 12TH" : activeDay === 1 ? "OCTOBER 13TH" : activeDay === 2 ? "OCTOBER 14TH" : activeDay === 3 ? "OCTOBER 15TH" : "OCTOBER 16TH"} SCHEDULE
           </Text>
 
           {activities.map((activity, index) => (

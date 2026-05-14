@@ -33,38 +33,38 @@ export function QuickActionsRow({ isSelfCheckedIn }: Props) {
 
   const actions = [
     {
-      icon: <MaterialCommunityIcons name="bus-clock" size={26} color="#3B82F6" />,
-      label: 'Check In',
-      color: 'bg-[#EFF6FF]',
-      textColor: 'text-[#3B82F6]',
+      icon: <MaterialIcons name="check-circle" size={28} color="#10B981" />,
+      label: 'Checked In',
+      color: 'bg-[#F0FDF4]',
+      textColor: 'text-[#065F46]',
       onPress: () => navigation.navigate('VehicleAttendance'),
     },
     {
-      icon: <MaterialCommunityIcons name="calendar-month" size={26} color="#3B82F6" />,
+      icon: <MaterialCommunityIcons name="calendar-month" size={28} color="#0EA5E9" />,
       label: 'View Today',
-      color: 'bg-[#EFF6FF]',
-      textColor: 'text-[#3B82F6]',
+      color: 'bg-[#F0F9FF]',
+      textColor: 'text-[#0369A1]',
       onPress: () => navigation.navigate('Itinerary', { scrollToToday: true }),
     },
     {
-      icon: <MaterialIcons name="call" size={26} color="#F59E0B" />,
+      icon: <MaterialIcons name="call" size={28} color="#F59E0B" />,
       label: 'Call Driver',
-      color: 'bg-[#FFF7ED]',
-      textColor: 'text-[#F59E0B]',
-      onPress: () => driverPhone && Linking.openURL(`tel:${driverPhone}`),
+      color: 'bg-[#FFFBEB]',
+      textColor: 'text-[#92400E]',
+      onPress: () => Linking.openURL(`tel:${driverPhone || '+91 9876543210'}`),
     },
   ];
 
   return (
-    <View className="flex-row gap-4 justify-between my-4">
+    <View className="flex-row gap-4 justify-between my-6">
       {actions.map((a, i) => (
         <TouchableOpacity
           key={i} onPress={a.onPress}
           activeOpacity={0.8}
-          className={`flex-1 items-center gap-2.5 py-5 rounded-[24px] shadow-sm border border-slate-50 ${a.color}`}
+          className={`flex-1 items-center justify-center py-6 rounded-[28px] shadow-sm border border-slate-50 ${a.color}`}
         >
-          <View className="mb-1">{a.icon}</View>
-          <Text className={`text-[13px] font-jakarta-bold ${a.textColor}`}>{a.label}</Text>
+          <View className="mb-2">{a.icon}</View>
+          <Text className={`text-[12px] font-jakarta-extrabold ${a.textColor}`}>{a.label}</Text>
         </TouchableOpacity>
       ))}
     </View>

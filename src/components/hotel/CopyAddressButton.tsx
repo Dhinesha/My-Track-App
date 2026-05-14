@@ -1,9 +1,12 @@
-// components/hotel/CopyAddressButton.tsx
+import React, { useState } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 
-interface Props { hotelName: string; address: string; }
+interface Props { 
+  hotelName: string; 
+  address: string; 
+}
 
 export function CopyAddressButton({ hotelName, address }: Props) {
   const [copied, setCopied] = useState(false);
@@ -15,13 +18,20 @@ export function CopyAddressButton({ hotelName, address }: Props) {
   };
 
   return (
-    <View className="flex-row items-center gap-2 my-1">
-      <TouchableOpacity onPress={handleCopy}
-        className="w-8 h-8 bg-gray-100 rounded-lg items-center justify-center">
-        <Text className="text-sm">{copied ? '✓' : '📋'}</Text>
+    <View className="flex-row items-center gap-2">
+      <TouchableOpacity 
+        onPress={handleCopy}
+        activeOpacity={0.7}
+        className={`w-10 h-10 rounded-xl items-center justify-center shadow-sm ${copied ? 'bg-emerald-50' : 'bg-slate-50'}`}
+      >
+        <Ionicons 
+          name={copied ? "checkmark-circle" : "copy-outline"} 
+          size={20} 
+          color={copied ? "#10B981" : "#64748B"} 
+        />
       </TouchableOpacity>
       {copied && (
-        <Text className="text-xs text-green-600 font-medium">Address copied!</Text>
+        <Text className="text-[11px] text-emerald-600 font-jakarta-bold uppercase tracking-wider">Copied!</Text>
       )}
     </View>
   );

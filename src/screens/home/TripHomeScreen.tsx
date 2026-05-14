@@ -62,7 +62,7 @@ export const TripHomeScreen = () => {
       
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 py-4 bg-white">
-        <Text className="text-2xl font-jakarta-extrabold text-[#0F6E56]">
+        <Text className="text-2xl font-jakarta-extrabold text-[#0EA5E9]">
           MyTripGuide
         </Text>
         <View className="flex-row items-center gap-4">
@@ -89,8 +89,8 @@ export const TripHomeScreen = () => {
         {/* Quick Actions Row */}
         <View className="flex-row justify-between px-6 py-6 border-b border-slate-50">
           {[
-            { id: 'itinerary', label: 'Itinerary', icon: 'calendar-month', color: '#0F6E56' },
-            { id: 'vehicle', label: 'Vehicle', icon: 'bus', color: '#0F6E56' },
+            { id: 'itinerary', label: 'Itinerary', icon: 'calendar-month', color: '#0EA5E9' },
+            { id: 'vehicle', label: 'Vehicle', icon: 'bus', color: '#0EA5E9' },
             { id: 'notifications', label: 'Notifications', icon: 'bell', color: '#64748b', count: 2 },
             { id: 'emergency', label: 'Emergency', icon: 'alert-decagram', color: '#ef4444' },
           ].map((action) => (
@@ -129,7 +129,7 @@ export const TripHomeScreen = () => {
               className="absolute inset-0 w-full h-full"
             />
             <LinearGradient
-              colors={['transparent', 'rgba(15, 110, 86, 0.9)']}
+              colors={['transparent', 'rgba(14, 165, 233, 0.9)']}
               className="absolute inset-0"
             />
             <View className="absolute inset-0 p-6 flex-col justify-between">
@@ -165,7 +165,7 @@ export const TripHomeScreen = () => {
           <View className="flex-row items-center justify-between mb-6 px-6">
             <Text className="text-xl font-jakarta-extrabold text-slate-900">Upcoming Trips</Text>
             <TouchableOpacity>
-              <Text className="text-[#0F6E56] font-jakarta-bold text-sm">See All ›</Text>
+              <Text className="text-[#0EA5E9] font-jakarta-bold text-sm">See All ›</Text>
             </TouchableOpacity>
           </View>
           

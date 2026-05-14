@@ -19,6 +19,7 @@ export function TodaySummaryCard() {
       const rows = await db.getAll(`SELECT start_date FROM trips WHERE id=?`, [activeTripId]);
       const trip = rows[0];
       if (!trip) return;
+      
       const dayNum = differenceInDays(new Date(), parseISO(trip.start_date)) + 1;
       const activities = await db.getAll(
         `SELECT place_name, start_time, entry_fee_type, entry_fee_amount, day_note FROM itinerary
@@ -71,25 +72,28 @@ export function TodaySummaryCard() {
   if (!summary) return null;
 
   return (
-    <View className="bg-[#FFFBEB] border border-[#FEF3C7] rounded-[24px] overflow-hidden shadow-sm">
-      <TouchableOpacity onPress={toggle} className="flex-row items-center justify-between px-5 py-4">
+    <View className="bg-[#FFFBEB] border border-[#FEF3C7] rounded-[32px] overflow-hidden shadow-sm">
+      <TouchableOpacity onPress={toggle} className="flex-row items-center justify-between px-6 py-5">
         <View className="flex-row items-center gap-3">
           <View className="w-10 h-10 bg-[#FEF3C7] rounded-xl items-center justify-center">
             <MaterialCommunityIcons name="weather-sunny" size={24} color="#92400E" />
           </View>
-          <Text className="text-[15px] font-jakarta-bold text-[#92400E]">Today at a glance</Text>
+          <Text className="text-[15px] font-jakarta-extrabold text-[#92400E]">Today at a glance</Text>
         </View>
         <Feather name={expanded ? "chevron-up" : "chevron-down"} size={24} color="#92400E" />
       </TouchableOpacity>
-      <Animated.View style={{ maxHeight }} className="px-5 pb-5 gap-3">
+      
+      <Animated.View style={{ maxHeight }} className="px-6 pb-6 gap-3">
         <View className="h-[1px] bg-[#FEF3C7] w-full mb-1" />
-        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">📍 Destinations today: <Text className="font-jakarta-bold text-[#92400E]">{summary.count} places</Text></Text>
+        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">📍 Destinations today: <Text className="font-jakarta-extrabold text-[#92400E]">{summary.count} places</Text></Text>
         {summary.firstName && (
-          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">⏰ Day starts at <Text className="font-jakarta-bold text-[#92400E]">{summary.firstTime}</Text> — {summary.firstName}</Text>
+          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">⏰ Day starts at <Text className="font-jakarta-extrabold text-[#92400E]">{summary.firstTime}</Text> — {summary.firstName}</Text>
         )}
-        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">💰 Entry fees: <Text className="font-jakarta-bold text-[#92400E]">{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text></Text>
+        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">💰 Entry fees: <Text className="font-jakarta-extrabold text-[#92400E]">{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text></Text>
         {summary.note && (
-          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium italic">📌 {summary.note}</Text>
+          <View className="bg-white/50 p-3 rounded-2xl mt-1">
+            <Text className="text-sm text-[#92400E] font-jakarta-medium italic">📌 {summary.note}</Text>
+          </View>
         )}
       </Animated.View>
     </View>

@@ -16,7 +16,7 @@ export function TripProgressBar({ startDate, endDate, status }: Props) {
   const pct = status === 'completed' ? 100 : Math.round((currentDay / totalDays) * 100);
 
   const getMilestoneLabel = () => {
-    if (status === 'completed') return 'Journey complete ✓';
+    if (status === 'completed') return 'Your trip is successfully completed! 🎉';
     if (currentDay === 1) return 'Day 1 — Your journey begins!';
     if (currentDay === totalDays) return `Last day — enjoy every moment 🌅`;
     if (pct >= 50 && pct < 60) return 'Over halfway through your journey!';
@@ -24,23 +24,22 @@ export function TripProgressBar({ startDate, endDate, status }: Props) {
   };
 
   useEffect(() => {
-    progress.value = withTiming(pct / 100, { duration: 800 });
+    progress.value = withTiming(pct / 100, { duration: 1000 });
   }, [pct]);
 
   const animStyle = useAnimatedStyle(() => ({ 
-    flex: progress.value === 0 ? 0.001 : progress.value // Avoid flex 0 issues
+    width: `${progress.value * 100}%` 
   }));
 
   return (
-    <View className="gap-1.5 px-4 mb-4">
-      <View className="h-1 bg-gray-100 rounded-full overflow-hidden flex-row">
+    <View className="gap-2">
+      <View className="h-1.5 bg-white/20 rounded-full overflow-hidden">
         <Animated.View
           style={animStyle}
-          className={`h-full rounded-full ${status === 'completed' ? 'bg-gray-400' : 'bg-teal-500'}`}
+          className={`h-full rounded-full ${status === 'completed' ? 'bg-emerald-400' : 'bg-[#0EA5E9]'}`}
         />
-        <View style={{ flex: 1 - pct/100 }} />
       </View>
-      <Text className={`text-xs font-medium ${status === 'completed' ? 'text-gray-400' : 'text-teal-700'}`}>
+      <Text className="text-white/60 text-[10px] font-jakarta-bold uppercase tracking-widest">
         {getMilestoneLabel()}
       </Text>
     </View>

@@ -1,19 +1,19 @@
 export const Colors = {
-  primary: '#0F6E56', // Teal as per SRS
-  secondary: '#2979FF', // Blue for secondary/upcoming
-  accent: '#FF9800', // Amber for delays/self-sponsored
-  teal: {
-    DEFAULT: '#0F6E56',
-    light: '#E0F2F1',
-    dark: '#004D40',
+  primary: '#0EA5E9', // Sky Blue
+  secondary: '#38BDF8', // Lighter Sky Blue
+  accent: '#F59E0B', 
+  sky: {
+    DEFAULT: '#0EA5E9',
+    light: '#E0F2FE',
+    dark: '#0369A1',
   },
   blue: {
-    DEFAULT: '#2979FF',
-    light: '#E3F2FD',
-    dark: '#1565C0',
+    DEFAULT: '#0EA5E9',
+    light: '#E0F2FE',
+    dark: '#0369A1',
   },
   white: '#FFFFFF',
-  black: '#1e293b', // Sleek slate-black for text
+  black: '#1e293b', 
   text: {
     primary: '#1e293b',
     secondary: '#64748b',
@@ -22,7 +22,7 @@ export const Colors = {
     error: '#ef4444',
   },
   background: {
-    default: '#f8fafc', // Very light slate background
+    default: '#f8fafc', 
     card: '#FFFFFF',
     input: '#f1f5f9',
     glass: 'rgba(255, 255, 255, 0.8)',
@@ -30,22 +30,22 @@ export const Colors = {
   border: {
     light: '#e2e8f0',
     default: '#cbd5e1',
-    focus: '#0F6E56',
+    focus: '#0EA5E9',
   },
   status: {
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    info: '#3b82f6',
-    ongoing: '#10b981',
-    upcoming: '#3b82f6',
+    info: '#0EA5E9',
+    ongoing: '#0EA5E9',
+    upcoming: '#38BDF8',
     completed: '#64748b',
   },
   badge: {
     greenBg: '#ecfdf5',
     greenText: '#059669',
-    blueBg: '#eff6ff',
-    blueText: '#2563eb',
+    blueBg: '#f0f9ff',
+    blueText: '#0369A1',
     redBg: '#fef2f2',
     redText: '#dc2626',
     yellowBg: '#fffbeb',
@@ -56,7 +56,7 @@ export const Colors = {
     tealText: '#0d9488',
   },
   nav: {
-    active: '#0F6E56',
+    active: '#0EA5E9',
     inactive: '#94a3b8',
   }
 };

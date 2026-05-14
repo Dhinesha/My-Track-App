@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { Colors } from "../theme/colors";
 import { Button } from "../components/common";
+import { CopyAddressButton } from "../components/hotel/CopyAddressButton";
 
 
 const GUESTS = [
@@ -59,9 +60,12 @@ export default function HotelScreen() {
               />
               <View className="p-6">
                 <Text className="text-2xl font-jakarta-extrabold text-text-primary mb-2">The Orchid Shimla</Text>
-                <View className="flex-row items-center mb-4">
-                  <Feather name="map-pin" size={14} color={Colors.primary} />
-                  <Text className="text-text-secondary font-jakarta-medium text-xs ml-2">Mall Road, Shimla, HP</Text>
+                <View className="flex-row items-center justify-between mb-4">
+                  <View className="flex-row items-center flex-1 mr-4">
+                    <Feather name="map-pin" size={14} color={Colors.primary} />
+                    <Text className="text-text-secondary font-jakarta-medium text-xs ml-2">Mall Road, Shimla, HP</Text>
+                  </View>
+                  <CopyAddressButton hotelName="The Orchid Shimla" address="Mall Road, Shimla, HP" />
                 </View>
                 
                 <View className="flex-row flex-wrap gap-4">

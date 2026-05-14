@@ -31,7 +31,7 @@ export default function FamilyMembersScreen() {
       status: 'Attending',
       checkIn: 'Pending',
       isCheckedIn: false,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newName)}&background=0F6E56&color=fff`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newName)}&background=0EA5E9&color=fff`,
     };
     setMembers([...members, newMember]);
     setNewName('');
@@ -88,7 +88,7 @@ export default function FamilyMembersScreen() {
                 <View className="relative mr-4">
                   <Image 
                     source={{ uri: member.avatar }} 
-                    className="w-16 h-16 rounded-[24px] bg-teal-light" 
+                    className="w-16 h-16 rounded-[24px] bg-primary-light" 
                   />
                   {member.isCheckedIn && (
                     <View className="absolute -bottom-1 -right-1 w-6 h-6 bg-status-success rounded-full items-center justify-center border-2 border-white">
@@ -100,7 +100,7 @@ export default function FamilyMembersScreen() {
                 <View className="flex-1">
                   <View className="flex-row items-center mb-1">
                     <Text className="text-text-primary font-jakarta-extrabold text-base mr-2">{member.name}</Text>
-                    <View className="bg-teal-light px-2 py-0.5 rounded-full">
+                    <View className="bg-primary-light px-2 py-0.5 rounded-full">
                       <Text className="text-primary font-jakarta-bold text-[10px]">{member.seat}</Text>
                     </View>
                   </View>
@@ -177,7 +177,7 @@ export default function FamilyMembersScreen() {
                       <TouchableOpacity onPress={() => setIsModalVisible(false)} className="flex-1 bg-slate-50 h-14 rounded-xl items-center justify-center border border-slate-100">
                         <Text className="text-slate-600 font-jakarta-extrabold text-sm">Cancel</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-[#0F6E56] h-14 rounded-xl items-center justify-center shadow-lg shadow-[#0F6E56]/20">
+                      <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-primary h-14 rounded-xl items-center justify-center shadow-lg shadow-primary/20">
                         <Text className="text-white font-jakarta-extrabold text-sm">Add Member</Text>
                       </TouchableOpacity>
                     </View>
@@ -217,7 +217,7 @@ export default function FamilyMembersScreen() {
                   <TouchableOpacity onPress={() => setIsModalVisible(false)} className="flex-1 bg-slate-50 h-14 rounded-xl items-center justify-center border border-slate-100">
                     <Text className="text-slate-600 font-jakarta-extrabold text-sm">Cancel</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-[#0F6E56] h-14 rounded-xl items-center justify-center shadow-lg shadow-[#0F6E56]/20">
+                  <TouchableOpacity onPress={addMember} activeOpacity={0.8} className="flex-1 bg-primary h-14 rounded-xl items-center justify-center shadow-lg shadow-primary/20">
                     <Text className="text-white font-jakarta-extrabold text-sm">Add Member</Text>
                   </TouchableOpacity>
                 </View>

@@ -39,6 +39,8 @@ import NotificationsScreen from "./src/screens/NotificationsScreen";
 import AdminDashboardScreen from "./src/screens/AdminDashboardScreen";
 import EmergencyScreen from "./src/screens/emergency/EmergencyScreen";
 import FeedbackScreen from "./src/screens/feedback/FeedbackScreen";
+import PackingChecklistScreen from "./src/screens/trips/PackingChecklistScreen";
+import BudgetTrackerScreen from "./src/screens/trips/BudgetTrackerScreen";
 import { StoreTestPanel } from "./src/components/shared/StoreTestPanel";
 import { OfflineBanner } from "./src/components/offline";
 
@@ -60,6 +62,8 @@ export type RootStackParamList = {
   AdminDashboard: undefined;
   Emergency: undefined;
   Feedback: { tripId: string; tripName: string; paxId: string };
+  PackingChecklist: { tripId: string; tripName: string; tripType: string };
+  BudgetTracker: { tripId: string; totalDays: number };
 };
 
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
@@ -122,36 +126,32 @@ function AppNavigator() {
   const Stack = Platform.OS === "web" ? JSStack : NativeStack;
 
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <StatusBar style="auto" />
-      <OfflineBanner />
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Splash"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Splash" component={SplashScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          <Stack.Screen name="Main" component={MainTabNavigator} />
-          <Stack.Screen name="TripDetail" component={TripDetailScreen} />
-          <Stack.Screen name="Itinerary" component={ItineraryScreen} />
-          <Stack.Screen name="Hotel" component={HotelScreen} />
-          <Stack.Screen
-            name="VehicleAttendance"
-            component={VehicleAttendanceScreen}
-          />
-          <Stack.Screen name="FamilyMembers" component={FamilyMembersScreen} />
-          <Stack.Screen name="Notifications" component={NotificationsScreen} />
-          <Stack.Screen
-            name="AdminDashboard"
-            component={AdminDashboardScreen}
-          />
-          <Stack.Screen name="Emergency" component={EmergencyScreen} />
-          <Stack.Screen name="Feedback" component={FeedbackScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <Stack.Navigator
+      initialRouteName="Splash"
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="Splash" component={SplashScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      <Stack.Screen name="Main" component={MainTabNavigator} />
+      <Stack.Screen name="TripDetail" component={TripDetailScreen} />
+      <Stack.Screen name="Itinerary" component={ItineraryScreen} />
+      <Stack.Screen name="Hotel" component={HotelScreen} />
+      <Stack.Screen
+        name="VehicleAttendance"
+        component={VehicleAttendanceScreen}
+      />
+      <Stack.Screen name="FamilyMembers" component={FamilyMembersScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen
+        name="AdminDashboard"
+        component={AdminDashboardScreen}
+      />
+      <Stack.Screen name="Emergency" component={EmergencyScreen} />
+      <Stack.Screen name="Feedback" component={FeedbackScreen} />
+      <Stack.Screen name="PackingChecklist" component={PackingChecklistScreen} />
+      <Stack.Screen name="BudgetTracker" component={BudgetTrackerScreen} />
+    </Stack.Navigator>
   );
 }
 
@@ -159,61 +159,53 @@ export default function App() {
   console.log("App rendering, platform:", Platform.OS);
   if (Platform.OS === "web") {
     return (
-      <View style={styles.webBg}>
-        {/* Background glow blobs */}
-        <View style={styles.blob1} />
-        <View style={styles.blob2} />
-        <View style={styles.blob3} />
+      <SafeAreaProvider style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <OfflineBanner />
+        <NavigationContainer>
+          <View style={styles.webBg}>
+            {/* Background glow blobs */}
+            <View style={styles.blob1} />
+            <View style={styles.blob2} />
+            <View style={styles.blob3} />
 
-        {/* Phone mockup */}
-        <View style={styles.phoneOuter}>
-          {/* Physical side buttons */}
-          <View style={styles.btnVolUp} />
-          <View style={styles.btnVolDown} />
-          <View style={styles.btnPower} />
+            {/* Phone mockup */}
+              <View style={styles.phoneBody}>
+                {/* Status bar / notch area */}
+                {/* App Screen */}
+                <View style={styles.screen}>
+                  <AppNavigator />
+                </View>
 
-          {/* Phone body */}
-          <View style={styles.phoneBody}>
-            {/* Status bar / notch area */}
-            <View style={styles.topBar}>
-              <View style={styles.topBarLeft}>
-                <View style={styles.timeBlock} />
+                {/* Home indicator */}
+                <View style={styles.homeBar}>
+                  <View style={styles.homeBar_pill} />
+                </View>
               </View>
-              <View style={styles.dynamicIsland}>
-                <View style={styles.islandCamera} />
-              </View>
-              <View style={styles.topBarRight}>
-                <View style={styles.sigIcon} />
-                <View style={styles.wifiIcon} />
-                <View style={styles.battIcon} />
-              </View>
+
+            {/* Brand watermark */}
+            <View style={styles.watermark}>
+              <View style={styles.wmDot} />
+              <View style={styles.wmLine} />
+              <View style={styles.wmDot} />
             </View>
 
-            {/* App Screen */}
-            <View style={styles.screen}>
-              <AppNavigator />
-            </View>
-
-            {/* Home indicator */}
-            <View style={styles.homeBar}>
-              <View style={styles.homeBar_pill} />
-            </View>
+            <StoreTestPanel />
           </View>
-        </View>
-
-        {/* Brand watermark */}
-        <View style={styles.watermark}>
-          <View style={styles.wmDot} />
-          <View style={styles.wmLine} />
-          <View style={styles.wmDot} />
-        </View>
-
-        <StoreTestPanel />
-      </View>
+        </NavigationContainer>
+      </SafeAreaProvider>
     );
   }
 
-  return <AppNavigator />;
+  return (
+    <SafeAreaProvider style={{ flex: 1 }}>
+      <StatusBar style="auto" />
+      <OfflineBanner />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
 }
 
 const PW = 390; // phone width
@@ -306,17 +298,17 @@ const styles = StyleSheet.create({
     width: PW,
     height: PH,
     borderRadius: 52,
-    backgroundColor: "#0d1b2e",
+    backgroundColor: "#fff",
     borderWidth: 2.5,
-    borderColor: "#1e3a5f",
+    borderColor: "#e2e8f0",
     overflow: "hidden",
-    // Blue glow shadow
+    // Subtle sky blue glow shadow
     ...(Platform.OS === "web"
-      ? { boxShadow: "0 0 40px rgba(43, 140, 238, 0.5)" }
+      ? { boxShadow: "0 0 40px rgba(14, 165, 233, 0.15)" }
       : {
-          shadowColor: "#2b8cee",
+          shadowColor: "#0ea5e9",
           shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.5,
+          shadowOpacity: 0.15,
           shadowRadius: 40,
           elevation: 40,
         }),

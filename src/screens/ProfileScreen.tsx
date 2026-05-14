@@ -39,7 +39,7 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between px-6 py-4">
           <Text className="text-2xl font-jakarta-extrabold text-[#1E293B]">Profile</Text>
           <TouchableOpacity onPress={() => handleEdit('Name', name, setName)}>
-            <Feather name="edit-3" size={22} color="#3B82F6" />
+            <Feather name="edit-3" size={22} color="#0EA5E9" />
           </TouchableOpacity>
         </View>
 
@@ -74,8 +74,8 @@ export default function ProfileScreen() {
             </View>
             <Text className="text-[#94a3b8] font-jakarta-medium text-sm mb-4">{email}</Text>
             
-            <View className="bg-[#EFF6FF] px-4 py-1.5 rounded-full">
-              <Text className="text-[#3B82F6] font-jakarta-extrabold text-xs">Primary Traveller</Text>
+            <View className="bg-primary-light px-4 py-1.5 rounded-full">
+              <Text className="text-primary font-jakarta-extrabold text-xs">Primary Traveller</Text>
             </View>
           </View>
 

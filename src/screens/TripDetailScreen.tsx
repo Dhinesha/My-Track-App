@@ -18,9 +18,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   QuickActionsRow,
   TripProgressBar,
+  TripCountdownWidget,
   WhatsHappeningNowCard,
   TodaySummaryCard,
   SmartCheckInBanner,
+  InTripWeatherWidget,
+  TripMemoriesCard,
 } from "../components/trips";
 import { EmergencyFAB } from "../components/common";
 
@@ -83,14 +86,7 @@ export default function TripDetailScreen() {
       badge: 2,
       onPress: () => navigation.navigate("Notifications"),
     },
-    {
-      id: "emergency",
-      label: "Emergency",
-      sub: "SOS & Help",
-      icon: "lifebuoy",
-      color: "#EC4899",
-      onPress: () => navigation.navigate("Emergency"),
-    },
+
     {
       id: "feedback",
       label: "Feedback",
@@ -103,6 +99,29 @@ export default function TripDetailScreen() {
           tripName,
           paxId: "demo-pax-1",
         }),
+    },
+    {
+      id: "packing",
+      label: "Packing List",
+      sub: "Get ready for travel",
+      icon: "briefcase-check",
+      color: "#0D9488",
+      onPress: () => navigation.navigate("PackingChecklist", { 
+        tripId, 
+        tripName, 
+        tripType: "family" 
+      }),
+    },
+    {
+      id: "budget",
+      label: "Budget",
+      sub: "Track your spendings",
+      icon: "currency-inr",
+      color: "#10B981",
+      onPress: () => navigation.navigate("BudgetTracker", { 
+        tripId, 
+        totalDays: 5 
+      }),
     },
   ];
 
@@ -137,8 +156,14 @@ export default function TripDetailScreen() {
             className="absolute inset-0"
           />
           <View className="absolute inset-0 p-6 flex-col justify-end">
-            <View className="bg-[#3B82F6] self-start px-4 py-1.5 rounded-full mb-3">
-              <Text className="text-white text-[10px] font-jakarta-extrabold">Day 2 of 5</Text>
+            <View className="flex-row items-center mb-3">
+              <View className="bg-white/90 px-3 py-1.5 rounded-full mr-2 shadow-sm">
+                <TripCountdownWidget 
+                  startDate="2023-10-12" 
+                  endDate="2023-10-20" 
+                  status="ongoing" 
+                />
+              </View>
             </View>
             <Text className="text-white text-3xl font-jakarta-extrabold mb-1">Family Kyoto Retreat</Text>
             <View className="flex-row items-center mb-6">
@@ -159,7 +184,15 @@ export default function TripDetailScreen() {
 
         {/* Dynamic Banners */}
         <View className="mt-6 gap-4">
+          <TripMemoriesCard 
+            tripId={tripId} 
+            tripName={tripName} 
+            startDate="2023-10-12" 
+            endDate="2023-10-20" 
+            paxId="demo-pax-1" 
+          />
           <SmartCheckInBanner />
+          <InTripWeatherWidget />
           <WhatsHappeningNowCard />
           <TodaySummaryCard />
         </View>
@@ -240,15 +273,6 @@ export default function TripDetailScreen() {
           ))}
         </View>
       </ScrollView>
-
-      <View className="absolute bottom-10 right-6">
-        <TouchableOpacity 
-          onPress={() => navigation.navigate("Emergency")}
-          className="w-16 h-16 bg-[#EF4444] rounded-full items-center justify-center shadow-2xl shadow-red-500/50 border-4 border-white"
-        >
-          <MaterialCommunityIcons name="alert-decagram" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
