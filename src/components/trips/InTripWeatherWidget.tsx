@@ -35,7 +35,7 @@ export function InTripWeatherWidget() {
     (async () => {
       if (!activeTripId) return;
 
-      const rows = await db.getAll(`SELECT start_date, destination FROM trips WHERE id=?`, [activeTripId]);
+      const rows = await db.getAll(`SELECT start_date, destination FROM trips WHERE id=?`, [activeTripId]) as any[];
       const trip = rows[0];
       if (!trip) return;
 
@@ -43,7 +43,7 @@ export function InTripWeatherWidget() {
       const actRows = await db.getAll(
         `SELECT city FROM itinerary WHERE trip_id=? AND day=? AND city IS NOT NULL LIMIT 1`,
         [activeTripId, dayNum]
-      );
+      ) as any[];
       const act = actRows[0];
 
       const targetCity = act?.city ?? trip.destination;

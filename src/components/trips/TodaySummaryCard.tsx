@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
-import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { differenceInDays, parseISO, format } from 'date-fns';
+import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
 
 export function TodaySummaryCard() {
   const [expanded, setExpanded] = useState(false);
@@ -16,7 +17,7 @@ export function TodaySummaryCard() {
     (async () => {
       if (!activeTripId) return;
       
-      const rows = await db.getAll(`SELECT start_date FROM trips WHERE id=?`, [activeTripId]);
+      const rows = await db.getAll(`SELECT start_date FROM trips WHERE id=?`, [activeTripId]) as any[];
       const trip = rows[0];
       if (!trip) return;
       
@@ -25,7 +26,7 @@ export function TodaySummaryCard() {
         `SELECT place_name, start_time, entry_fee_type, entry_fee_amount, day_note FROM itinerary
          WHERE trip_id=? AND day=? ORDER BY start_time`,
         [activeTripId, dayNum]
-      );
+      ) as any[];
       
       if (activities.length === 0) {
         setSummary(null);
@@ -40,7 +41,7 @@ export function TodaySummaryCard() {
       if (first) {
         const [h, m] = first.start_time.split(':').map(Number);
         const d = new Date();
-        d.setHours(h, m);
+        d.setHours(h, m, 0, 0);
         firstTimeStr = format(d, 'h:mm a');
       }
 
@@ -66,36 +67,135 @@ export function TodaySummaryCard() {
 
   const maxHeight = heightAnim.interpolate({ 
     inputRange: [0, 1], 
-    outputRange: [0, 200] 
+    outputRange: [0, 320] 
   });
 
   if (!summary) return null;
 
   return (
-    <View className="bg-[#FFFBEB] border border-[#FEF3C7] rounded-[32px] overflow-hidden shadow-sm">
-      <TouchableOpacity onPress={toggle} className="flex-row items-center justify-between px-6 py-5">
-        <View className="flex-row items-center gap-3">
-          <View className="w-10 h-10 bg-[#FEF3C7] rounded-xl items-center justify-center">
-            <MaterialCommunityIcons name="weather-sunny" size={24} color="#92400E" />
-          </View>
-          <Text className="text-[15px] font-jakarta-extrabold text-[#92400E]">Today at a glance</Text>
+    <View style={[styles.card, Shadows.sm]}>
+      <TouchableOpacity onPress={toggle} style={styles.headerRow} activeOpacity={0.8}>
+        <View style={styles.headerLeft}>
+          <Text style={styles.sunEmoji}>🌤</Text>
+          <Text style={styles.headerTitle}>Today at a glance</Text>
         </View>
-        <Feather name={expanded ? "chevron-up" : "chevron-down"} size={24} color="#92400E" />
+        <Ionicons name={expanded ? "chevron-up" : "chevron-down"} size={20} color={Colors.warning.main} />
       </TouchableOpacity>
       
-      <Animated.View style={{ maxHeight }} className="px-6 pb-6 gap-3">
-        <View className="h-[1px] bg-[#FEF3C7] w-full mb-1" />
-        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">📍 Destinations today: <Text className="font-jakarta-extrabold text-[#92400E]">{summary.count} places</Text></Text>
-        {summary.firstName && (
-          <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">⏰ Day starts at <Text className="font-jakarta-extrabold text-[#92400E]">{summary.firstTime}</Text> — {summary.firstName}</Text>
-        )}
-        <Text className="text-sm text-[#92400E]/80 font-jakarta-medium">💰 Entry fees: <Text className="font-jakarta-extrabold text-[#92400E]">{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text></Text>
-        {summary.note && (
-          <View className="bg-white/50 p-3 rounded-2xl mt-1">
-            <Text className="text-sm text-[#92400E] font-jakarta-medium italic">📌 {summary.note}</Text>
+      <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
+        <View style={styles.divider} />
+        <View style={styles.content}>
+          
+          <View style={styles.row}>
+            <Ionicons name="location-outline" size={18} color="#555555" />
+            <Text style={styles.rowText}>
+              Destinations: <Text style={styles.boldText}>{summary.count} places</Text>
+            </Text>
           </View>
-        )}
+
+          {summary.firstName && (
+            <View style={styles.row}>
+              <Ionicons name="time-outline" size={18} color="#555555" />
+              <Text style={styles.rowText}>
+                Starts at <Text style={styles.boldText}>{summary.firstTime}</Text> — {summary.firstName}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.row}>
+            <Ionicons name="ticket-outline" size={18} color="#555555" />
+            <Text style={styles.rowText}>
+              Entry fees: <Text style={styles.boldText}>{summary.selfCount} self-paid{summary.totalFee ? ` (₹${summary.totalFee} est.)` : ''}</Text>
+            </Text>
+          </View>
+
+          {summary.note && (
+            <View style={styles.noteCard}>
+              <Ionicons name="pin" size={16} color={Colors.warning.main} style={styles.notePin} />
+              <Text style={styles.noteText}>{summary.note}</Text>
+            </View>
+          )}
+          
+        </View>
       </Animated.View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#FEF9F0',
+    borderRadius: Spacing.cardRadius,
+    borderWidth: 1,
+    borderColor: '#F0D9A8',
+    marginHorizontal: Spacing.screenPaddingH,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  sunEmoji: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  headerTitle: {
+    fontSize: Typography.fontSizes.cardTitle,
+    fontWeight: '600',
+    color: Colors.warning.textOnAmber,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#F0D9A8',
+    marginHorizontal: 16,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 12,
+    gap: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  rowText: {
+    fontSize: 14,
+    color: '#333333',
+    fontFamily: Typography.fontFamilies.regular,
+  },
+  boldText: {
+    fontWeight: '700',
+    color: '#111111',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  noteCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+    marginTop: 4,
+  },
+  notePin: {
+    marginTop: 2,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 14,
+    color: Colors.warning.textOnAmber,
+    fontFamily: Typography.fontFamilies.regular,
+    fontStyle: 'italic',
+    lineHeight: 18,
+  },
+});

@@ -50,7 +50,7 @@ export default function DashboardHomeScreen() {
         <Text className="text-xl font-jakarta-extrabold text-[#1E293B]">
           Trip Dashboard
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')} className="w-10 h-10 bg-[#0F6E56] rounded-full items-center justify-center border-2 border-white shadow-sm">
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')} className="w-10 h-10 bg-[#2B8CEE] rounded-full items-center justify-center border-2 border-white shadow-sm">
           <Text className="text-white font-jakarta-bold text-xs">{initials}</Text>
         </TouchableOpacity>
       </View>
@@ -149,8 +149,8 @@ export default function DashboardHomeScreen() {
             onPress={() => navigation.navigate("Notifications")}
             className="flex-row items-center bg-white p-4 rounded-3xl border border-slate-100 shadow-sm"
           >
-            <View className="w-12 h-12 bg-orange-50 rounded-full items-center justify-center relative">
-              <MaterialCommunityIcons name="bell-ring" size={24} color="#f97316" />
+            <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center relative">
+              <MaterialCommunityIcons name="bell-ring" size={24} color="#2b8cee" />
               <View className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
             </View>
             <View className="flex-1 ml-4">
@@ -169,7 +169,7 @@ export default function DashboardHomeScreen() {
             onPress={() => navigation.navigate("Emergency")}
             className="flex-row items-center justify-center bg-white p-5 rounded-2xl border-2 border-slate-100 shadow-sm"
           >
-            <Feather name="headphones" size={20} color="#64748b" />
+            <Feather name="headphones" size={20} color="#2b8cee" />
             <Text className="text-slate-500 font-jakarta-extrabold text-base ml-3">Emergency or Help</Text>
           </TouchableOpacity>
         </View>

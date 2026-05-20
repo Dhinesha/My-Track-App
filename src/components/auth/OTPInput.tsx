@@ -7,11 +7,11 @@ import {
   Platform,
 } from "react-native";
 
-interface OTPInputProps {
+interface AuthOTPInputProps {
   onChange: (otp: string) => void;
 }
 
-export function OTPInput({ onChange }: OTPInputProps) {
+export function AuthOTPInput({ onChange }: AuthOTPInputProps) {
   const [values, setValues] = useState<string[]>(Array(6).fill(""));
   const inputs = useRef<(TextInput | null)[]>([]);
 

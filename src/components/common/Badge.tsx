@@ -26,7 +26,7 @@ const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
   warning: { bg: Colors.badge.yellowBg, text: Colors.badge.yellowText },
   info: { bg: Colors.badge.blueBg, text: Colors.badge.blueText },
   neutral: { bg: Colors.badge.grayBg, text: Colors.badge.grayText },
-  primary: { bg: Colors.primaryLight, text: Colors.primary },
+  primary: { bg: Colors.sky.light, text: Colors.primary },
 };
 
 const sizeStyles: Record<

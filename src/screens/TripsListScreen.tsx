@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  Image, TextInput,
+  Image, TextInput, StyleSheet, Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from '../../App';
-import { Colors } from '../theme/colors';
+import { Colors, Typography, Spacing, Shadows } from '../constants/theme';
 import { TripProgressBar, TripCountdownWidget } from '../components/trips';
-
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -46,26 +45,27 @@ export default function TripsListScreen() {
   });
 
   return (
-    <View className="flex-1 bg-background">
-      <SafeAreaView className="flex-1" edges={['top']}>
+    <View style={styles.root}>
+      <SafeAreaView style={styles.safe} edges={['top']}>
         {/* Header */}
-        <View className="px-6 py-4 flex-row items-center justify-between">
-          <Text className="text-2xl font-jakarta-extrabold text-text-primary">
-            My Trips
-          </Text>
-          <TouchableOpacity className="w-10 h-10 bg-white rounded-full items-center justify-center shadow-sm border border-border-light">
-            <Feather name="plus" size={24} color={Colors.primary} />
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>My Trips</Text>
+          <TouchableOpacity 
+            style={[styles.plusBtn, Shadows.sm]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add" size={24} color={Colors.primary.main} />
           </TouchableOpacity>
         </View>
 
         {/* Search Bar */}
-        <View className="px-6 mb-4">
-          <View className="flex-row items-center bg-white border border-border-light rounded-2xl px-4 h-12 shadow-sm">
-            <Feather name="search" size={20} color={Colors.text.muted} />
+        <View style={styles.searchContainer}>
+          <View style={[styles.searchBar, Shadows.sm]}>
+            <Ionicons name="search" size={20} color={Colors.neutral.textMuted} />
             <TextInput
-              className="flex-1 ml-3 font-jakarta-medium text-text-primary"
+              style={styles.searchInput}
               placeholder="Search your trips..."
-              placeholderTextColor={Colors.text.muted}
+              placeholderTextColor={Colors.neutral.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -73,111 +73,127 @@ export default function TripsListScreen() {
         </View>
 
         {/* Filter Chips */}
-        <View className="mb-6">
+        <View style={styles.filtersWrapper}>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24 }}
+            contentContainerStyle={styles.filtersScrollContent}
           >
-            {FILTERS.map(filter => (
-              <TouchableOpacity
-                key={filter}
-                onPress={() => setActiveFilter(filter)}
-                className={`
-                  mr-3 px-6 py-2.5 rounded-full border
-                  ${activeFilter === filter ? "bg-primary border-primary shadow-lg shadow-primary/20" : "bg-white border-border-light"}
-                `}
-              >
-                <Text className={`
-                  font-jakarta-bold text-xs
-                  ${activeFilter === filter ? "text-white" : "text-text-secondary"}
-                `}>
-                  {filter}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {FILTERS.map(filter => {
+              const isActive = activeFilter === filter;
+              return (
+                <TouchableOpacity
+                  key={filter}
+                  onPress={() => setActiveFilter(filter)}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.filterChip,
+                    isActive ? styles.filterChipActive : styles.filterChipInactive,
+                    isActive && Shadows.sm
+                  ]}
+                >
+                  <Text style={[
+                    styles.filterText,
+                    isActive ? styles.filterTextActive : styles.filterTextInactive
+                  ]}>
+                    {filter}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
 
         <ScrollView 
-          className="flex-1 px-6" 
+          style={styles.scrollView} 
           showsVerticalScrollIndicator={false} 
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={styles.scrollContent}
         >
-          {filteredTrips.map(trip => (
-            <TouchableOpacity
-              key={trip.id}
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('Main', { screen: 'Home' })}
-              className="bg-white rounded-[32px] mb-6 overflow-hidden shadow-xl shadow-black/5 border border-border-light"
-            >
-              <View className="h-44 relative">
-                <Image source={{ uri: trip.image }} className="w-full h-full" />
-                <View className="absolute top-4 left-4">
-                  <View className={`
-                    px-3 py-1.5 rounded-full border border-white/30 backdrop-blur-md
-                    ${trip.status === 'ongoing' ? "bg-status-success/80" : trip.status === 'upcoming' ? "bg-secondary/80" : "bg-text-muted/80"}
-                  `}>
-                    <Text className="text-white text-[10px] font-jakarta-bold uppercase tracking-wider">
-                      {trip.status}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              
-              <View className="p-5">
-                <Text className="text-text-primary font-jakarta-extrabold text-lg mb-1">{trip.name}</Text>
-                <Text className="text-text-muted font-jakarta-bold text-[11px] mb-4 uppercase tracking-tighter">
-                  {trip.group}
-                </Text>
-                
-                <View className="flex-row items-center justify-between mb-4">
-                  <View className="flex-row items-center">
-                    <Feather name="calendar" size={14} color={Colors.primary} />
-                    <Text className="text-text-secondary font-jakarta-bold text-xs ml-2">{trip.dates}</Text>
-                  </View>
-                  <View className="flex-row items-center">
-                    <Feather name="users" size={14} color={Colors.text.muted} />
-                    <Text className="text-text-muted font-jakarta-bold text-xs ml-2">5 members</Text>
-                  </View>
-                </View>
+          {filteredTrips.map(trip => {
+            const isUpcoming = trip.status === 'upcoming';
+            const isOngoing = trip.status === 'ongoing';
+            const isPast = trip.status === 'past';
+            
+            let statusBg = Colors.neutral.textMuted + 'CC';
+            if (isOngoing) statusBg = Colors.success.checkIcon + 'CC';
+            if (isUpcoming) statusBg = Colors.info.main + 'CC';
 
-                {trip.status !== 'past' && (
-                  <View>
-                    <TripProgressBar 
-                      startDate={trip.startDate} 
-                      endDate={trip.endDate} 
-                      status={trip.status} 
-                    />
-                    <View className="mt-3 flex-row items-center justify-between">
-                      <TripCountdownWidget 
-                        startDate={trip.startDate} 
-                        endDate={trip.endDate} 
-                        status={trip.status as any} 
-                      />
-                      <Text className="text-primary font-jakarta-extrabold text-xs">VIEW DETAILS ›</Text>
+            return (
+              <TouchableOpacity
+                key={trip.id}
+                disabled={isUpcoming}
+                activeOpacity={isUpcoming ? 1 : 0.9}
+                onPress={() => navigation.navigate('Main')}
+                style={[styles.tripCard, Shadows.sm]}
+              >
+                <View style={styles.cardImageContainer}>
+                  <Image source={{ uri: trip.image }} style={styles.cardImg} />
+                  <View style={styles.statusBadgeContainer}>
+                    <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
+                      <Text style={styles.statusBadgeText}>
+                        {trip.status}
+                      </Text>
                     </View>
                   </View>
-                )}
-                {trip.status === 'past' && (
-                  <View className="flex-row items-center justify-between border-t border-border-light pt-4">
-                    <Text className="text-text-muted font-jakarta-bold text-xs">Completed Oct 20, 2023</Text>
-                    <TouchableOpacity className="bg-background-input px-4 py-2 rounded-xl">
-                      <Text className="text-text-primary font-jakarta-bold text-xs">Recap</Text>
-                    </TouchableOpacity>
+                </View>
+                
+                <View style={styles.cardBody}>
+                  <Text style={styles.cardTitle}>{trip.name}</Text>
+                  <Text style={styles.cardGroup}>{trip.group}</Text>
+                  
+                  <View style={styles.metaRow}>
+                    <View style={styles.metaItem}>
+                      <Ionicons name="calendar-outline" size={14} color={Colors.warning.main} />
+                      <Text style={styles.metaText}>{trip.dates}</Text>
+                    </View>
+                    <View style={styles.metaItem}>
+                      <Ionicons name="people-outline" size={14} color={Colors.neutral.textSecondary} />
+                      <Text style={[styles.metaText, { color: Colors.neutral.textSecondary }]}>5 members</Text>
+                    </View>
                   </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
+
+                  {!isPast && (
+                    <View style={styles.progressSection}>
+                      <TripProgressBar 
+                        startDate={trip.startDate} 
+                        endDate={trip.endDate} 
+                        status={trip.status} 
+                      />
+                      <View style={styles.countdownRow}>
+                        <TripCountdownWidget 
+                          startDate={trip.startDate} 
+                          endDate={trip.endDate} 
+                          status={trip.status as any} 
+                        />
+                        {!isUpcoming && (
+                          <Text style={styles.viewDetailsText}>VIEW DETAILS ›</Text>
+                        )}
+                      </View>
+                    </View>
+                  )}
+                  {isPast && (
+                    <View style={styles.pastSection}>
+                      <Text style={styles.pastText}>Completed Oct 20, 2023</Text>
+                      <TouchableOpacity 
+                        style={styles.recapBtn}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.recapBtnText}>Recap</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
           
           {filteredTrips.length === 0 && (
-            <View className="items-center justify-center py-20">
-              <View className="w-20 h-20 bg-background-input rounded-full items-center justify-center mb-4">
-                <Feather name="search" size={40} color={Colors.text.muted} />
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconCircle}>
+                <Ionicons name="search" size={40} color={Colors.neutral.textMuted} />
               </View>
-              <Text className="text-text-primary font-jakarta-bold text-lg mb-1">No trips found</Text>
-              <Text className="text-text-secondary font-jakarta-medium text-sm">Try a different search or filter</Text>
+              <Text style={styles.emptyTitle}>No trips found</Text>
+              <Text style={styles.emptySub}>Try a different search or filter</Text>
             </View>
           )}
         </ScrollView>
@@ -186,8 +202,232 @@ export default function TripsListScreen() {
   );
 }
 
-
-
-
-
-
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.neutral.pageBackground,
+  },
+  safe: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  plusBtn: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  searchContainer: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    marginBottom: 16,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    height: 48,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: Typography.fontSizes.body,
+    fontFamily: Typography.fontFamilies.regular,
+    color: Colors.neutral.textPrimary,
+  },
+  filtersWrapper: {
+    marginBottom: 16,
+  },
+  filtersScrollContent: {
+    paddingHorizontal: Spacing.screenPaddingH,
+  },
+  filterChip: {
+    marginRight: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 0.5,
+  },
+  filterChipActive: {
+    backgroundColor: Colors.primary.main,
+    borderColor: Colors.primary.main,
+  },
+  filterChipInactive: {
+    backgroundColor: '#FFFFFF',
+    borderColor: Colors.neutral.border,
+  },
+  filterText: {
+    fontSize: 13,
+    fontWeight: '600',
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  filterTextActive: {
+    color: '#FFFFFF',
+  },
+  filterTextInactive: {
+    color: Colors.neutral.textSecondary,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    paddingBottom: 100,
+  },
+  tripCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Spacing.cardRadius,
+    marginBottom: 20,
+    overflow: 'hidden',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  cardImageContainer: {
+    height: 140,
+    position: 'relative',
+  },
+  cardImg: {
+    width: '100%',
+    height: '100%',
+  },
+  statusBadgeContainer: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  statusBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  cardBody: {
+    padding: 16,
+  },
+  cardTitle: {
+    fontSize: Typography.fontSizes.cardTitle,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+  },
+  cardGroup: {
+    fontSize: Typography.fontSizes.smallLabel,
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 12,
+    textTransform: 'uppercase',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  metaText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  progressSection: {
+    marginTop: 4,
+  },
+  countdownRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  viewDetailsText: {
+    color: Colors.primary.medium,
+    fontWeight: '700',
+    fontSize: 12,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  pastSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 0.5,
+    borderColor: Colors.neutral.divider,
+    paddingTop: 12,
+    marginTop: 4,
+  },
+  pastText: {
+    fontSize: 12,
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  recapBtn: {
+    backgroundColor: Colors.neutral.pageBackground,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  recapBtnText: {
+    color: Colors.neutral.textPrimary,
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyIconCircle: {
+    width: 80,
+    height: 80,
+    backgroundColor: Colors.neutral.divider,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+  },
+  emptySub: {
+    fontSize: 14,
+    color: Colors.neutral.textSecondary,
+    fontFamily: Typography.fontFamilies.regular,
+  },
+});

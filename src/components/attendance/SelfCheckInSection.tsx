@@ -21,6 +21,7 @@ interface Props {
   initialState?: CheckInState;
   checkedInAt?: string;
   onCheckInSuccess?: () => void;
+  transportType?: "bus" | "flight" | "train" | "cab";
 }
 
 export function SelfCheckInSection({
@@ -30,6 +31,7 @@ export function SelfCheckInSection({
   initialState = "READY",
   checkedInAt,
   onCheckInSuccess,
+  transportType = "bus",
 }: Props) {
   const [state, setState] = useState<CheckInState>(initialState);
   const [timestamp, setTimestamp] = useState<string>(checkedInAt ?? "");
@@ -76,7 +78,7 @@ export function SelfCheckInSection({
 
   if (state === "LOADING")
     return (
-      <ActivityIndicator style={{ paddingVertical: 24 }} color="#0F6E56" />
+      <ActivityIndicator style={{ paddingVertical: 24 }} color="#2B8CEE" />
     );
 
   if (state === "NOT_ASSIGNED") {
@@ -102,6 +104,9 @@ export function SelfCheckInSection({
     state === "CONFIRMED_OFFLINE" ||
     state === "ALREADY_CHECKED"
   ) {
+    const successTitle = transportType === "cab" ? "Pickup Confirmed!" : "Boarding Confirmed!";
+    const checkinTimeLabel = transportType === "cab" ? `Picked up at ${timestamp}` : `Boarded at ${timestamp}`;
+
     return (
       <View
         style={{
@@ -114,9 +119,9 @@ export function SelfCheckInSection({
       >
         <MaterialCommunityIcons name="check-circle" size={64} color="#059669" />
         <Text style={{ color: "#065F46", fontWeight: "600", fontSize: 16 }}>
-          You're checked in!
+          {successTitle}
         </Text>
-        <Text style={{ color: "#0F766E", fontSize: 13 }}>{timestamp}</Text>
+        <Text style={{ color: "#0F766E", fontSize: 13 }}>{checkinTimeLabel}</Text>
         {state === "CONFIRMED_OFFLINE" && (
           <Text style={{ color: "#9CA3AF", fontSize: 12 }}>(syncing...)</Text>
         )}
@@ -124,12 +129,26 @@ export function SelfCheckInSection({
     );
   }
 
+  const getButtonText = () => {
+    switch (transportType) {
+      case "flight":
+        return "Confirm Boarding — Flight";
+      case "train":
+        return "Confirm Boarding — Train";
+      case "cab":
+        return "Confirm Pickup — Cab";
+      case "bus":
+      default:
+        return "Confirm Boarding — Bus";
+    }
+  };
+
   return (
     <TouchableOpacity
       onPress={handleCheckIn}
       disabled={state === "CHECKING_IN"}
       style={{
-        backgroundColor: "#0F6E56",
+        backgroundColor: "#2B8CEE",
         borderRadius: 12,
         height: 56,
         alignItems: "center",
@@ -142,7 +161,7 @@ export function SelfCheckInSection({
         <ActivityIndicator color="#fff" />
       ) : (
         <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
-          Check In
+          {getButtonText()}
         </Text>
       )}
     </TouchableOpacity>

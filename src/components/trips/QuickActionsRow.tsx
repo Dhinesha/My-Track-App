@@ -1,10 +1,11 @@
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useEffect, useState } from 'react';
 import { useTripStore } from '../../store/tripStore';
 import { useAuthStore } from '../../store/authStore';
+import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
 
 interface Props { isSelfCheckedIn: boolean; }
 
@@ -33,40 +34,70 @@ export function QuickActionsRow({ isSelfCheckedIn }: Props) {
 
   const actions = [
     {
-      icon: <MaterialIcons name="check-circle" size={28} color="#10B981" />,
+      icon: <Ionicons name="checkmark-circle" size={28} color={Colors.success.checkIcon} />,
       label: 'Checked In',
-      color: 'bg-[#F0FDF4]',
-      textColor: 'text-[#065F46]',
+      bg: Colors.success.lightBg,
+      textColor: Colors.success.text,
       onPress: () => navigation.navigate('VehicleAttendance'),
     },
     {
-      icon: <MaterialCommunityIcons name="calendar-month" size={28} color="#0EA5E9" />,
+      icon: <Ionicons name="calendar-outline" size={28} color={Colors.info.main} />,
       label: 'View Today',
-      color: 'bg-[#F0F9FF]',
-      textColor: 'text-[#0369A1]',
+      bg: Colors.info.lightBg,
+      textColor: Colors.info.text,
       onPress: () => navigation.navigate('Itinerary', { scrollToToday: true }),
     },
     {
-      icon: <MaterialIcons name="call" size={28} color="#F59E0B" />,
+      icon: <Ionicons name="call-outline" size={28} color={Colors.warning.main} />,
       label: 'Call Driver',
-      color: 'bg-[#FFFBEB]',
-      textColor: 'text-[#92400E]',
+      bg: Colors.warning.lightBg,
+      textColor: Colors.warning.textOnAmber,
       onPress: () => Linking.openURL(`tel:${driverPhone || '+91 9876543210'}`),
     },
   ];
 
   return (
-    <View className="flex-row gap-4 justify-between my-6">
+    <View style={styles.container}>
       {actions.map((a, i) => (
         <TouchableOpacity
-          key={i} onPress={a.onPress}
+          key={i} 
+          onPress={a.onPress}
           activeOpacity={0.8}
-          className={`flex-1 items-center justify-center py-6 rounded-[28px] shadow-sm border border-slate-50 ${a.color}`}
+          style={[styles.card, { backgroundColor: a.bg }, Shadows.sm]}
         >
-          <View className="mb-2">{a.icon}</View>
-          <Text className={`text-[12px] font-jakarta-extrabold ${a.textColor}`}>{a.label}</Text>
+          <View style={styles.iconContainer}>{a.icon}</View>
+          <Text style={[styles.label, { color: a.textColor }]}>{a.label}</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    gap: 12,
+    marginHorizontal: Spacing.screenPaddingH,
+    marginVertical: 16,
+    justifyContent: 'space-between',
+  },
+  card: {
+    flex: 1,
+    height: 90,
+    borderRadius: Spacing.cardRadius,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: Typography.fontFamilies.semibold,
+    textAlign: 'center',
+  },
+});

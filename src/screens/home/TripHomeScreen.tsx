@@ -1,27 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
   ScrollView, 
   TouchableOpacity, 
-  RefreshControl, 
   Image,
   StatusBar,
-  ActivityIndicator,
+  StyleSheet,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
-import { format, differenceInDays, parseISO } from 'date-fns';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-
-import { usePowerSync } from '../../core/powersync-mock';
 import { useAuthStore } from '../../store/authStore';
 import { useTripStore } from '../../store/tripStore';
-import { useSyncStore } from '../../store/syncStore';
-import { Colors } from '../../theme/colors';
+import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
 import { EmergencyFAB } from '../../components/common';
-
 
 export const TripHomeScreen = () => {
   const { user } = useAuthStore();
@@ -30,8 +25,6 @@ export const TripHomeScreen = () => {
   
   const [loading, setLoading] = useState(true);
   const [ongoingTrip, setOngoingTrip] = useState<any>(null);
-
-  const initials = user?.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "DT";
 
   useEffect(() => {
     const trip = {
@@ -46,36 +39,31 @@ export const TripHomeScreen = () => {
     };
     setOngoingTrip(trip);
     
-    // Sync ongoing trip to store so tab navigation works
     if (!activeTripId) {
       setActiveTrip(trip.id, trip.name);
     }
     
     setLoading(false);
-  }, []);
+  }, [activeTripId, setActiveTrip]);
 
   if (loading || !ongoingTrip) return null;
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+    <SafeAreaView style={styles.root} edges={['top']}>
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 bg-white">
-        <Text className="text-2xl font-jakarta-extrabold text-[#0EA5E9]">
-          MyTripGuide
-        </Text>
-        <View className="flex-row items-center gap-4">
-          <TouchableOpacity className="w-10 h-10 items-center justify-center">
-            <Feather name="bell" size={24} color="#1E293B" />
-          </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>MyTripGuide</Text>
+        <View style={styles.headerRight}>
           <TouchableOpacity 
             onPress={() => navigation.navigate('Profile')} 
-            className="w-10 h-10 rounded-full border border-slate-100 overflow-hidden"
+            style={styles.profileBtn}
+            activeOpacity={0.7}
           >
             <Image 
               source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' }} 
-              className="w-full h-full"
+              style={styles.profileImg}
             />
           </TouchableOpacity>
         </View>
@@ -83,20 +71,21 @@ export const TripHomeScreen = () => {
 
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        className="flex-1"
+        contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
       >
         {/* Quick Actions Row */}
-        <View className="flex-row justify-between px-6 py-6 border-b border-slate-50">
+        <View style={styles.quickActionsRow}>
           {[
-            { id: 'itinerary', label: 'Itinerary', icon: 'calendar-month', color: '#0EA5E9' },
-            { id: 'vehicle', label: 'Vehicle', icon: 'bus', color: '#0EA5E9' },
-            { id: 'notifications', label: 'Notifications', icon: 'bell', color: '#64748b', count: 2 },
-            { id: 'emergency', label: 'Emergency', icon: 'alert-decagram', color: '#ef4444' },
+            { id: 'itinerary', label: 'Itinerary', icon: 'calendar-outline', color: Colors.info.main, bg: Colors.info.lightBg },
+            { id: 'vehicle', label: 'Vehicle', icon: 'bus', color: Colors.warning.main, bg: Colors.warning.lightBg },
+            { id: 'notifications', label: 'Notifications', icon: 'notifications', color: Colors.info.main, bg: Colors.info.lightBg, count: 2 },
+            { id: 'emergency', label: 'Emergency', icon: 'warning', color: Colors.info.main, bg: Colors.info.lightBg },
           ].map((action) => (
             <TouchableOpacity 
               key={action.id}
-              className="items-center"
+              style={styles.quickActionItem}
+              activeOpacity={0.75}
               onPress={() => {
                 if (action.id === 'emergency') navigation.navigate('Emergency');
                 else if (action.id === 'itinerary') navigation.navigate('Itinerary', { tripId: ongoingTrip.id, tripName: ongoingTrip.name });
@@ -104,56 +93,56 @@ export const TripHomeScreen = () => {
                 else if (action.id === 'notifications') navigation.navigate('Notifications');
               }}
             >
-              <View className="relative w-14 h-14 bg-white rounded-full items-center justify-center border border-slate-100 shadow-sm mb-2">
-                <MaterialCommunityIcons name={action.icon as any} size={26} color={action.color} />
-                {action.count > 0 && (
-                  <View className="absolute -top-1 -right-1 bg-red-500 min-w-[20px] h-5 rounded-full items-center justify-center border-2 border-white px-1">
-                    <Text className="text-white text-[10px] font-jakarta-bold">{action.count}</Text>
+              <View style={[styles.quickActionIconContainer, { backgroundColor: action.bg }, Shadows.sm]}>
+                <Ionicons name={action.icon as any} size={26} color={action.color} />
+                {action.count !== undefined && action.count > 0 && (
+                  <View style={styles.quickActionBadge}>
+                    <Text style={styles.quickActionBadgeText}>{action.count}</Text>
                   </View>
                 )}
               </View>
-              <Text className="text-slate-500 text-[11px] font-jakarta-bold">{action.label}</Text>
+              <Text style={styles.quickActionLabel}>{action.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Ongoing Trip Hero Card */}
-        <View className="px-6 mt-8">
+        <View style={styles.heroWrapper}>
           <TouchableOpacity 
             activeOpacity={0.9}
             onPress={() => navigation.navigate('TripDetail', { tripId: ongoingTrip.id, tripName: ongoingTrip.name })}
-            className="relative w-full h-64 rounded-[32px] overflow-hidden shadow-2xl shadow-black/20"
+            style={[styles.heroCard, Shadows.md]}
           >
             <Image
               source={{ uri: ongoingTrip.image_url }}
-              className="absolute inset-0 w-full h-full"
+              style={StyleSheet.absoluteFill}
             />
             <LinearGradient
-              colors={['transparent', 'rgba(14, 165, 233, 0.9)']}
-              className="absolute inset-0"
+              colors={['transparent', 'rgba(15, 110, 86, 0.9)']}
+              style={StyleSheet.absoluteFill}
             />
-            <View className="absolute inset-0 p-6 flex-col justify-between">
+            <View style={styles.heroCardContent}>
               <View>
-                <View className="bg-black/30 self-start px-4 py-1.5 rounded-full backdrop-blur-md mb-4">
-                  <Text className="text-white text-[10px] font-jakarta-extrabold tracking-widest">ONGOING</Text>
+                <View style={styles.ongoingBadge}>
+                  <Text style={styles.ongoingBadgeText}>ONGOING</Text>
                 </View>
-                <Text className="text-white text-3xl font-jakarta-extrabold mb-1">
+                <Text style={styles.heroTripTitle}>
                   Kyoto Spring Adventure
                 </Text>
-                <View className="bg-white/20 self-start px-3 py-1 rounded-full backdrop-blur-md mb-6">
-                  <Text className="text-white text-[11px] font-jakarta-bold">Day 9 of 9</Text>
+                <View style={styles.heroDayBadge}>
+                  <Text style={styles.heroDayText}>Day 9 of 9</Text>
                 </View>
-                <View className="h-0.5 bg-white/40 w-full rounded-full" />
+                <View style={styles.heroDivider} />
               </View>
               
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center">
-                  <Text className="text-white font-jakarta-extrabold text-base">Osaka</Text>
-                  <MaterialIcons name="arrow-right-alt" size={24} color="white" style={{ marginHorizontal: 8 }} />
-                  <Text className="text-white font-jakarta-extrabold text-base">Kyoto</Text>
+              <View style={styles.heroFooter}>
+                <View style={styles.cityRow}>
+                  <Text style={styles.cityText}>Osaka</Text>
+                  <Ionicons name="arrow-forward-outline" size={18} color="white" style={{ marginHorizontal: 8 }} />
+                  <Text style={styles.cityText}>Kyoto</Text>
                 </View>
-                <View className="w-8 h-8 rounded-full bg-white/20 items-center justify-center backdrop-blur-md">
-                  <Feather name="arrow-right" size={18} color="white" />
+                <View style={styles.heroArrowBtn}>
+                  <Ionicons name="arrow-forward" size={18} color={Colors.primary.main} />
                 </View>
               </View>
             </View>
@@ -161,80 +150,64 @@ export const TripHomeScreen = () => {
         </View>
 
         {/* Upcoming Trips Section */}
-        <View className="mt-10">
-          <View className="flex-row items-center justify-between mb-6 px-6">
-            <Text className="text-xl font-jakarta-extrabold text-slate-900">Upcoming Trips</Text>
-            <TouchableOpacity>
-              <Text className="text-[#0EA5E9] font-jakarta-bold text-sm">See All ›</Text>
+        <View style={styles.upcomingSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionHeading}>Upcoming Trips</Text>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Text style={styles.seeAllText}>See All ›</Text>
             </TouchableOpacity>
           </View>
           
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={{ 
-              paddingHorizontal: 24, 
-              paddingBottom: 20,
-              flexDirection: 'row'
-            }}
-            style={{ width: '100%' }}
+            contentContainerStyle={styles.upcomingScrollContent}
+            style={styles.upcomingScrollView}
             decelerationRate="fast"
-            snapToInterval={272} // card width (256) + margin (16)
+            snapToInterval={272}
             snapToAlignment="start"
           >
-            <TouchableOpacity 
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('TripDetail', { tripId: 'kyoto-2', tripName: 'Kyoto Spring Adventure' })}
-              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-4"
-            >
+            <View style={[styles.upcomingCard, Shadows.sm]}>
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80' }} 
-                className="w-full h-40"
+                style={styles.upcomingCardImg}
               />
-              <View className="p-4">
-                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Kyoto Spring Adventure</Text>
-                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">12 Oct - 20 Oct 2023</Text>
-                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
-                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
+              <View style={styles.upcomingCardBody}>
+                <Text style={styles.upcomingCardTitle}>Kyoto Spring Adventure</Text>
+                <Text style={styles.upcomingCardDate}>12 Oct - 20 Oct 2023</Text>
+                <View style={styles.upcomingBadge}>
+                  <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity 
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('TripDetail', { tripId: 'goa-1', tripName: 'Goa Beach Party' })}
-              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-4"
-            >
+            <View style={[styles.upcomingCard, Shadows.sm]}>
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80' }} 
-                className="w-full h-40"
+                style={styles.upcomingCardImg}
               />
-              <View className="p-4">
-                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Goa Beach Party</Text>
-                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">15 Dec - 22 Dec 2023</Text>
-                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
-                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
+              <View style={styles.upcomingCardBody}>
+                <Text style={styles.upcomingCardTitle}>Goa Beach Party</Text>
+                <Text style={styles.upcomingCardDate}>15 Dec - 22 Dec 2023</Text>
+                <View style={styles.upcomingBadge}>
+                  <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
             
-            <TouchableOpacity 
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('TripDetail', { tripId: 'paris-1', tripName: 'Paris Getaway' })}
-              className="w-64 bg-white rounded-3xl overflow-hidden border border-slate-50 shadow-lg shadow-black/5 mr-6"
-            >
+            <View style={[styles.upcomingCard, Shadows.sm]}>
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80' }} 
-                className="w-full h-40"
+                style={styles.upcomingCardImg}
               />
-              <View className="p-4">
-                <Text className="text-slate-900 font-jakarta-extrabold text-base mb-1">Paris Getaway</Text>
-                <Text className="text-slate-400 font-jakarta-medium text-[10px] mb-3">05 Jan - 12 Jan 2024</Text>
-                <View className="bg-blue-50 self-start px-3 py-1 rounded-md">
-                  <Text className="text-blue-600 text-[10px] font-jakarta-extrabold tracking-wider">UPCOMING</Text>
+              <View style={styles.upcomingCardBody}>
+                <Text style={styles.upcomingCardTitle}>Paris Getaway</Text>
+                <Text style={styles.upcomingCardDate}>05 Jan - 12 Jan 2024</Text>
+                <View style={styles.upcomingBadge}>
+                  <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
       </ScrollView>
@@ -242,9 +215,268 @@ export const TripHomeScreen = () => {
   );
 };
 
-
-
-
-
-
-
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.neutral.pageBackground,
+  },
+  header: {
+    height: Spacing.headerHeight,
+    backgroundColor: Colors.neutral.headerBg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.border,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.primary.main,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notificationBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E53935',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  profileBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: Colors.neutral.border,
+  },
+  profileImg: {
+    width: '100%',
+    height: '100%',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
+    paddingVertical: 18,
+    backgroundColor: Colors.neutral.cardBackground,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.border,
+  },
+  quickActionItem: {
+    alignItems: 'center',
+    width: '22%',
+  },
+  quickActionIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+    position: 'relative',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  quickActionBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: '#D94040',
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    paddingHorizontal: 2,
+  },
+  quickActionBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 8,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  quickActionLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.neutral.textSecondary,
+    fontFamily: Typography.fontFamilies.semibold,
+    textAlign: 'center',
+  },
+  heroWrapper: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    marginTop: 20,
+  },
+  heroCard: {
+    height: 240,
+    borderRadius: Spacing.cardRadius,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  heroCardContent: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  ongoingBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  ongoingBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    letterSpacing: 1.2,
+  },
+  heroTripTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+  },
+  heroDayBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  heroDayText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  heroDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    width: '100%',
+  },
+  heroFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cityText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  heroArrowBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upcomingSection: {
+    marginTop: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
+    marginBottom: 12,
+  },
+  sectionHeading: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  seeAllText: {
+    color: Colors.primary.medium,
+    fontWeight: '600',
+    fontSize: 14,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  upcomingScrollView: {
+    width: '100%',
+  },
+  upcomingScrollContent: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    paddingBottom: 16,
+  },
+  upcomingCard: {
+    width: 256,
+    backgroundColor: Colors.neutral.cardBackground,
+    borderRadius: Spacing.cardRadius,
+    overflow: 'hidden',
+    marginRight: 16,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  upcomingCardImg: {
+    width: '100%',
+    height: 130,
+  },
+  upcomingCardBody: {
+    padding: 14,
+  },
+  upcomingCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+  },
+  upcomingCardDate: {
+    fontSize: 12,
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.regular,
+    marginBottom: 10,
+  },
+  upcomingBadge: {
+    backgroundColor: Colors.info.lightBg,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  upcomingBadgeText: {
+    color: Colors.info.text,
+    fontSize: 9,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    letterSpacing: 1,
+  },
+});

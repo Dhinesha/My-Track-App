@@ -33,10 +33,10 @@ export function TripMemoriesCard({ tripId, tripName, startDate, endDate, paxId }
       // We'll keep it visible for now, but usually we mark as seen
       // await AsyncStorage.setItem(`memories_seen_${tripId}`, 'true');
 
-      const placesRows = await db.getAll(`SELECT COUNT(*) as cnt FROM itinerary WHERE trip_id=?`, [tripId]);
-      const checkinsRows = await db.getAll(`SELECT COUNT(*) as cnt FROM attendance WHERE pax_id=?`, [paxId]);
-      const hotelsRows = await db.getAll(`SELECT COUNT(DISTINCT hotel_id) as cnt FROM hotel_checkins WHERE pax_id=?`, [paxId]);
-      const notifsRows = await db.getAll(`SELECT COUNT(*) as cnt FROM notifications WHERE trip_id=?`, [tripId]);
+      const placesRows = await db.getAll(`SELECT COUNT(*) as cnt FROM itinerary WHERE trip_id=?`, [tripId]) as any[];
+      const checkinsRows = await db.getAll(`SELECT COUNT(*) as cnt FROM attendance WHERE pax_id=?`, [paxId]) as any[];
+      const hotelsRows = await db.getAll(`SELECT COUNT(DISTINCT hotel_id) as cnt FROM hotel_checkins WHERE pax_id=?`, [paxId]) as any[];
+      const notifsRows = await db.getAll(`SELECT COUNT(*) as cnt FROM notifications WHERE trip_id=?`, [tripId]) as any[];
       
       const days = differenceInDays(parseISO(endDate), parseISO(startDate)) + 1;
 
@@ -52,7 +52,7 @@ export function TripMemoriesCard({ tripId, tripName, startDate, endDate, paxId }
 
   if (!visible || !stats) return null;
 
-  const shareText = `I just completed my ${tripName} with MyTripGuide! 🎉\n${stats.days} days • ${stats.places} places • ${stats.checkins} departures on time 🙏`;
+  const shareText = `I just completed my ${tripName} with MyTripGuide!\n${stats.days} days • ${stats.places} places • ${stats.checkins} departures on time`;
 
   const handleShare = async () => {
     try {
@@ -66,9 +66,9 @@ export function TripMemoriesCard({ tripId, tripName, startDate, endDate, paxId }
     <View className="bg-[#0F766E] rounded-[32px] overflow-hidden shadow-2xl shadow-[#0F766E]/30 mb-8 mt-4">
       <View className="px-6 pt-8 pb-5">
         <View className="w-12 h-12 bg-white/20 rounded-2xl items-center justify-center mb-4">
-          <MaterialCommunityIcons name="party-popper" size={28} color="white" />
+          <MaterialCommunityIcons name="medal-outline" size={28} color="white" />
         </View>
-        <Text className="text-white text-2xl font-jakarta-extrabold leading-tight">Your Journey is Complete! 🎉</Text>
+        <Text className="text-white text-2xl font-jakarta-extrabold leading-tight">Journey Completed</Text>
         <Text className="text-teal-200 font-jakarta-bold text-sm mt-1 uppercase tracking-widest">{tripName}</Text>
       </View>
 
@@ -100,7 +100,7 @@ export function TripMemoriesCard({ tripId, tripName, startDate, endDate, paxId }
         >
           <View className="flex-row items-center gap-2">
             <Feather name="share-2" size={18} color="#0F766E" />
-            <Text className="text-[#0F766E] font-jakarta-extrabold text-[15px]">Share Your Journey 🌟</Text>
+            <Text className="text-[#0F766E] font-jakarta-extrabold text-[15px]">Share Your Journey</Text>
           </View>
         </TouchableOpacity>
         
@@ -114,3 +114,4 @@ export function TripMemoriesCard({ tripId, tripName, startDate, endDate, paxId }
     </View>
   );
 }
+

@@ -51,7 +51,7 @@ export const OngoingTripBanner: React.FC<OngoingTripBannerProps> = ({ trip }) =>
           <View style={styles.bottomSection}>
             <View style={styles.routeContainer}>
               <Text style={styles.routeText}>{trip.from}</Text>
-              <MaterialCommunityIcons name="arrow-right" size={14} color="white" style={{ mx: 4 }} />
+              <MaterialCommunityIcons name="arrow-right" size={14} color="white" style={{ marginHorizontal: 4 }} />
               <Text style={styles.routeText}>{trip.to}</Text>
             </View>
 

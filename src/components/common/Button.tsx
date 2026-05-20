@@ -22,6 +22,7 @@ interface ButtonProps {
   textClassName?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  style?: any;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -36,6 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
   textClassName = "",
   leftIcon,
   rightIcon,
+  style,
 }) => {
   const isDisabled = disabled || loading;
 
@@ -104,6 +106,7 @@ export const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.8}
+      style={style}
       className={`
         flex-row items-center justify-center rounded-xl
         ${getVariantClasses()}
@@ -119,7 +122,7 @@ export const Button: React.FC<ButtonProps> = ({
             variant === "secondary" ||
             variant === "outline" ||
             variant === "ghost"
-              ? "#0F6E56"
+              ? "#2B8CEE"
               : "#FFFFFF"
           }
         />

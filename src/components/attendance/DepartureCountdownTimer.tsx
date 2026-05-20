@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Animated, { useSharedValue, withRepeat, withSequence, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import { differenceInSeconds } from 'date-fns';
 
-interface Props { departureISO: string | null; }
+interface Props {
+  departureISO: string | null;
+  transportType?: "bus" | "flight" | "train" | "cab";
+}
 
-export function DepartureCountdownTimer({ departureISO }: Props) {
+export function DepartureCountdownTimer({ departureISO, transportType = "bus" }: Props) {
   const [secsLeft, setSecsLeft] = useState(0);
   const opacity = useSharedValue(1);
 
@@ -21,16 +24,13 @@ export function DepartureCountdownTimer({ departureISO }: Props) {
   }, [departureISO]);
 
   useEffect(() => {
-    if (secsLeft <= 0 || secsLeft > 1800) { 
-      opacity.value = withTiming(1, { duration: 300 });
-      return; 
-    }
+    if (secsLeft <= 0 || secsLeft > 900) { opacity.value = 1; return; }
     const speed = secsLeft <= 900 ? 400 : 800;
     opacity.value = withRepeat(withSequence(
       withTiming(0.4, { duration: speed }),
       withTiming(1, { duration: speed })
-    ), -1, true);
-  }, [secsLeft]);
+    ), -1);
+  }, [secsLeft <= 900, secsLeft <= 1800]);
 
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
@@ -40,10 +40,66 @@ export function DepartureCountdownTimer({ departureISO }: Props) {
   const secs = Math.abs(secsLeft) % 60;
   const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+  const getDepartedText = () => {
+    switch (transportType) {
+      case "flight":
+        return "Flight has departed — please check details";
+      case "train":
+        return "Train has departed — contact organiser";
+      case "cab":
+        return "Cab has departed — contact driver";
+      case "bus":
+      default:
+        return "Bus has departed — contact your organiser if you are missing";
+    }
+  };
+
+  const getUrgentText = () => {
+    switch (transportType) {
+      case "cab":
+        return "Cab pickup soon — be ready!";
+      case "flight":
+        return "Board now!";
+      case "train":
+        return "Train departs soon — board now!";
+      case "bus":
+      default:
+        return "Board now!";
+    }
+  };
+
+  const getWarningText = () => {
+    switch (transportType) {
+      case "cab":
+        return "Cab pickup soon — hurry up!";
+      case "flight":
+        return "Flight departs soon — hurry to gate!";
+      case "train":
+        return "Train departs soon — hurry up!";
+      case "bus":
+      default:
+        return "Bus departs soon — hurry up!";
+    }
+  };
+
+  const getNormalText = () => {
+    switch (transportType) {
+      case "cab":
+        return "Cab pickup in";
+      case "flight":
+        return "Flight departs in";
+      case "train":
+        return "Train departs in";
+      case "bus":
+      default:
+        return "Bus departs in";
+    }
+  };
+
   if (secsLeft <= 0) {
     return (
-      <View className="bg-gray-50 border border-gray-200 rounded-xl p-4 items-center my-2">
-        <Text className="text-gray-500 text-sm">Bus has departed — contact your organiser if you are missing</Text>
+      <View style={[styles.departedContainer]}>
+        <Text style={[styles.departedText]}>{getDepartedText()}</Text>
       </View>
     );
   }
@@ -51,19 +107,90 @@ export function DepartureCountdownTimer({ departureISO }: Props) {
   const isUrgent = secsLeft <= 900;
   const isWarning = secsLeft <= 1800;
 
+  let containerStyle: any = styles.normalContainer;
+  let textStyle: any = styles.normalText;
+  let labelStyle: any = styles.normalLabel;
+
+  if (isUrgent) {
+    containerStyle = styles.urgentContainer;
+    textStyle = styles.urgentText;
+    labelStyle = styles.urgentLabel;
+  } else if (isWarning) {
+    containerStyle = styles.warningContainer;
+    textStyle = styles.warningText;
+    labelStyle = styles.warningLabel;
+  }
+
   return (
-    <Animated.View style={animStyle}
-      className={`rounded-xl p-4 items-center border my-2
-        ${isUrgent ? 'bg-red-50 border-red-300' : isWarning ? 'bg-amber-50 border-amber-200' : 'bg-green-50 border-green-200'}`}
-    >
-      <Text className={`text-3xl font-bold tracking-wider
-        ${isUrgent ? 'text-red-600' : isWarning ? 'text-amber-600' : 'text-green-600'}`}>
+    <Animated.View style={[animStyle, styles.baseContainer, containerStyle]}>
+      <Text style={[styles.timeText, textStyle]}>
         {isUrgent ? '⚠️ ' : ''}{timeStr}
       </Text>
-      <Text className={`text-xs mt-1 font-medium
-        ${isUrgent ? 'text-red-500' : isWarning ? 'text-amber-500' : 'text-green-500'}`}>
-        {isUrgent ? 'Board now!' : isWarning ? 'Bus departs soon — hurry up!' : 'Bus departs in'}
+      <Text style={[styles.labelSubText, labelStyle]}>
+        {isUrgent ? getUrgentText() : isWarning ? getWarningText() : getNormalText()}
       </Text>
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  departedContainer: {
+    backgroundColor: "#F9FAFB",
+    borderColor: "#E5E7EB",
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+  },
+  departedText: {
+    color: "#6B7280",
+    fontSize: 13,
+    textAlign: "center",
+  },
+  baseContainer: {
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  normalContainer: {
+    backgroundColor: "#ECFDF5",
+    borderColor: "#A7F3D0",
+  },
+  warningContainer: {
+    backgroundColor: "#FFFBEB",
+    borderColor: "#FDE68A",
+  },
+  urgentContainer: {
+    backgroundColor: "#FEF2F2",
+    borderColor: "#FCA5A5",
+  },
+  timeText: {
+    fontSize: 30,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+  },
+  normalText: {
+    color: "#047857",
+  },
+  warningText: {
+    color: "#B45309",
+  },
+  urgentText: {
+    color: "#B91C1C",
+  },
+  labelSubText: {
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: "500",
+  },
+  normalLabel: {
+    color: "#059669",
+  },
+  warningLabel: {
+    color: "#D97706",
+  },
+  urgentLabel: {
+    color: "#EF4444",
+  },
+});

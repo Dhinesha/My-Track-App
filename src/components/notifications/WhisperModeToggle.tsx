@@ -1,6 +1,8 @@
-import { View, Text, TouchableOpacity, ActionSheetIOS, Platform, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ActionSheetIOS, Platform, Alert, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
 
 const QUIET_KEY = 'quiet_mode';
 
@@ -72,20 +74,117 @@ export function WhisperModeToggle() {
   };
 
   return (
-    <TouchableOpacity onPress={showOptions}
-      className="flex-row items-center justify-between bg-white border border-gray-100 rounded-xl px-4 py-3 mx-4 my-2">
-      <View className="gap-0.5">
-        <View className="flex-row items-center gap-2">
-          <Text className="text-sm font-semibold text-gray-800">🔕 Quiet Mode</Text>
-          {active && <View className="bg-purple-100 px-2 py-0.5 rounded-full"><Text className="text-purple-700 text-xs">zzz</Text></View>}
+    <TouchableOpacity 
+      onPress={showOptions}
+      activeOpacity={0.8}
+      style={[styles.container, Shadows.sm]}
+    >
+      <View style={styles.left}>
+        <View style={styles.titleRow}>
+          <Ionicons name="volume-mute-outline" size={18} color={active ? Colors.info.main : Colors.neutral.textSecondary} />
+          <Text style={styles.title}>Quiet Mode</Text>
+          {active && (
+            <View style={styles.activeBadge}>
+              <Text style={styles.activeBadgeText}>zzz</Text>
+            </View>
+          )}
         </View>
-        <Text className="text-xs text-gray-400">
+        <Text style={styles.subtitle}>
           {active ? `Active — ${label}` : 'Silence notifications temporarily'}
         </Text>
       </View>
-      <View className={`w-12 h-6 rounded-full ${active ? 'bg-purple-500' : 'bg-gray-200'} justify-center px-0.5`}>
-        <View className={`w-5 h-5 bg-white rounded-full shadow-sm ${active ? 'self-end' : 'self-start'}`} />
+      <View style={[
+        styles.switchTrack,
+        active ? styles.switchTrackActive : styles.switchTrackInactive
+      ]}>
+        <View style={[
+          styles.switchThumb,
+          active ? styles.switchThumbActive : styles.switchThumbInactive
+        ]} />
       </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+    borderRadius: Spacing.cardRadius,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginHorizontal: Spacing.screenPaddingH,
+    marginTop: 14,
+    marginBottom: 6,
+  },
+  left: {
+    gap: 4,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  activeBadge: {
+    backgroundColor: Colors.info.lightBg,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  activeBadgeText: {
+    color: Colors.info.text,
+    fontSize: 10,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.regular,
+  },
+  switchTrack: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+  },
+  switchTrackActive: {
+    backgroundColor: Colors.info.main,
+  },
+  switchTrackInactive: {
+    backgroundColor: Colors.neutral.divider,
+  },
+  switchThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    ...Platform.select({
+      web: { boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+      },
+    }) as any,
+  },
+  switchThumbActive: {
+    alignSelf: 'flex-end',
+  },
+  switchThumbInactive: {
+    alignSelf: 'flex-start',
+  },
+});

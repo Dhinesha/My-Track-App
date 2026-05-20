@@ -1,6 +1,8 @@
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { format } from "date-fns";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
 
 export type NotifType =
   | "general"
@@ -21,13 +23,38 @@ interface Props {
 
 const TYPE_CONFIG: Record<
   NotifType,
-  { borderColor: string; icon: string; emergency?: boolean }
+  { bg: string; icon: keyof typeof Ionicons.glyphMap; iconColor: string; labelColor: string }
 > = {
-  general: { borderColor: "#D1D5DB", icon: "📢" },
-  urgent: { borderColor: "#FBBF24", icon: "⚠️" },
-  departure: { borderColor: "#22C55E", icon: "🚌" },
-  delay: { borderColor: "#EF4444", icon: "🕐" },
-  emergency: { borderColor: "#DC2626", icon: "🚨", emergency: true },
+  general: { 
+    bg: Colors.info.lightBg, 
+    icon: "notifications-outline", 
+    iconColor: Colors.info.main, 
+    labelColor: Colors.info.text 
+  },
+  urgent: { 
+    bg: Colors.warning.lightBg, 
+    icon: "alert-circle-outline", 
+    iconColor: Colors.warning.main, 
+    labelColor: Colors.warning.textOnAmber 
+  },
+  departure: { 
+    bg: Colors.primary.lightBg, 
+    icon: "bus-outline", 
+    iconColor: Colors.primary.main, 
+    labelColor: Colors.primary.dark 
+  },
+  delay: { 
+    bg: Colors.urgent.lightBg, 
+    icon: "time-outline", 
+    iconColor: Colors.urgent.main, 
+    labelColor: Colors.urgent.main 
+  },
+  emergency: { 
+    bg: Colors.info.lightBg, // Emergency icon is blue per user request!
+    icon: "warning-outline", 
+    iconColor: Colors.info.main, 
+    labelColor: Colors.info.text 
+  },
 };
 
 export function NotificationItem({
@@ -50,25 +77,23 @@ export function NotificationItem({
       activeOpacity={0.8}
       style={[
         styles.container,
-        { borderLeftColor: cfg.borderColor },
-        cfg.emergency ? styles.emergency : styles.normal,
+        { borderLeftColor: cfg.iconColor },
+        Shadows.sm
       ]}
     >
-      {!isRead && !cfg.emergency ? (
-        <View style={styles.unreadDot} />
-      ) : (
-        <View style={styles.spacer} />
-      )}
-      <Text style={styles.icon}>{cfg.icon}</Text>
-      <View style={styles.content}>
-        <Text
-          style={[styles.message, cfg.emergency && styles.emergencyMessage]}
-        >
-          {message}
-        </Text>
-        <Text style={[styles.time, cfg.emergency && styles.emergencyTime]}>
-          {timeLabel}
-        </Text>
+      <View style={styles.headerRow}>
+        <View style={[styles.iconCircle, { backgroundColor: cfg.bg }]}>
+          <Ionicons name={cfg.icon} size={20} color={cfg.iconColor} />
+        </View>
+        <View style={styles.content}>
+          <Text style={[styles.message, !isRead && styles.unreadMessage]}>
+            {message}
+          </Text>
+          <View style={styles.footerRow}>
+            <Text style={styles.time}>{timeLabel}</Text>
+            {!isRead && <View style={styles.unreadDot} />}
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -76,66 +101,55 @@ export function NotificationItem({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    backgroundColor: "#FFFFFF",
+    borderRadius: Spacing.cardRadius,
     padding: 16,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
     borderLeftWidth: 4,
     marginBottom: 12,
   },
-  normal: {
-    backgroundColor: "#FFFFFF",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  iconCircle: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#F1F5F9",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  emergency: {
-    backgroundColor: "#DC2626",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#B91C1C",
-  },
-  unreadDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#2B8CEE",
-    marginTop: 6,
-    marginRight: 12,
-  },
-  spacer: {
-    width: 10,
-    marginRight: 12,
-  },
-  icon: {
-    fontSize: 18,
-    marginRight: 12,
-    marginTop: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     flex: 1,
   },
   message: {
-    color: "#1F2937",
     fontSize: 14,
+    color: Colors.neutral.textSecondary,
+    fontFamily: Typography.fontFamilies.regular,
     lineHeight: 20,
-    fontFamily: "PlusJakartaSans-Medium",
   },
-  emergencyMessage: {
-    color: "#FFFFFF",
-    fontFamily: "PlusJakartaSans-SemiBold",
+  unreadMessage: {
+    fontFamily: Typography.fontFamilies.bold,
+    color: Colors.neutral.textPrimary,
+    fontWeight: "700",
+  },
+  footerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
   },
   time: {
-    marginTop: 6,
-    color: "#94A3B8",
     fontSize: 11,
-    fontFamily: "PlusJakartaSans-Medium",
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.regular,
   },
-  emergencyTime: {
-    color: "#FECACA",
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.primary.main,
   },
 });

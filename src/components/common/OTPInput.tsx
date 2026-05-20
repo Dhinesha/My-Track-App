@@ -65,7 +65,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
       {Array.from({ length }).map((_, index) => (
         <TextInput
           key={index}
-          ref={(ref) => (inputRefs.current[index] = ref as TextInput)}
+          ref={(ref) => { inputRefs.current[index] = ref as TextInput; }}
           className={`
             w-12 h-14 bg-background-input rounded-xl border-2 text-center text-xl font-jakarta-bold text-text-primary
             ${value[index] ? "border-primary bg-white" : "border-border-light"}

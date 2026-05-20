@@ -5,19 +5,19 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
+  StatusBar,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Colors } from "../theme/colors";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
 import {
   MarkAllReadButton,
   NotificationItem,
   WhisperModeToggle,
   type NotifType,
 } from "../components/notifications";
-
 
 const NOTIFICATIONS = [
   {
@@ -59,7 +59,7 @@ const NOTIFICATIONS = [
 ];
 
 export default function NotificationsScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [notifs, setNotifs] = useState(NOTIFICATIONS);
 
   const markAllRead = () => {
@@ -73,33 +73,37 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Area */}
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#64748B" />
-          </TouchableOpacity>
-          <MarkAllReadButton onPress={markAllRead} />
-        </View>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Header Bar */}
+      <View style={styles.headerBar}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.headerBackBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="arrow-back" size={22} color={Colors.neutral.textPrimary} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
+        <MarkAllReadButton onPress={markAllRead} />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
       >
         <WhisperModeToggle />
 
-        {["TODAY", "EARLIER"].map((category) => (
-          <View key={category} style={styles.section}>
-            <Text style={styles.sectionTitle}>{category}</Text>
-            {notifs
-              .filter((n) => n.category === category)
-              .map((n) => (
+        {["TODAY", "EARLIER"].map((category) => {
+          const catNotifs = notifs.filter((n) => n.category === category);
+          if (catNotifs.length === 0) return null;
+          
+          return (
+            <View key={category} style={styles.section}>
+              <Text style={styles.sectionTitle}>{category}</Text>
+              {catNotifs.map((n) => (
                 <NotificationItem
                   key={n.id}
                   id={n.id}
@@ -111,8 +115,9 @@ export default function NotificationsScreen() {
                   onRead={() => handleRead(n.id)}
                 />
               ))}
-          </View>
-        ))}
+            </View>
+          );
+        })}
 
         {/* Catch-up Message */}
         <View style={styles.catchUp}>
@@ -120,22 +125,34 @@ export default function NotificationsScreen() {
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation */}
+      {/* Bottom Nav Mockup */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <MaterialIcons name="luggage" size={24} color="#94A3B8" />
-          <Text style={styles.navText}>My Trips</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Main', { screen: 'My Trips' })} 
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="map-outline" size={22} color={Colors.neutral.textMuted} />
+          <Text style={styles.navLabelInactive}>My Trips</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem}>
-          <View style={styles.activeIndicator} />
-          <MaterialIcons name="dashboard" size={24} color={Colors.primary} />
-          <Text style={[styles.navText, styles.activeNavText]}>Dashboard</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Main', { screen: 'Home' })} 
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <View style={styles.navActiveWrapper}>
+            <Ionicons name="grid" size={22} color={Colors.primary.main} />
+            <View style={styles.navActiveDot} />
+          </View>
+          <Text style={styles.navLabelActive}>Dashboard</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem}>
-          <MaterialIcons name="person" size={24} color="#94A3B8" />
-          <Text style={styles.navText}>Profile</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Main', { screen: 'Profile' })} 
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="person-outline" size={22} color={Colors.neutral.textMuted} />
+          <Text style={styles.navLabelInactive}>Profile</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -145,144 +162,49 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F6F7F8",
+    backgroundColor: Colors.neutral.pageBackground,
   },
-  header: {
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-    zIndex: 10,
+  headerBar: {
+    height: Spacing.headerHeight,
+    backgroundColor: Colors.neutral.headerBg,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
   },
-  headerTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  backButton: {
+  headerBackBtn: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  markReadText: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans-SemiBold",
-    color: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 32,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#0F172A",
-    letterSpacing: -0.5,
+    fontSize: Typography.fontSizes.screenTitle,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 150,
   },
   section: {
-    marginTop: 24,
-    paddingHorizontal: 16,
+    marginTop: 20,
+    paddingHorizontal: Spacing.screenPaddingH,
   },
   sectionTitle: {
-    fontSize: 12,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#64748B",
-    textTransform: "uppercase",
-    letterSpacing: 1,
+    fontSize: Typography.fontSizes.sectionLabel,
+    fontWeight: '700',
+    color: Colors.primary.medium,
+    fontFamily: Typography.fontFamilies.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
     marginBottom: 12,
     marginLeft: 4,
-  },
-  notifItem: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "#F1F5F9",
-  },
-  notifInner: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 16,
-  },
-  iconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconBoxUnread: {
-    backgroundColor: "rgba(43, 140, 238, 0.1)",
-  },
-  iconBoxRead: {
-    backgroundColor: "#F1F5F9",
-  },
-  notifContent: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  notifTitle: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans-SemiBold",
-    color: "#334155",
-    lineHeight: 20,
-  },
-  unreadTitle: {
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#0F172A",
-  },
-  notifBody: {
-    fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
-    color: "#64748B",
-    lineHeight: 18,
-    marginTop: 4,
-  },
-  notifFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 8,
-  },
-  tripBadge: {
-    backgroundColor: "#F1F5F9",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  tripBadgeText: {
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans-Bold",
-    color: "#64748B",
-  },
-  timeText: {
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans-Medium",
-    color: "#94A3B8",
-  },
-  unreadDot: {
-    position: "absolute",
-    right: 0,
-    top: 4,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.primary,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
   },
   catchUp: {
     marginTop: 32,
@@ -291,42 +213,62 @@ const styles = StyleSheet.create({
   },
   catchUpText: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
-    color: "#94A3B8",
+    fontFamily: Typography.fontFamilies.regular,
+    color: Colors.neutral.textMuted,
   },
   bottomNav: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-    backgroundColor: "#FFFFFF",
-    flexDirection: "row",
-    borderTopWidth: 1,
-    borderTopColor: "#F1F5F9",
-    paddingBottom: 20,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 0.5,
+    borderTopColor: Colors.neutral.border,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 64,
+    paddingBottom: Platform.OS === 'ios' ? 12 : 0,
+    ...Platform.select({
+      web: { boxShadow: '0 -4px 12px rgba(0,0,0,0.05)' },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+        elevation: 10,
+      },
+    }) as any,
   },
   navItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
   },
-  activeIndicator: {
-    position: "absolute",
-    top: 0,
-    width: 32,
-    height: 4,
-    backgroundColor: "rgba(43, 140, 238, 0.1)",
-    borderRadius: 2,
+  navActiveWrapper: {
+    position: 'relative',
+    alignItems: 'center',
   },
-  navText: {
+  navActiveDot: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.primary.main,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  navLabelActive: {
     fontSize: 10,
-    fontFamily: "PlusJakartaSans-Medium",
-    color: "#94A3B8",
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    color: Colors.primary.main,
   },
-  activeNavText: {
-    color: "#2B8CEE",
-    fontFamily: "PlusJakartaSans-Bold",
+  navLabelInactive: {
+    fontSize: 10,
+    fontWeight: '500',
+    fontFamily: Typography.fontFamilies.regular,
+    color: Colors.neutral.textMuted,
   },
 });

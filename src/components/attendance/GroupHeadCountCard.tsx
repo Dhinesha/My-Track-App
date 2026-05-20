@@ -17,34 +17,34 @@ export function GroupHeadCountCard() {
   const load = async () => {
     if (!activeTripId || !user?.id) return;
 
-    const paxRows = await db.getAll(`SELECT id FROM pax WHERE user_id=? AND trip_id=?`, [user.id, activeTripId]);
+    const paxRows = await db.getAll(`SELECT id FROM pax WHERE user_id=? AND trip_id=?`, [user.id, activeTripId]) as any[];
     const pax = paxRows[0];
     if (!pax) return;
     
-    const pvRows = await db.getAll(`SELECT vehicle_id FROM pax_vehicles WHERE pax_id=?`, [pax.id]);
+    const pvRows = await db.getAll(`SELECT vehicle_id FROM pax_vehicles WHERE pax_id=?`, [pax.id]) as any[];
     const pv = pvRows[0];
     if (!pv) return;
 
-    const totalRows = await db.getAll(`SELECT COUNT(*) as cnt FROM pax_vehicles WHERE vehicle_id=?`, [pv.vehicle_id]);
+    const totalRows = await db.getAll(`SELECT COUNT(*) as cnt FROM pax_vehicles WHERE vehicle_id=?`, [pv.vehicle_id]) as any[];
     const checkedRows = await db.getAll(
       `SELECT COUNT(*) as cnt FROM attendance a JOIN pax_vehicles pv ON pv.pax_id=a.pax_id WHERE pv.vehicle_id=? AND a.trip_id=?`,
       [pv.vehicle_id, activeTripId]
-    );
+    ) as any[];
     
     setTotal(totalRows[0]?.cnt ?? 0); 
     setChecked(checkedRows[0]?.cnt ?? 0);
 
-    const family = await db.getAll(`SELECT id FROM pax WHERE primary_id=? AND trip_id=?`, [pax.id, activeTripId]);
+    const family = await db.getAll(`SELECT id FROM pax WHERE primary_id=? AND trip_id=?`, [pax.id, activeTripId]) as any[];
     if (family.length > 0) {
         const fc = await db.getAll(
           `SELECT COUNT(*) as cnt FROM attendance WHERE trip_id=? AND pax_id IN (${family.map(() => '?').join(',')})`,
           [activeTripId, ...family.map((f: any) => f.id)]
-        );
+        ) as any[];
         setFamilyTotal(family.length + 1);
         setFamilyChecked((fc[0]?.cnt ?? 0) + 1);
     } else {
         // Just self
-        const sc = await db.getAll(`SELECT COUNT(*) as cnt FROM attendance WHERE trip_id=? AND pax_id=?`, [activeTripId, pax.id]);
+        const sc = await db.getAll(`SELECT COUNT(*) as cnt FROM attendance WHERE trip_id=? AND pax_id=?`, [activeTripId, pax.id]) as any[];
         setFamilyTotal(1);
         setFamilyChecked(sc[0]?.cnt ?? 0);
     }
@@ -67,7 +67,7 @@ export function GroupHeadCountCard() {
       <View className="items-center justify-center">
         <Svg width={110} height={110}>
           <Circle cx={55} cy={55} r={R} stroke="#F3F4F6" strokeWidth={8} fill="none" />
-          <Circle cx={55} cy={55} r={R} stroke="#0F6E56" strokeWidth={8} fill="none"
+          <Circle cx={55} cy={55} r={R} stroke="#2B8CEE" strokeWidth={8} fill="none"
             strokeDasharray={`${C}`} strokeDashoffset={`${C * (1 - pct)}`}
             strokeLinecap="round" transform="rotate(-90 55 55)" />
         </Svg>

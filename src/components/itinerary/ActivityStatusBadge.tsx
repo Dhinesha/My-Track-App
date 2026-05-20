@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 
 interface Props {
   status: 'upcoming' | 'in_progress' | 'delayed' | 'completed';
@@ -24,14 +24,9 @@ export function ActivityStatusBadge({ status, updatedTime }: Props) {
   if (status === 'upcoming') return null;
 
   const cfg = {
-    in_progress: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', label: 'In Progress', dot: 'bg-blue-500' },
-    delayed: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', label: `Delayed · ${updatedTime ?? ''}`, dot: 'bg-red-500' },
-    completed: { bg: 'bg-gray-50 border-gray-200', text: 'text-gray-500', label: 'Completed', dot: 'bg-gray-400' },
-      border: "#E5E7EB",
-      text: "#6B7280",
-      label: "Completed",
-      dot: "#9CA3AF",
-    },
+    in_progress: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', label: 'In Progress', dot: '#3B82F6' },
+    delayed: { bg: '#FEF2F2', border: '#FECACA', text: '#B91C1C', label: `Delayed · ${updatedTime ?? ''}`, dot: '#EF4444' },
+    completed: { bg: '#F9FAFB', border: '#E5E7EB', text: '#6B7280', label: 'Completed', dot: '#9CA3AF' },
   }[status];
 
   return (

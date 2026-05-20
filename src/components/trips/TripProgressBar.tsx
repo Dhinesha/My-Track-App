@@ -16,10 +16,10 @@ export function TripProgressBar({ startDate, endDate, status }: Props) {
   const pct = status === 'completed' ? 100 : Math.round((currentDay / totalDays) * 100);
 
   const getMilestoneLabel = () => {
-    if (status === 'completed') return 'Your trip is successfully completed! 🎉';
-    if (currentDay === 1) return 'Day 1 — Your journey begins!';
-    if (currentDay === totalDays) return `Last day — enjoy every moment 🌅`;
-    if (pct >= 50 && pct < 60) return 'Over halfway through your journey!';
+    if (status === 'completed') return 'Journey successfully completed';
+    if (currentDay === 1) return 'Day 1 — Your journey begins';
+    if (currentDay === totalDays) return `Final day of journey`;
+    if (pct >= 50 && pct < 60) return 'Over halfway through your journey';
     return `Day ${currentDay} of ${totalDays}`;
   };
 

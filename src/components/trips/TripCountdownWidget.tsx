@@ -56,7 +56,7 @@ export function TripCountdownWidget({ startDate, endDate, status }: Props) {
       <View className="flex-row items-center gap-1.5">
         <View className="w-2 h-2 rounded-full bg-[#0EA5E9]" />
         <Text className="text-[11px] font-jakarta-bold text-[#0EA5E9] uppercase tracking-wider">
-          {dayLabel} at {timeStr} — Get ready! 🎒
+          {dayLabel} at {timeStr} — Final Prep
         </Text>
       </View>
     );
@@ -67,11 +67,12 @@ export function TripCountdownWidget({ startDate, endDate, status }: Props) {
       <View className="flex-row items-center gap-1.5">
         <View className="w-2 h-2 rounded-full bg-amber-500" />
         <Text className="text-[11px] font-jakarta-bold text-amber-600 uppercase tracking-wider">
-          {daysLeft} days to go 🚀
+          {daysLeft} days to departure
         </Text>
       </View>
     );
   }
+
 
   return (
     <View className="flex-row items-center gap-1.5">

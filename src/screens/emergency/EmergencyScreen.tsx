@@ -8,36 +8,64 @@ import {
   ScrollView,
   StatusBar,
   Alert,
+  StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { Feather, MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useTripStore } from "../../store/tripStore";
-import { Colors } from "../../theme/colors";
-
+import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
 
 interface Contact {
   label: string;
   name: string;
   phone: string;
-  icon: any;
+  icon: keyof typeof Ionicons.glyphMap;
   color: string;
+  bg: string;
 }
 
 export default function EmergencyScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { activeTripId, activeTripName } = useTripStore();
   
   const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
-    const tripLabel = activeTripName || (activeTripId ? `Trip ${activeTripId}` : "Active Trip");
-    
     setContacts([
-      { label: "Tour Organiser", name: "Suresh Khanna", phone: "+91 98765 00001", icon: 'user', color: '#0D9488' },
-      { label: "Bus Driver", name: "Ramesh Kumar", phone: "+91 98765 00002", icon: 'truck', color: '#2563EB' },
-      { label: "Hotel Helpdesk", name: "The Grand Residency", phone: "+91 98765 00003", icon: 'home', color: '#D97706' },
-      { label: "Family Emergency", name: "Priya Sharma", phone: "+91 98765 00004", icon: 'heart', color: '#DC2626' },
+      { 
+        label: "Tour Organiser", 
+        name: "Suresh Khanna", 
+        phone: "+91 98765 00001", 
+        icon: 'person-outline', 
+        color: Colors.primary.main, 
+        bg: Colors.primary.lightBg 
+      },
+      { 
+        label: "Bus Driver", 
+        name: "Ramesh Kumar", 
+        phone: "+91 98765 00002", 
+        icon: 'bus-outline', 
+        color: Colors.warning.main, 
+        bg: Colors.warning.lightBg 
+      },
+      { 
+        label: "Hotel Helpdesk", 
+        name: "The Grand Residency", 
+        phone: "+91 98765 00003", 
+        icon: 'business-outline', 
+        color: Colors.info.main, 
+        bg: Colors.info.lightBg 
+      },
+      { 
+        label: "Family Emergency", 
+        name: "Priya Sharma", 
+        phone: "+91 98765 00004", 
+        icon: 'heart-outline', 
+        color: Colors.urgent.main, 
+        bg: Colors.urgent.lightBg 
+      },
     ]);
   }, [activeTripId, activeTripName]);
 
@@ -61,99 +89,105 @@ export default function EmergencyScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={styles.root}>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView className="flex-1" edges={["top"]}>
-        {/* Header */}
-        <View className="flex-row items-center justify-between px-6 py-4">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="w-10 h-10 bg-white rounded-full items-center justify-center shadow-sm border border-border-light">
-            <Feather name="arrow-left" size={20} color={Colors.text.primary} />
+      <SafeAreaView style={styles.safe} edges={["top"]}>
+        {/* Header Bar */}
+        <View style={styles.headerBar}>
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()} 
+            style={styles.headerBackBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={22} color={Colors.neutral.textPrimary} />
           </TouchableOpacity>
-          <Text className="text-xl font-jakarta-extrabold text-text-primary">Emergency Help</Text>
-          <View className="w-10" />
+          <Text style={styles.headerTitle}>Emergency Help</Text>
+          <View style={styles.headerRightPlaceholder} />
         </View>
 
         <ScrollView 
-          className="flex-1" 
+          style={styles.scrollView} 
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
+          contentContainerStyle={styles.scrollContent}
         >
-          {/* SOS Section */}
-          <View className="items-center py-8 px-6">
+          {/* SOS Button Section */}
+          <View style={styles.sosSection}>
             <TouchableOpacity 
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               onPress={handleSOS}
-              className="w-48 h-48 rounded-full bg-status-error/10 items-center justify-center border-2 border-status-error/20"
+              style={[styles.sosOuterCircle, Shadows.md]}
             >
-              <View className="w-36 h-36 rounded-full bg-status-error items-center justify-center shadow-2xl shadow-status-error/50">
-                <MaterialCommunityIcons name="alarm-light" size={64} color="#fff" />
-                <Text className="text-white font-jakarta-extrabold text-2xl mt-2">SOS</Text>
+              <View style={[styles.sosInnerCircle, Shadows.md]}>
+                <Ionicons name="alert-circle" size={60} color="#FFFFFF" />
+                <Text style={styles.sosText}>SOS</Text>
               </View>
             </TouchableOpacity>
-            <Text className="text-text-primary font-jakarta-extrabold text-lg mt-6">Emergency Assistance</Text>
-            <Text className="text-text-muted font-jakarta-medium text-center mt-2 px-10">
-              Press and hold the SOS button to notify the trip coordinator immediately.
+            <Text style={styles.sosHeading}>Emergency Assistance</Text>
+            <Text style={styles.sosSub}>
+              Press the SOS button to immediately notify the trip coordinator.
             </Text>
           </View>
 
           {/* Location Sharing Card */}
-          <View className="px-6 mb-8">
+          <View style={styles.section}>
             <TouchableOpacity 
               onPress={shareLocation}
-              className="bg-primary/5 rounded-[32px] p-6 border border-primary/10 flex-row items-center"
+              style={[styles.shareCard, Shadows.sm]}
+              activeOpacity={0.8}
             >
-              <View className="w-14 h-14 bg-primary rounded-2xl items-center justify-center mr-4">
-                <Feather name="map-pin" size={28} color="#fff" />
+              <View style={styles.shareCardLeft}>
+                <View style={styles.shareIconCircle}>
+                  <Ionicons name="location" size={26} color="#FFFFFF" />
+                </View>
+                <View style={styles.shareTextCol}>
+                  <Text style={styles.shareTitle}>Share Location</Text>
+                  <Text style={styles.shareSub}>Send current GPS coordinates</Text>
+                </View>
               </View>
-              <View className="flex-1">
-                <Text className="text-primary font-jakarta-extrabold text-base">Share Location</Text>
-                <Text className="text-primary/60 font-jakarta-bold text-xs">Send current GPS coordinates</Text>
-              </View>
-              <Feather name="share-2" size={20} color={Colors.primary} />
+              <Ionicons name="share-social-outline" size={20} color={Colors.primary.main} />
             </TouchableOpacity>
           </View>
 
           {/* Support Contacts */}
-          <View className="px-6">
-            <Text className="text-lg font-jakarta-bold text-text-primary mb-4">Support Contacts</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Support Contacts</Text>
             {contacts.map((contact, idx) => (
               <View 
                 key={idx} 
-                className="bg-white rounded-[24px] p-4 mb-3 border border-border-light shadow-sm flex-row items-center"
+                style={[styles.contactCard, Shadows.sm]}
               >
-                <View 
-                  style={{ backgroundColor: `${contact.color}15` }}
-                  className="w-12 h-12 rounded-xl items-center justify-center mr-4"
-                >
-                  <Feather name={contact.icon as any} size={22} color={contact.color} />
+                <View style={[styles.contactIconBg, { backgroundColor: contact.bg }]}>
+                  <Ionicons name={contact.icon} size={22} color={contact.color} />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-text-muted font-jakarta-bold text-[10px] uppercase">{contact.label}</Text>
-                  <Text className="text-text-primary font-jakarta-extrabold text-base">{contact.name}</Text>
+                <View style={styles.contactDetails}>
+                  <Text style={styles.contactLabel}>{contact.label}</Text>
+                  <Text style={styles.contactName}>{contact.name}</Text>
                 </View>
                 <TouchableOpacity 
                   onPress={() => handleCall(contact.phone)}
-                  className="w-12 h-12 bg-status-success/10 rounded-full items-center justify-center"
+                  style={styles.callBtn}
+                  activeOpacity={0.7}
                 >
-                  <Feather name="phone" size={20} color={Colors.status.success} />
+                  <Ionicons name="call" size={20} color={Colors.success.text} />
                 </TouchableOpacity>
               </View>
             ))}
           </View>
 
           {/* Local Emergency Numbers */}
-          <View className="mx-6 mt-6 p-6 bg-slate-100 rounded-[32px] border border-slate-200">
-            <Text className="text-slate-500 font-jakarta-extrabold text-[10px] uppercase mb-4 tracking-widest">Local Emergency</Text>
-            <View className="flex-row justify-between mb-4">
-              <Text className="text-slate-800 font-jakarta-bold">Police</Text>
+          <View style={[styles.localCard, Shadows.sm]}>
+            <Text style={styles.localHeading}>Local Emergency</Text>
+            <View style={styles.localRow}>
+              <Text style={styles.localLabel}>Police</Text>
               <TouchableOpacity onPress={() => handleCall("100")}>
-                <Text className="text-primary font-jakarta-extrabold">100</Text>
+                <Text style={styles.localNumber}>100</Text>
               </TouchableOpacity>
             </View>
-            <View className="flex-row justify-between">
-              <Text className="text-slate-800 font-jakarta-bold">Ambulance</Text>
+            <View style={styles.localDivider} />
+            <View style={styles.localRow}>
+              <Text style={styles.localLabel}>Ambulance</Text>
               <TouchableOpacity onPress={() => handleCall("102")}>
-                <Text className="text-primary font-jakarta-extrabold">102</Text>
+                <Text style={styles.localNumber}>102</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -163,7 +197,234 @@ export default function EmergencyScreen() {
   );
 }
 
-
-
-
-
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.neutral.pageBackground,
+  },
+  safe: {
+    flex: 1,
+  },
+  headerBar: {
+    height: Spacing.headerHeight,
+    backgroundColor: Colors.neutral.headerBg,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
+  },
+  headerBackBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: Typography.fontSizes.screenTitle,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  headerRightPlaceholder: {
+    width: 40,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  sosSection: {
+    alignItems: 'center',
+    paddingVertical: 24,
+    paddingHorizontal: Spacing.screenPaddingH,
+  },
+  sosOuterCircle: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: Colors.urgent.lightBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FECACA',
+  },
+  sosInnerCircle: {
+    width: 144,
+    height: 144,
+    borderRadius: 72,
+    backgroundColor: Colors.urgent.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      web: { boxShadow: '0 8px 24px rgba(217,64,64,0.4)' },
+      default: {
+        shadowColor: Colors.urgent.main,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+        elevation: 12,
+      },
+    }) as any,
+  },
+  sosText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    marginTop: 4,
+  },
+  sosHeading: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+    marginTop: 20,
+  },
+  sosSub: {
+    fontSize: 14,
+    color: Colors.neutral.textSecondary,
+    fontFamily: Typography.fontFamilies.regular,
+    textAlign: 'center',
+    paddingHorizontal: 24,
+    marginTop: 6,
+    lineHeight: 20,
+  },
+  section: {
+    paddingHorizontal: Spacing.screenPaddingH,
+    marginTop: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+    marginBottom: 12,
+  },
+  shareCard: {
+    backgroundColor: Colors.info.lightBg,
+    borderColor: '#C5DDF5',
+    borderWidth: 0.5,
+    borderRadius: Spacing.cardRadius,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  shareCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  shareIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: Colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shareTextCol: {
+    flex: 1,
+  },
+  shareTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.primary.main,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  shareSub: {
+    fontSize: 12,
+    color: Colors.primary.medium,
+    fontFamily: Typography.fontFamilies.regular,
+    marginTop: 2,
+  },
+  contactCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Spacing.cardRadius,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  contactIconBg: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  contactDetails: {
+    flex: 1,
+  },
+  contactLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.bold,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  contactName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  callBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.success.lightBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  localCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Spacing.cardRadius,
+    padding: 20,
+    marginHorizontal: Spacing.screenPaddingH,
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  localHeading: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    marginBottom: 16,
+  },
+  localRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  localLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  localNumber: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.primary.main,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  localDivider: {
+    height: 0.5,
+    backgroundColor: Colors.neutral.border,
+    marginVertical: 12,
+  },
+});

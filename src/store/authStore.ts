@@ -7,6 +7,7 @@ interface User {
   name: string;
   mobile: string;
   role: "traveler" | "admin";
+  onboarding_complete?: boolean;
 }
 
 interface AuthStore {

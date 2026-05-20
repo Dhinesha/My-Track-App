@@ -15,48 +15,48 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  SharedValue,
 } from 'react-native-reanimated';
 import { useAuthStore } from '../../store/authStore';
+import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
 
 // Illustrations
 import Slide1Illustration from '../../components/onboarding/Slide1Illustration';
 import Slide2Illustration from '../../components/onboarding/Slide2Illustration';
 import Slide3Illustration from '../../components/onboarding/Slide3Illustration';
 
-const PRIMARY = '#2b8cee';
-const GRAY = '#888';
-const LIGHT_GRAY = '#D3D1C7';
+const LIGHT_GRAY = Colors.neutral.divider;
 
 const SLIDES = [
   {
     id: '1',
     title: 'Your trip, on your phone',
-    subtitle: 'Itinerary, hotel room, and emergency\ncontacts are available offline.',
-    illustrationBg: '#F0FFF8',
+    subtitle: 'Itinerary, hotel room, and emergency contacts are available offline.',
+    illustrationBg: Colors.primary.lightBg,
     Illustration: Slide1Illustration,
   },
   {
     id: '2',
     title: 'Check in with one tap',
-    subtitle: 'Check in yourself and your whole\nfamily from a single screen.',
-    illustrationBg: '#F0F7FF',
+    subtitle: 'Check in yourself and your whole family from a single screen.',
+    illustrationBg: Colors.info.lightBg,
     Illustration: Slide2Illustration,
   },
   {
     id: '3',
     title: 'Get updates instantly',
-    subtitle: 'Your organiser can reach you in\nseconds with important announcements.',
-    illustrationBg: '#FFF9F0',
+    subtitle: 'Your organiser can reach you in seconds with important announcements.',
+    illustrationBg: Colors.warning.lightBg,
     Illustration: Slide3Illustration,
   },
 ];
 
-const Dot = ({ index, currentIndex }: { index: number; currentIndex: Animated.SharedValue<number> }) => {
+const Dot = ({ index, currentIndex }: { index: number; currentIndex: SharedValue<number> }) => {
   const animatedStyle = useAnimatedStyle(() => {
     const isActive = Math.round(currentIndex.value) === index;
     return {
       width: withTiming(isActive ? 24 : 8, { duration: 300 }),
-      backgroundColor: isActive ? PRIMARY : LIGHT_GRAY,
+      backgroundColor: isActive ? Colors.primary.main : LIGHT_GRAY,
     };
   });
 
@@ -112,14 +112,14 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      {/* 1. Skip Button */}
+      {/* Skip Button */}
       <View style={styles.topRow}>
-        <TouchableOpacity onPress={complete} style={styles.skipBtn}>
+        <TouchableOpacity onPress={complete} style={styles.skipBtn} activeOpacity={0.7}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 2. FlatList for Slides */}
+      {/* FlatList for Slides */}
       <View style={styles.listContainer} onLayout={onLayout}>
         <FlatList
           ref={listRef}
@@ -167,6 +167,7 @@ export default function OnboardingScreen() {
           onPress={handleNext}
           style={({ pressed }) => [
             styles.nextBtn,
+            Shadows.md,
             { transform: [{ scale: pressed ? 0.98 : 1 }] }
           ]}
         >
@@ -182,19 +183,21 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
   topRow: {
     alignItems: 'flex-end',
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.screenPaddingH,
   },
   skipBtn: {
-    padding: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   skipText: {
-    color: '#999',
-    fontSize: 16,
-    fontWeight: '500',
+    color: Colors.neutral.textMuted,
+    fontSize: 15,
+    fontWeight: '600',
+    fontFamily: Typography.fontFamilies.semibold,
   },
   listContainer: {
     flex: 1,
@@ -205,54 +208,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   illustrationBox: {
-    width: 300,
-    height: 300,
-    borderRadius: 52,
+    width: 280,
+    height: 280,
+    borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 40,
     overflow: 'hidden',
   },
   textBox: {
-    paddingHorizontal: 32,
+    paddingHorizontal: 36,
     alignItems: 'center',
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#111',
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
     textAlign: 'center',
-    lineHeight: 36,
+    lineHeight: 32,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 14,
+    color: Colors.neutral.textSecondary,
+    fontFamily: Typography.fontFamilies.regular,
     textAlign: 'center',
     marginTop: 12,
-    lineHeight: 24,
+    lineHeight: 22,
   },
   bottomArea: {
-    paddingHorizontal: 24,
-    paddingBottom: 48,
+    paddingHorizontal: Spacing.screenPaddingH,
+    paddingBottom: 40,
     alignItems: 'center',
   },
   dotsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
   },
   nextBtn: {
-    backgroundColor: PRIMARY,
+    backgroundColor: Colors.primary.main,
     width: '100%',
-    height: 60,
-    borderRadius: 18,
+    height: 52,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
   nextBtnText: {
-    color: '#fff',
-    fontSize: 18,
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
   },
 });

@@ -6,16 +6,15 @@ import {
   Linking,
   ScrollView,
   StyleSheet,
-  Dimensions,
+  StatusBar,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Colors } from "../../theme/colors";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from "expo-linear-gradient";
-
-const { width } = Dimensions.get("window");
 
 interface Contact {
   label: string;
@@ -24,7 +23,7 @@ interface Contact {
 }
 
 export default function UrgentEmergencyScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [personalContacts, setPersonalContacts] = useState<Contact[]>([]);
 
   useFocusEffect(
@@ -53,60 +52,81 @@ export default function UrgentEmergencyScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['#EF4444', '#B91C1C']}
+        colors={[Colors.urgent.main, '#A61C1C']}
         style={styles.alertHeader}
       >
         <View style={styles.headerTop}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <MaterialIcons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Urgent Caller</Text>
-          <View style={styles.backButton} />
+          <View style={styles.backButtonPlaceholder} />
         </View>
         <View style={styles.alertIconWrap}>
-          <MaterialCommunityIcons name="phone-alert" size={48} color="#FFFFFF" />
+          <Ionicons name="call" size={44} color="#FFFFFF" />
           <Text style={styles.alertMainText}>EMERGENCY CALL</Text>
           <Text style={styles.alertSubText}>Immediate assistance for urgent situations</Text>
         </View>
       </LinearGradient>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
+      >
         <Text style={styles.sectionLabel}>SEQUENTIAL EMERGENCY CONTACTS</Text>
         <View style={styles.urgentList}>
-          {personalContacts.map((contact, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.urgentCallCard, idx === 0 ? styles.primaryCard : styles.secondaryCard]}
-              onPress={() => handleCall(contact.phone)}
-              activeOpacity={0.9}
-            >
-              <View style={styles.cardHeader}>
-                <View style={[styles.urgentIconCircle, idx === 0 ? styles.primaryIconBg : styles.secondaryIconBg]}>
-                  <MaterialIcons 
-                    name={idx === 0 ? "emergency-share" : "contact-phone"} 
-                    size={28} 
-                    color="#FFFFFF" 
-                  />
+          {personalContacts.map((contact, idx) => {
+            const isPrimary = idx === 0;
+            return (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.urgentCallCard, 
+                  isPrimary ? styles.primaryCard : styles.secondaryCard,
+                  Shadows.sm
+                ]}
+                onPress={() => handleCall(contact.phone)}
+                activeOpacity={0.9}
+              >
+                <View style={styles.cardHeader}>
+                  <View style={[
+                    styles.urgentIconCircle, 
+                    isPrimary ? styles.primaryIconBg : styles.secondaryIconBg
+                  ]}>
+                    <Ionicons 
+                      name={isPrimary ? "shield-checkmark" : "person"} 
+                      size={24} 
+                      color="#FFFFFF" 
+                    />
+                  </View>
+                  <View style={styles.cardInfo}>
+                    <Text style={[
+                      styles.urgentLabel, 
+                      isPrimary ? styles.primaryLabel : styles.secondaryLabel
+                    ]}>
+                      {isPrimary ? "PRIMARY CONTACT (CALL FIRST)" : "SECONDARY CONTACT"}
+                    </Text>
+                    <Text style={styles.urgentName}>{contact.name}</Text>
+                  </View>
                 </View>
-                <View style={styles.cardInfo}>
-                  <Text style={[styles.urgentLabel, idx === 0 ? styles.primaryLabel : styles.secondaryLabel]}>
-                    {idx === 0 ? "PRIMARY CONTACT (CALL FIRST)" : "SECONDARY CONTACT"}
-                  </Text>
-                  <Text style={styles.urgentName}>{contact.name}</Text>
-                </View>
-              </View>
 
-              <View style={[styles.callActionBtn, idx === 0 ? styles.primaryCallBtn : styles.secondaryCallBtn]}>
-                <MaterialIcons name="call" size={24} color="#FFFFFF" />
-                <Text style={styles.callNowText}>CALL {contact.phone}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+                <View style={[
+                  styles.callActionBtn, 
+                  isPrimary ? styles.primaryCallBtn : styles.secondaryCallBtn
+                ]}>
+                  <Ionicons name="call" size={20} color="#FFFFFF" />
+                  <Text style={styles.callNowText}>CALL {contact.phone}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <View style={styles.infoBox}>
-          <MaterialIcons name="info-outline" size={20} color="#64748B" />
+          <Ionicons name="information-circle-outline" size={20} color={Colors.neutral.textMuted} />
           <Text style={styles.infoText}>
             These contacts are managed in your profile. Ensure they are up to date for your safety during trips.
           </Text>
@@ -117,74 +137,163 @@ export default function UrgentEmergencyScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8FAFC" },
+  container: { 
+    flex: 1, 
+    backgroundColor: Colors.neutral.pageBackground,
+  },
+  scrollView: {
+    flex: 1,
+  },
   alertHeader: {
-    paddingBottom: 30,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    paddingBottom: 24,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
   headerTop: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: Spacing.screenPaddingH,
+    height: Spacing.headerHeight,
   },
-  backButton: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
-  headerTitle: { color: "#FFFFFF", fontSize: 18, fontFamily: "PlusJakartaSans-Bold" },
-  alertIconWrap: { alignItems: "center", marginTop: 10 },
-  alertMainText: { color: "#FFFFFF", fontSize: 22, fontFamily: "PlusJakartaSans-ExtraBold", marginTop: 12, letterSpacing: 1 },
-  alertSubText: { color: "rgba(255,255,255,0.8)", fontSize: 14, fontFamily: "PlusJakartaSans-Medium", marginTop: 4 },
-  scrollContent: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40 },
-  sectionLabel: { fontSize: 11, fontFamily: "PlusJakartaSans-Bold", color: "#94A3B8", letterSpacing: 1, marginBottom: 20, textAlign: 'center' },
-  urgentList: { gap: 16 },
+  backButton: { 
+    width: 40, 
+    height: 40, 
+    alignItems: "center", 
+    justifyContent: "center",
+  },
+  backButtonPlaceholder: {
+    width: 40,
+  },
+  headerTitle: { 
+    color: "#FFFFFF", 
+    fontSize: Typography.fontSizes.screenTitle, 
+    fontFamily: Typography.fontFamilies.semibold,
+    fontWeight: "600",
+  },
+  alertIconWrap: { 
+    alignItems: "center", 
+    marginTop: 10,
+  },
+  alertMainText: { 
+    color: "#FFFFFF", 
+    fontSize: 22, 
+    fontFamily: Typography.fontFamilies.bold, 
+    fontWeight: "700",
+    marginTop: 10, 
+    letterSpacing: 1,
+  },
+  alertSubText: { 
+    color: "rgba(255,255,255,0.85)", 
+    fontSize: 13, 
+    fontFamily: Typography.fontFamilies.regular, 
+    marginTop: 4,
+  },
+  scrollContent: { 
+    paddingHorizontal: Spacing.screenPaddingH, 
+    paddingTop: 24, 
+    paddingBottom: 40,
+  },
+  sectionLabel: { 
+    fontSize: 10, 
+    fontFamily: Typography.fontFamilies.bold, 
+    fontWeight: "700",
+    color: Colors.neutral.textMuted, 
+    letterSpacing: 1.2, 
+    marginBottom: 16, 
+    textAlign: 'center',
+  },
+  urgentList: { 
+    gap: 16,
+  },
   urgentCallCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 20,
-    width: '100%',
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    borderRadius: Spacing.cardRadius,
+    padding: 16,
+    borderWidth: 0.5,
   },
-  primaryCard: { borderColor: "#FEE2E2", backgroundColor: "#FFF5F5" },
-  secondaryCard: { borderColor: "#E2E8F0" },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 20 },
+  primaryCard: { 
+    borderColor: '#FECACA', 
+    backgroundColor: Colors.urgent.lightBg,
+  },
+  secondaryCard: { 
+    borderColor: Colors.neutral.border,
+  },
+  cardHeader: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 12, 
+    marginBottom: 16,
+  },
   urgentIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryIconBg: { backgroundColor: "#EF4444" },
-  secondaryIconBg: { backgroundColor: "#64748B" },
-  cardInfo: { flex: 1 },
-  urgentLabel: { fontSize: 10, fontFamily: "PlusJakartaSans-Bold", marginBottom: 4 },
-  primaryLabel: { color: "#EF4444" },
-  secondaryLabel: { color: "#64748B" },
-  urgentName: { fontSize: 18, fontFamily: "PlusJakartaSans-Bold", color: "#1E293B" },
+  primaryIconBg: { 
+    backgroundColor: Colors.urgent.main,
+  },
+  secondaryIconBg: { 
+    backgroundColor: Colors.neutral.textSecondary,
+  },
+  cardInfo: { 
+    flex: 1,
+  },
+  urgentLabel: { 
+    fontSize: 9, 
+    fontFamily: Typography.fontFamilies.bold, 
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  primaryLabel: { 
+    color: Colors.urgent.main,
+  },
+  secondaryLabel: { 
+    color: Colors.neutral.textSecondary,
+  },
+  urgentName: { 
+    fontSize: 16, 
+    fontFamily: Typography.fontFamilies.bold, 
+    fontWeight: "700",
+    color: Colors.neutral.textPrimary,
+  },
   callActionBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    paddingVertical: 16,
-    borderRadius: 16,
+    gap: 8,
+    height: 48,
+    borderRadius: 12,
   },
-  primaryCallBtn: { backgroundColor: "#EF4444" },
-  secondaryCallBtn: { backgroundColor: "#1E293B" },
-  callNowText: { color: "#FFFFFF", fontSize: 16, fontFamily: "PlusJakartaSans-ExtraBold" },
+  primaryCallBtn: { 
+    backgroundColor: Colors.urgent.main,
+  },
+  secondaryCallBtn: { 
+    backgroundColor: Colors.neutral.textPrimary,
+  },
+  callNowText: { 
+    color: "#FFFFFF", 
+    fontSize: 14, 
+    fontFamily: Typography.fontFamilies.bold,
+    fontWeight: "700",
+  },
   infoBox: {
-    marginTop: 40,
+    marginTop: 32,
     flexDirection: "row",
-    gap: 12,
-    backgroundColor: "#F1F5F9",
-    padding: 16,
-    borderRadius: 16,
+    gap: 10,
+    backgroundColor: Colors.neutral.pageBackground,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+    padding: 14,
+    borderRadius: 12,
   },
-  infoText: { flex: 1, fontSize: 12, color: "#64748B", lineHeight: 18, fontFamily: "PlusJakartaSans-Medium" },
+  infoText: { 
+    flex: 1, 
+    fontSize: 12, 
+    color: Colors.neutral.textSecondary, 
+    lineHeight: 18, 
+    fontFamily: Typography.fontFamilies.regular,
+  },
 });

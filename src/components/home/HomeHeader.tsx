@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#0F6E56',
+    color: '#2B8CEE',
     letterSpacing: -0.5,
   },
   rightSection: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#0F6E56',
+    backgroundColor: '#2B8CEE',
     alignItems: 'center',
     justifyContent: 'center',
   },

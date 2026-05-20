@@ -36,7 +36,7 @@ export const QuickShortcutRow: React.FC<{ unreadNotifCount?: number }> = ({ unre
               <MaterialCommunityIcons 
                 name={item.icon as any} 
                 size={22} 
-                color={item.isImportant ? '#FFFFFF' : '#0F6E56'} 
+                color={item.isImportant ? '#FFFFFF' : '#2B8CEE'} 
               />
               {item.label === 'Notifications' && (
                 <View style={styles.badge}>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   importantCircle: {
-    backgroundColor: '#EF4444',
+    backgroundColor: '#0EA5E9',
   },
   badge: {
     position: 'absolute',

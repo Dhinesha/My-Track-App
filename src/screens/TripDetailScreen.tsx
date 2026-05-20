@@ -6,19 +6,21 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MaterialCommunityIcons, MaterialIcons, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RootStackParamList } from "../../App";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
 
 import {
   QuickActionsRow,
   TripProgressBar,
-  TripCountdownWidget,
   WhatsHappeningNowCard,
   TodaySummaryCard,
   SmartCheckInBanner,
@@ -49,50 +51,49 @@ export default function TripDetailScreen() {
       id: "itinerary",
       label: "Itinerary",
       sub: "View today's plan",
-      icon: "calendar-clock",
-      color: "#3B82F6",
+      icon: "calendar-outline",
+      color: Colors.info.main,
       onPress: () => navigation.navigate("Itinerary", { tripId, tripName }),
     },
     {
       id: "vehicle",
       label: "Vehicle",
       sub: "Bus #2 - 12/15 here",
-      icon: "bus",
-      color: "#F59E0B",
+      icon: "bus-outline",
+      color: Colors.warning.main,
       onPress: () => navigation.navigate("VehicleAttendance", { tripId }),
     },
     {
       id: "family",
       label: "Family",
       sub: "Manage Group",
-      icon: "account-group",
-      color: "#10B981",
+      icon: "people-outline",
+      color: Colors.success.checkIcon,
       onPress: () => navigation.navigate("FamilyMembers", { tripId }),
     },
     {
       id: "hotel",
       label: "Hotel Details",
       sub: "Hotel Granvia",
-      icon: "office-building",
-      color: "#8B5CF6",
+      icon: "business-outline",
+      color: Colors.info.text,
       onPress: () => navigation.navigate("Hotel", { tripId }),
     },
     {
       id: "notifications",
       label: "Notifications",
       sub: "2 New",
-      icon: "bell",
-      color: "#EF4444",
+      icon: "notifications-outline",
+      color: Colors.info.main,
       badge: 2,
       onPress: () => navigation.navigate("Notifications"),
     },
-
     {
       id: "feedback",
       label: "Feedback",
       sub: "Rate your trip",
-      icon: "star",
-      color: "#F59E0B",
+      icon: "star-outline",
+      color: Colors.warning.main,
       onPress: () =>
         navigation.navigate("Feedback", {
           tripId,
@@ -104,177 +105,481 @@ export default function TripDetailScreen() {
       id: "packing",
       label: "Packing List",
       sub: "Get ready for travel",
-      icon: "briefcase-check",
-      color: "#0D9488",
+      icon: "briefcase-outline",
+      color: Colors.primary.medium,
       onPress: () => navigation.navigate("PackingChecklist", { 
         tripId, 
         tripName, 
         tripType: "family" 
       }),
     },
-    {
-      id: "budget",
-      label: "Budget",
-      sub: "Track your spendings",
-      icon: "currency-inr",
-      color: "#10B981",
-      onPress: () => navigation.navigate("BudgetTracker", { 
-        tripId, 
-        totalDays: 5 
-      }),
-    },
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView style={styles.root} edges={["top"]}>
       <StatusBar barStyle="dark-content" />
       
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 bg-white">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="w-10 h-10 items-center justify-center">
-          <Feather name="arrow-left" size={24} color="#1E293B" />
+      {/* Header Bar */}
+      <View style={styles.headerBar}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()} 
+          style={styles.headerBackBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="arrow-back" size={22} color={Colors.neutral.textPrimary} />
         </TouchableOpacity>
-        <Text className="text-xl font-jakarta-bold text-[#1E293B]">Trip Dashboard</Text>
-        <View className="w-10" />
+        <Text style={styles.headerTitle}>Trip Dashboard</Text>
+        <View style={styles.headerRightPlaceholder} />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        className="flex-1 px-6"
+        contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
       >
-        {/* Hero Section */}
-        <View className="mt-4 rounded-[32px] overflow-hidden shadow-2xl shadow-black/20 h-72">
+        {/* Hero Section (Edge to Edge) */}
+        <View style={styles.heroContainer}>
           <Image
             source={{
               uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuAF3zCS6btqNZMelf0lJdzX-H_fJ9p6fdz5_CS7se8XKtsDOlN7JfSb7tD-o_X9RCgeWMHN48QmoY3DcAzd3u01NIffCACoUdjhjWpxJkjVNMkXRaewwYmdMVEZi1K8gDmp52Z9Au96Li8xUYqHT_7-2Jw9EQqOLjpnBNHOdU3voC2IPBPdu3gNb475ulRAXJ-WHy7Po4Kzptiqz_FgwBdYdfOV_qt4wdtFsW4YzBr59LP0K3-wo7U7NPD48IxJ04iEp0ZetTbg8fM",
             }}
-            className="absolute inset-0 w-full h-full"
+            style={StyleSheet.absoluteFill}
           />
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.8)"]}
-            className="absolute inset-0"
+            colors={["transparent", "rgba(0,0,0,0.65)"]}
+            style={StyleSheet.absoluteFill}
           />
-          <View className="absolute inset-0 p-6 flex-col justify-end">
-            <View className="flex-row items-center mb-3">
-              <View className="bg-white/90 px-3 py-1.5 rounded-full mr-2 shadow-sm">
-                <TripCountdownWidget 
-                  startDate="2023-10-12" 
-                  endDate="2023-10-20" 
-                  status="ongoing" 
-                />
+          
+          <View style={styles.heroContent}>
+            {/* Top Row: Pill and Underway text */}
+            <View style={styles.heroTopRow}>
+              <View style={styles.heroPill}>
+                <Text style={styles.heroPillText}>Day 2 of 9</Text>
+              </View>
+              <View style={styles.underwayContainer}>
+                <View style={styles.underwayDot} />
+                <Text style={styles.underwayText}>Underway</Text>
               </View>
             </View>
-            <Text className="text-white text-3xl font-jakarta-extrabold mb-1">Family Kyoto Retreat</Text>
-            <View className="flex-row items-center mb-6">
-              <MaterialIcons name="location-on" size={16} color="white" />
-              <Text className="text-white/90 font-jakarta-medium text-sm ml-1">Kyoto, Japan</Text>
+
+            {/* Trip Name */}
+            <Text style={styles.heroTripName}>Family Kyoto Retreat</Text>
+            
+            {/* Location Row */}
+            <View style={styles.heroLocationRow}>
+              <Ionicons name="location" size={18} color="#FFFFFF" />
+              <Text style={styles.heroLocationText}>Kyoto, Japan</Text>
             </View>
             
-            <View className="mb-2">
-              <TripProgressBar
-                startDate="2023-10-12"
-                endDate="2023-10-20"
-                status="ongoing"
-              />
-              <Text className="text-white/60 text-[10px] font-jakarta-bold mt-2 uppercase tracking-widest">Day 2 of 9</Text>
+            {/* Progress Bar & Track */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBarTrack}>
+                <View style={[styles.progressBarFill, { width: "22%" }]} />
+              </View>
+              <Text style={styles.progressLabel}>Day 2 of 9</Text>
             </View>
           </View>
         </View>
 
-        {/* Dynamic Banners */}
-        <View className="mt-6 gap-4">
-          <TripMemoriesCard 
-            tripId={tripId} 
-            tripName={tripName} 
-            startDate="2023-10-12" 
-            endDate="2023-10-20" 
-            paxId="demo-pax-1" 
-          />
-          <SmartCheckInBanner />
-          <InTripWeatherWidget />
-          <WhatsHappeningNowCard />
-          <TodaySummaryCard />
+        {/* Content wrapper for screen padding */}
+        <View style={styles.paddedContent}>
+          {/* Dynamic Banners */}
+          <View style={styles.bannerContainer}>
+            <TripMemoriesCard 
+              tripId={tripId} 
+              tripName={tripName} 
+              startDate="2023-10-12" 
+              endDate="2023-10-20" 
+              paxId="demo-pax-1" 
+            />
+            <SmartCheckInBanner />
+            <InTripWeatherWidget />
+            <WhatsHappeningNowCard />
+            <TodaySummaryCard />
+          </View>
         </View>
 
-        {/* Quick Actions */}
+        {/* Quick Actions Row */}
         <QuickActionsRow isSelfCheckedIn={isSelfCheckedIn} />
 
-        {/* Self Check-In Section */}
-        <View className="mt-8 mb-6">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-xl font-jakarta-extrabold text-slate-900">Self Check-In</Text>
-            {isSelfCheckedIn && (
-              <View className="bg-emerald-50 px-3 py-1 rounded-full flex-row items-center border border-emerald-100">
-                <MaterialIcons name="check-circle" size={12} color="#10B981" />
-                <Text className="text-[#10B981] text-[10px] font-jakarta-bold ml-1 uppercase">Completed</Text>
-              </View>
-            )}
-          </View>
-          
-          <TouchableOpacity 
-            activeOpacity={0.8}
-            className={`w-full py-5 rounded-[24px] items-center justify-center shadow-lg ${isSelfCheckedIn ? 'bg-slate-100' : 'bg-[#0F6E56]'}`}
-            onPress={async () => {
-              if (!isSelfCheckedIn) {
-                await AsyncStorage.setItem(`checkin_${tripId}`, 'true');
-                setIsSelfCheckedIn(true);
-              }
-            }}
-          >
-            <Text className={`text-lg font-jakarta-bold ${isSelfCheckedIn ? 'text-slate-400' : 'text-white'}`}>
-              {isSelfCheckedIn ? 'Already Checked In' : 'Check In'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Status Section */}
-        <View className="mb-8">
-          <View className="bg-[#EFF6FF] self-start px-4 py-2 rounded-full mb-4 border border-blue-100">
-            <Text className="text-[#3B82F6] text-xs font-jakarta-bold">Day 1 of 8 — Wednesday 13 May</Text>
-          </View>
-          
-          <View className="flex-row gap-3">
-            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
-              <Text className="text-[#92400E] text-xs font-jakarta-bold">My Check-in</Text>
+        <View style={styles.paddedContent}>
+          {/* Self Check-In Section */}
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionHeading}>Self Check-In</Text>
+              {isSelfCheckedIn && (
+                <View style={styles.completedBadge}>
+                  <Ionicons name="checkmark-circle" size={12} color={Colors.success.checkIcon} />
+                  <Text style={styles.completedBadgeText}>Completed</Text>
+                </View>
+              )}
             </View>
-            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
-              <Text className="text-[#92400E] text-xs font-jakarta-bold">Family 2/4</Text>
-            </View>
-            <View className="bg-[#FFFBEB] px-4 py-2 rounded-full border border-amber-100 flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
-              <Text className="text-[#92400E] text-xs font-jakarta-bold">Hotel</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Menu Grid */}
-        <View className="flex-row flex-wrap justify-between">
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
+            
+            <TouchableOpacity 
               activeOpacity={0.8}
-              onPress={item.onPress}
-              className="w-[47%] bg-white rounded-[32px] p-6 mb-5 border border-slate-50 shadow-xl shadow-black/5 items-center"
+              style={[
+                styles.primaryButton,
+                isSelfCheckedIn ? styles.disabledButton : styles.activeButton
+              ]}
+              onPress={async () => {
+                if (!isSelfCheckedIn) {
+                  await AsyncStorage.setItem(`checkin_${tripId}`, 'true');
+                  setIsSelfCheckedIn(true);
+                }
+              }}
             >
-              <View className="w-16 h-16 rounded-full items-center justify-center mb-4 relative" style={{ backgroundColor: item.color + '10' }}>
-                <MaterialCommunityIcons name={item.icon as any} size={30} color={item.color} />
-                {item.badge && (
-                  <View className="absolute top-0 right-0 bg-red-500 w-5 h-5 rounded-full items-center justify-center border-2 border-white">
-                    <Text className="text-white text-[8px] font-jakarta-bold">{item.badge}</Text>
-                  </View>
-                )}
-              </View>
-              <Text className="text-slate-900 font-jakarta-extrabold text-[15px] mb-1">{item.label}</Text>
-              <Text className="text-slate-400 font-jakarta-medium text-[11px] text-center">{item.sub}</Text>
+              <Text style={[
+                styles.primaryButtonText,
+                isSelfCheckedIn ? styles.disabledButtonText : styles.activeButtonText
+              ]}>
+                {isSelfCheckedIn ? 'Already Checked In' : 'Check In'}
+              </Text>
             </TouchableOpacity>
-          ))}
+          </View>
+
+          {/* Status Section */}
+          <View style={styles.statusContainer}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusBadgeText}>Day 1 of 8 — Wednesday 13 May</Text>
+            </View>
+            
+            <View style={styles.statusPillsRow}>
+              <View style={styles.statusPill}>
+                <View style={styles.statusPillDot} />
+                <Text style={styles.statusPillText}>My Check-in</Text>
+              </View>
+              <View style={styles.statusPill}>
+                <View style={styles.statusPillDot} />
+                <Text style={styles.statusPillText}>Family 2/4</Text>
+              </View>
+              <View style={styles.statusPill}>
+                <View style={styles.statusPillDot} />
+                <Text style={styles.statusPillText}>Hotel</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Menu Grid */}
+          <View style={styles.menuGrid}>
+            {menuItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.85}
+                onPress={item.onPress}
+                style={[styles.menuCard, Shadows.sm]}
+              >
+                <View style={[styles.menuIconBg, { backgroundColor: item.color + '12' }]}>
+                  <Ionicons name={item.icon as any} size={28} color={item.color} />
+                  {item.badge && (
+                    <View style={styles.menuBadge}>
+                      <Text style={styles.menuBadgeText}>{item.badge}</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.menuLabel}>{item.label}</Text>
+                <Text style={styles.menuSub}>{item.sub}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = {}; // Removed old styles as we use NativeWind
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.neutral.pageBackground,
+  },
+  headerBar: {
+    height: Spacing.headerHeight,
+    backgroundColor: Colors.neutral.headerBg,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.neutral.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screenPaddingH,
+  },
+  headerBackBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: Typography.fontSizes.screenTitle,
+    fontWeight: '600',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  headerRightPlaceholder: {
+    width: 40,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  heroContainer: {
+    height: Spacing.heroHeight,
+    width: '100%',
+    position: 'relative',
+    justifyContent: 'flex-end',
+  },
+  heroContent: {
+    padding: 16,
+  },
+  heroTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+  },
+  heroPill: {
+    backgroundColor: Colors.primary.main,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  heroPillText: {
+    color: '#FFFFFF',
+    fontSize: Typography.fontSizes.badgeText,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  underwayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  underwayDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.primary.medium,
+  },
+  underwayText: {
+    fontSize: Typography.fontSizes.smallLabel,
+    color: Colors.primary.medium,
+    fontFamily: Typography.fontFamilies.regular,
+  },
+  heroTripName: {
+    fontSize: Typography.fontSizes.heroTripName,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+  },
+  heroLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 16,
+  },
+  heroLocationText: {
+    fontSize: Typography.fontSizes.heroLoc,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontFamily: Typography.fontFamilies.regular,
+  },
+  progressContainer: {
+    width: '100%',
+  },
+  progressBarTrack: {
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+  },
+  progressLabel: {
+    fontSize: 13,
+    color: Colors.primary.medium,
+    fontFamily: Typography.fontFamilies.regular,
+    marginTop: 6,
+  },
+  paddedContent: {
+    paddingHorizontal: Spacing.screenPaddingH,
+  },
+  bannerContainer: {
+    marginTop: 16,
+    gap: 16,
+  },
+  sectionContainer: {
+    marginTop: 24,
+    marginBottom: 12,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  sectionHeading: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  completedBadge: {
+    backgroundColor: Colors.success.lightBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 0.5,
+    borderColor: '#C2E7D9',
+  },
+  completedBadgeText: {
+    color: Colors.success.text,
+    fontSize: 10,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+    textTransform: 'uppercase',
+  },
+  primaryButton: {
+    height: 52,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    ...Platform.select({
+      web: { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 4,
+      },
+    }) as any,
+  },
+  activeButton: {
+    backgroundColor: Colors.primary.main,
+  },
+  disabledButton: {
+    backgroundColor: Colors.neutral.border,
+  },
+  primaryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: Typography.fontFamilies.semibold,
+  },
+  activeButtonText: {
+    color: '#FFFFFF',
+  },
+  disabledButtonText: {
+    color: Colors.neutral.textMuted,
+  },
+  statusContainer: {
+    marginBottom: 16,
+  },
+  statusBadge: {
+    backgroundColor: Colors.info.lightBg,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginBottom: 12,
+    borderWidth: 0.5,
+    borderColor: '#C5DDF5',
+  },
+  statusBadgeText: {
+    color: Colors.info.text,
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  statusPillsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  statusPill: {
+    backgroundColor: Colors.warning.lightBg,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: Colors.warning.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  statusPillDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.warning.main,
+  },
+  statusPillText: {
+    color: Colors.warning.textOnAmber,
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  menuGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  menuCard: {
+    width: '48%',
+    backgroundColor: Colors.neutral.cardBackground,
+    borderRadius: Spacing.cardRadius,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+    alignItems: 'center',
+  },
+  menuIconBg: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    position: 'relative',
+  },
+  menuBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: '#D94040',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  menuBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '700',
+    fontFamily: Typography.fontFamilies.bold,
+  },
+  menuLabel: {
+    fontSize: Typography.fontSizes.boldInline,
+    fontWeight: '700',
+    color: Colors.neutral.textPrimary,
+    fontFamily: Typography.fontFamilies.bold,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  menuSub: {
+    fontSize: Typography.fontSizes.sectionLabel,
+    color: Colors.neutral.textMuted,
+    fontFamily: Typography.fontFamilies.regular,
+    textAlign: 'center',
+  },
+});
