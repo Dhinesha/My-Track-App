@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography } from "../../constants/theme";
+import { Colors, Typography, fonts, textStyles } from '../../constants/theme';
 import { TransportLeg } from "../../hooks/useAttendance";
 
 interface Props {
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   vehicleName: {
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   routeRow: {
     flexDirection: "row",
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     flex: 1,
   },
   timeRow: {
@@ -138,17 +138,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     marginBottom: 16,
-  },
+    fontFamily: fonts.regular,},
   timeText: {
     fontSize: 22,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   timeDivider: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.regular,},
   divider: {
     height: 0.5,
     backgroundColor: Colors.neutral.border,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#0F6E56",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   driverRow: {
     flexDirection: "row",
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   driverName: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   callBtn: {
     width: 32,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   vehicleNumberBottom: {
     fontSize: 11,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginTop: 6,
     textAlign: "right",
   },

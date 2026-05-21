@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, TouchableOpacity, LayoutAnimation, Platform, UIManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePowerSync } from '@powersync/react-native';

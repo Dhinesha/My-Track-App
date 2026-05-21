@@ -5,27 +5,21 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Shadows } from '../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
+import { useProfileStore } from '../store/profileStore';
 
 export default function ProfileScreen() {
   const navigation = useNavigation<any>();
+  const profile = useProfileStore();
 
-  const [name, setName] = React.useState('Robert Jenkins');
-  const [email, setEmail] = React.useState('robert.jenkins@example.com');
-  const [photo, setPhoto] = React.useState('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80');
-  const [primaryContact, setPrimaryContact] = React.useState('+91 98765 43210');
-  const [secondaryContact, setSecondaryContact] = React.useState('+91 98765 43211');
+  const { name, email, photo, primaryContact, secondaryContact } = profile;
 
-  const handleEdit = (field: string, current: string, setter: (v: string) => void) => {
-    if (Platform.OS === 'web') {
-      const val = window.prompt(`Edit ${field}`, current);
-      if (val) setter(val);
-    }
-  };
+  React.useEffect(() => {
+    profile.loadProfile();
+  }, []);
 
   const MENU_ITEMS = [
     { icon: 'person-outline', label: 'Personal Information', id: 'personal' },
-    { icon: 'notifications-outline', label: 'Notification Settings', id: 'notifications' },
     { icon: 'shield-checkmark-outline', label: 'Admin Dashboard', id: 'admin' },
     { icon: 'settings-outline', label: 'General Settings', id: 'settings' },
     { icon: 'help-circle-outline', label: 'Help & Support', id: 'help' },
@@ -39,14 +33,14 @@ export default function ProfileScreen() {
         <View style={styles.headerBar}>
           <Text style={styles.headerTitle}>Profile</Text>
           <TouchableOpacity 
-            onPress={() => handleEdit('Name', name, setName)}
+            onPress={() => navigation.navigate('PersonalInformation')}
             activeOpacity={0.7}
             style={styles.headerEditBtn}
           >
             <Ionicons name="pencil-outline" size={22} color={Colors.neutral.textPrimary} />
           </TouchableOpacity>
         </View>
-
+ 
         <ScrollView 
           style={styles.scrollView} 
           showsVerticalScrollIndicator={false}
@@ -56,7 +50,7 @@ export default function ProfileScreen() {
           <View style={styles.profileHeader}>
             <TouchableOpacity 
               activeOpacity={0.8}
-              onPress={() => handleEdit('Photo URL', photo, setPhoto)}
+              onPress={() => navigation.navigate('PersonalInformation')}
               style={styles.avatarWrapper}
             >
               <View style={styles.avatarBorder}>
@@ -72,7 +66,7 @@ export default function ProfileScreen() {
             
             <View style={styles.nameRow}>
               <Text style={styles.nameText}>{name}</Text>
-              <TouchableOpacity onPress={() => handleEdit('Name', name, setName)}>
+              <TouchableOpacity onPress={() => navigation.navigate('PersonalInformation')}>
                 <Ionicons name="pencil-sharp" size={16} color={Colors.neutral.textMuted} />
               </TouchableOpacity>
             </View>
@@ -82,35 +76,35 @@ export default function ProfileScreen() {
               <Text style={styles.travellerBadgeText}>Primary Traveller</Text>
             </View>
           </View>
-
+ 
           {/* Emergency Contacts Card */}
           <View style={[styles.emergencyCard, Shadows.sm]}>
             <View style={styles.emergencyCardTitleRow}>
               <Ionicons name="alert-circle-outline" size={20} color={Colors.urgent.main} />
               <Text style={styles.emergencyCardTitle}>Emergency Contacts</Text>
             </View>
-
+ 
             <View style={styles.contactFieldWrapper}>
               <Text style={styles.contactFieldLabel}>Primary Contact</Text>
               <View style={styles.contactFieldBox}>
                 <Text style={styles.contactFieldVal}>{primaryContact}</Text>
-                <TouchableOpacity onPress={() => handleEdit('Primary Contact', primaryContact, setPrimaryContact)}>
+                <TouchableOpacity onPress={() => navigation.navigate('PersonalInformation')}>
                   <Ionicons name="pencil-sharp" size={16} color={Colors.neutral.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
-
+ 
             <View style={styles.contactFieldWrapper}>
               <Text style={styles.contactFieldLabel}>Secondary Contact</Text>
               <View style={styles.contactFieldBox}>
                 <Text style={styles.contactFieldVal}>{secondaryContact}</Text>
-                <TouchableOpacity onPress={() => handleEdit('Secondary Contact', secondaryContact, setSecondaryContact)}>
+                <TouchableOpacity onPress={() => navigation.navigate('PersonalInformation')}>
                   <Ionicons name="pencil-sharp" size={16} color={Colors.neutral.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
-
+ 
           {/* Stats Box */}
           <View style={[styles.statsCard, Shadows.sm]}>
             <View style={styles.statCol}>
@@ -128,13 +122,19 @@ export default function ProfileScreen() {
               <Text style={styles.statLabel}>Members</Text>
             </View>
           </View>
-
+ 
           {/* Menu List */}
           <View style={[styles.menuCard, Shadows.sm]}>
             {MENU_ITEMS.map((item, index) => (
               <TouchableOpacity 
                 key={item.id}
-                onPress={() => item.id === 'admin' ? navigation.navigate('AdminDashboard') : {}}
+                onPress={() => {
+                  if (item.id === 'personal') {
+                    navigation.navigate('PersonalInformation');
+                  } else if (item.id === 'admin') {
+                    navigation.navigate('AdminDashboard');
+                  }
+                }}
                 style={[
                   styles.menuItem,
                   index !== MENU_ITEMS.length - 1 && styles.menuItemBorder
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   headerEditBtn: {
     width: 40,
@@ -245,17 +245,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 2,
-  },
+    fontFamily: fonts.regular,},
   nameText: {
     fontSize: 22,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   emailText: {
     fontSize: 13,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginBottom: 12,
   },
   travellerBadge: {
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     color: Colors.primary.main,
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
   },
   emergencyCard: {
@@ -285,12 +285,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginBottom: 16,
-  },
+    fontFamily: fonts.regular,},
   emergencyCardTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: Colors.urgent.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
   },
   contactFieldWrapper: {
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '700',
     color: Colors.urgent.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
     marginBottom: 4,
     marginLeft: 2,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   statsCard: {
     backgroundColor: '#FFFFFF',
@@ -341,12 +341,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   statLabel: {
     fontSize: 11,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginTop: 2,
   },
   statDivider: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   logoutBtn: {
     backgroundColor: '#FFFFFF',
@@ -399,6 +399,6 @@ const styles = StyleSheet.create({
     color: Colors.urgent.main,
     fontSize: 15,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
 });

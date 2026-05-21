@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { View, TextInput, NativeEventEmitter, Platform } from "react-native";
 
 interface OTPInputProps {

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { usePowerSync } from "@powersync/react-native";
-import { Colors, Typography, Shadows } from "../../constants/theme";
+import { Colors, Typography, Shadows, fonts, textStyles } from '../../constants/theme';
 
 interface Props {
   tripId: string;
@@ -37,10 +37,10 @@ export function ReservationsAttachments({ tripId, tripName }: Props) {
         const cars = vehicles.filter((v) => v.transport_type === "cab" || v.transport_type === "car").length;
 
         const lodgingRows = (await db.getAll(
-          "SELECT count(distinct hotel_id) as cnt FROM hotel_assignments WHERE trip_id = ?",
+          "SELECT count(*) as cnt FROM hotels WHERE trip_id = ?",
           [tripId]
         )) as any[];
-        const lodging = lodgingRows[0]?.cnt || 1;
+        const lodging = lodgingRows[0]?.cnt || 0;
 
         setCounts({
           flights: flights || 2,
@@ -56,7 +56,7 @@ export function ReservationsAttachments({ tripId, tripName }: Props) {
     };
 
     fetchCounts();
-  }, [tripId, db]);
+  }, [tripId]);
 
   const items = [
     {
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     color: "#0F172A",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 16,
   },
   grid: {
@@ -186,12 +186,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 9,
     fontWeight: "800",
-  },
+    fontFamily: fonts.extraBold,},
   label: {
     fontSize: 12,
     fontWeight: "500",
     color: "#334155",
-    fontFamily: Typography.fontFamilies.medium,
+    fontFamily: fonts.medium,
     flexShrink: 1,
   },
 });

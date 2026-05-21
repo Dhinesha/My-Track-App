@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
+import { fonts } from '../constants/theme';
 
 export const Typography = StyleSheet.create({
-  appTitle: { fontSize: 26, fontFamily: 'PlusJakartaSans-Bold', color: '#FFFFFF' },
-  screenTitle: { fontSize: 20, fontFamily: 'PlusJakartaSans-SemiBold', color: '#212121' },
-  cardTitle: { fontSize: 16, fontFamily: 'PlusJakartaSans-SemiBold', color: '#212121' },
-  body: { fontSize: 14, fontFamily: 'PlusJakartaSans-Regular', color: '#212121' },
-  bodyMedium: { fontSize: 14, fontFamily: 'PlusJakartaSans-Medium', color: '#212121' },
-  subText: { fontSize: 12, fontFamily: 'PlusJakartaSans-Regular', color: '#757575' },
-  button: { fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' },
-  badge: { fontSize: 10, fontFamily: 'PlusJakartaSans-Bold', color: '#FFFFFF' },
+  appTitle: { fontSize: 26, fontFamily: fonts.bold, color: '#FFFFFF' },
+  screenTitle: { fontSize: 20, fontFamily: fonts.semiBold, color: '#212121' },
+  cardTitle: { fontSize: 16, fontFamily: fonts.semiBold, color: '#212121' },
+  body: { fontSize: 14, fontFamily: fonts.regular, color: '#212121' },
+  bodyMedium: { fontSize: 14, fontFamily: fonts.medium, color: '#212121' },
+  subText: { fontSize: 12, fontFamily: fonts.regular, color: '#757575' },
+  button: { fontSize: 15, fontFamily: fonts.bold },
+  badge: { fontSize: 10, fontFamily: fonts.bold, color: '#FFFFFF' },
 });
 
 export const Spacing = {

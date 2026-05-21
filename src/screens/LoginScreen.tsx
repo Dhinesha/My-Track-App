@@ -17,7 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import { useAuthStore } from "../store/authStore";
 import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
-import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 
 const CORRECT_OTP = "1234";
 
@@ -298,7 +298,7 @@ const s = StyleSheet.create({
     fontSize: 26,
     fontWeight: "700",
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: -0.5,
   },
   body: {
@@ -311,20 +311,20 @@ const s = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 6,
   },
   subheading: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginBottom: 24,
   },
   label: {
     fontSize: 14,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     marginBottom: 10,
   },
   phoneRow: {
@@ -346,12 +346,12 @@ const s = StyleSheet.create({
   },
   flagEmoji: {
     fontSize: 18,
-  },
+    fontFamily: fonts.regular,},
   countryCode: {
     fontSize: 15,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   phoneInput: {
     flex: 1,
@@ -363,7 +363,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 15,
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   phoneInputFocused: {
     borderColor: Colors.primary.main,
@@ -385,7 +385,7 @@ const s = StyleSheet.create({
     color: "#ffffff",
     fontSize: 15,
     fontWeight: "700",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   divRow: {
     flexDirection: "row",
@@ -403,14 +403,14 @@ const s = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: 2,
   },
   otpLabel: {
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 14,
   },
   otpRow: {
@@ -428,7 +428,7 @@ const s = StyleSheet.create({
     borderRadius: 14,
     fontSize: 24,
     fontWeight: "700",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     color: Colors.neutral.textPrimary,
     textAlign: "center",
     padding: 0,
@@ -458,28 +458,28 @@ const s = StyleSheet.create({
   sentTo: {
     fontSize: 12,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   resend: {
     fontSize: 12,
     fontWeight: "600",
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   resendDisabled: {
     color: Colors.neutral.textMuted,
-  },
+    fontFamily: fonts.regular,},
   footerNote: {
     textAlign: "center",
     marginTop: 16,
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   errorText: {
     color: Colors.urgent.main,
     fontSize: 12,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginBottom: 12,
     marginLeft: 2,
   },

@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
+import { fonts } from "../../constants/theme";
 
 interface TextInputProps {
   label?: string;
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.md,
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: fonts.regular,
     color: Colors.text.primary,
   },
   leftIcon: {

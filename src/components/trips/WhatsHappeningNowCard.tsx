@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { differenceInDays, parseISO, format } from 'date-fns';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 interface Activity {
   place_name: string; start_time: string;
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.sectionLabel,
     fontWeight: '700',
     color: Colors.primary.medium,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
     marginBottom: 4,
@@ -201,17 +201,17 @@ const styles = StyleSheet.create({
   bodyText: {
     fontSize: Typography.fontSizes.body,
     color: '#222222',
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     lineHeight: 20,
   },
   boldText: {
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   semiboldText: {
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
 });

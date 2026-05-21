@@ -9,13 +9,16 @@ import {
   StyleSheet,
   Platform,
   Linking,
+  Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { usePowerSync } from "@powersync/react-native";
-import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
+import * as Haptics from "expo-haptics";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 import { useAttendance, TransportLeg } from "../hooks/useAttendance";
+import { useFamilyAttendance } from "../hooks/useFamilyAttendance";
 import { useTripStore } from "../store/tripStore";
 
 // Component imports
@@ -28,20 +31,9 @@ import { PNRQuickAction } from "../components/attendance/PNRQuickAction";
 import { SelfCheckInSection } from "../components/attendance/SelfCheckInSection";
 import { DepartureCountdownTimer } from "../components/attendance/DepartureCountdownTimer";
 import { TransportTimeline } from "../components/attendance/TransportTimeline";
+import { FamilyAttendanceSection } from "../components/attendance/FamilyAttendanceSection";
 
-interface Passenger {
-  id: string;
-  name: string;
-  seat: string;
-  berth?: string;
-  pnr?: string;
-  status: string;
-  time?: string;
-  role: string;
-  selected: boolean;
-  phone: string;
-  meal?: string;
-}
+import type { AttendanceStatus, PaxRole, FamilyMember, AttendanceRecord } from '../types/attendance';
 
 export default function VehicleAttendanceScreen() {
   const navigation = useNavigation<any>();
@@ -52,15 +44,15 @@ export default function VehicleAttendanceScreen() {
 
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [selectedLeg, setSelectedLeg] = useState<TransportLeg | null>(null);
-  const [passengers, setPassengers] = useState<Passenger[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {
+    familyMembers: passengers,
+    loading: hookLoading,
+  } = useFamilyAttendance(selectedLeg?.id || "");
 
-  // Get unique days from legs
   const uniqueDays = Array.from(new Set(allLegs.map((l) => l.trip_day))).sort(
     (a, b) => a - b
   );
 
-  // Set initial selected day and leg once data is loaded
   useEffect(() => {
     if (!loading && allLegs.length > 0) {
       const initialDay = uniqueDays.includes(currentDay)
@@ -77,7 +69,6 @@ export default function VehicleAttendanceScreen() {
     }
   }, [loading, allLegs.length]);
 
-  // Sync selected leg when day changes
   const handleDaySelect = (dayNum: number) => {
     setSelectedDay(dayNum);
     const dayLegs = allLegs.filter((l) => l.trip_day === dayNum);
@@ -88,128 +79,25 @@ export default function VehicleAttendanceScreen() {
     setSelectedLeg(initialLeg);
   };
 
-  // Fetch passengers for the selected leg
-  useEffect(() => {
-    if (!selectedLeg) return;
 
-    const loadPassengers = async () => {
-      try {
-        const rows = (await db.getAll(
-          `SELECT pv.*, p.name as pax_name, p.user_id 
-           FROM pax_vehicles pv 
-           JOIN pax p ON pv.pax_id = p.id 
-           WHERE pv.vehicle_id = ?`,
-          [selectedLeg.id]
-        )) as any[];
 
-        if (rows.length > 0) {
-          setPassengers(
-            rows.map((r) => ({
-              id: r.pax_id,
-              name: r.pax_name || "Traveller",
-              seat: r.seat_number || "",
-              berth: r.berth_number || "",
-              pnr: r.pnr_number || "",
-              status: r.status || "Not Boarded",
-              time: r.checked_in_at || "",
-              role: r.role || "FAMILY",
-              selected: r.status === "Checked In" || r.status === "Not Boarded" || !r.status,
-              phone: r.phone || "+91 98765 43210",
-              meal: r.meal_preference || "",
-            }))
-          );
-        } else {
-          // Fallback static passengers if database relation is empty
-          setPassengers([
-            {
-              id: "pax-1",
-              name: "Dhinesha G",
-              role: "PRIMARY",
-              seat: selectedLeg.transport_type === "flight" ? "12A" : "Seat 24",
-              berth: "Upper",
-              pnr: selectedLeg.transport_type === "flight" ? "FLIGHT123" : "TRAIN456",
-              status: "Checked In",
-              time: "09:45 AM",
-              selected: true,
-              phone: "+91 98765 43210",
-              meal: "Veg Meal",
-            },
-            {
-              id: "pax-2",
-              name: "Ananya G",
-              role: "SPOUSE",
-              seat: selectedLeg.transport_type === "flight" ? "12B" : "Seat 25",
-              berth: "Middle",
-              pnr: selectedLeg.transport_type === "flight" ? "FLIGHT123" : "TRAIN456",
-              status: "Not Boarded",
-              selected: true,
-              phone: "+91 98765 43211",
-              meal: "Non-Veg Meal",
-            },
-            {
-              id: "pax-3",
-              name: "Rahul G",
-              role: "CHILD",
-              seat: selectedLeg.transport_type === "flight" ? "12C" : "Seat 26",
-              berth: "Lower",
-              pnr: selectedLeg.transport_type === "flight" ? "FLIGHT123" : "TRAIN456",
-              status: "Checked In",
-              time: "10:15 AM",
-              selected: true,
-              phone: "+91 98765 43212",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error loading passengers:", error);
-      }
-    };
-
-    loadPassengers();
-  }, [selectedLeg?.id]);
-
-  const toggleSelect = (id: string) => {
-    setPassengers((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, selected: !p.selected } : p))
-    );
-  };
-
-  const handleConfirmAttendance = async () => {
-    if (!selectedLeg) return;
-    try {
-      // Persist checked-in statuses in database
-      const nowStr = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      for (const p of passengers) {
-        const status = p.selected ? "Checked In" : "Not Boarded";
-        await db.execute(
-          `INSERT OR REPLACE INTO attendance(pax_id, vehicle_id, checked_in_at, status) 
-           VALUES(?, ?, ?, ?)`,
-          [p.id, selectedLeg.id, p.selected ? nowStr : "", status]
-        );
-      }
-      setIsModalVisible(true);
-    } catch (e) {
-      console.error("Failed to confirm attendance:", e);
-      setIsModalVisible(true);
-    }
-  };
-
-  const getDepartureISO = (timeStr?: string) => {
+  const getDepartureISO = (timeStr?: string, tripDay?: number) => {
     if (!timeStr) return null;
     try {
       const [h, m] = timeStr.split(":").map(Number);
       const d = new Date();
       d.setHours(h, m, 0, 0);
+      if (tripDay !== undefined && currentDay !== undefined) {
+        const diffDays = tripDay - currentDay;
+        d.setDate(d.getDate() + diffDays);
+      }
       return d.toISOString();
     } catch {
       return null;
     }
   };
 
-  if (loading) {
+  if (loading || (selectedLeg && hookLoading)) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.primary.main} />
@@ -220,18 +108,15 @@ export default function VehicleAttendanceScreen() {
 
   const dayLegs = allLegs.filter((l) => l.trip_day === selectedDay);
   const primaryPax = passengers.find((p) => p.role === "PRIMARY") || passengers[0];
-  const primarySeat = primaryPax?.seat || "";
-  const primaryPNR = selectedLeg?.pnr_number || primaryPax?.pnr || "";
+  const primarySeat = primaryPax?.seatNumber || "";
+  const primaryPNR = selectedLeg?.pnr_number || primaryPax?.pnrNumber || "";
   const primaryMeal = primaryPax?.meal || "";
-  const primaryBerth = primaryPax?.berth || "";
-
-  const checkedCount = passengers.filter((p) => p.selected).length;
+  const primaryBerth = primaryPax?.berthNumber || "";
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.safe} edges={["top"]}>
-        {/* Header Bar */}
         <View style={styles.headerBar}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -248,7 +133,6 @@ export default function VehicleAttendanceScreen() {
           <View style={styles.headerRightPlaceholder} />
         </View>
 
-        {/* Day Selector Tabs Row */}
         <View style={styles.tabsContainer}>
           <ScrollView
             horizontal
@@ -278,7 +162,6 @@ export default function VehicleAttendanceScreen() {
           </ScrollView>
         </View>
 
-        {/* Leg Selector Chips for Multiple Legs */}
         {selectedLeg && (
           <LegSelectorChips
             legs={dayLegs}
@@ -294,15 +177,13 @@ export default function VehicleAttendanceScreen() {
         >
           {selectedLeg ? (
             <>
-              {/* Countdown Timer */}
               <View style={styles.timerSection}>
                 <DepartureCountdownTimer
-                  departureISO={getDepartureISO(selectedLeg.departure_time)}
+                  departureISO={getDepartureISO(selectedLeg.departure_time, selectedLeg.trip_day)}
                   transportType={selectedLeg.transport_type}
                 />
               </View>
 
-              {/* Dynamic Transport Details Card */}
               {selectedLeg.transport_type === "bus" && (
                 <BusCard leg={selectedLeg} seatNumber={primarySeat} />
               )}
@@ -330,7 +211,6 @@ export default function VehicleAttendanceScreen() {
                 />
               )}
 
-              {/* PNR Quick Action Row */}
               {(selectedLeg.transport_type === "flight" ||
                 selectedLeg.transport_type === "train") &&
                 primaryPNR && (
@@ -340,7 +220,6 @@ export default function VehicleAttendanceScreen() {
                   />
                 )}
 
-              {/* Self Check-In Button / Success Banner */}
               <View style={styles.checkinWrapper}>
                 <SelfCheckInSection
                   paxId="pax-1"
@@ -350,93 +229,13 @@ export default function VehicleAttendanceScreen() {
                 />
               </View>
 
-              {/* Family List Checklist */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Traveller Boarding Checklist</Text>
-                {passengers.map((p) => {
-                  const isChecked = p.selected;
-                  return (
-                    <TouchableOpacity
-                      key={p.id}
-                      activeOpacity={0.85}
-                      onPress={() => toggleSelect(p.id)}
-                      style={[styles.paxCard, Shadows.sm]}
-                    >
-                      <View
-                        style={[
-                          styles.checkbox,
-                          isChecked
-                            ? styles.checkboxSelected
-                            : styles.checkboxUnselected,
-                        ]}
-                      >
-                        {isChecked && (
-                          <Ionicons name="checkmark" size={14} color="white" />
-                        )}
-                      </View>
-
-                      <View style={styles.paxIconCircle}>
-                        <Ionicons
-                          name="person-circle-outline"
-                          size={32}
-                          color={Colors.neutral.textMuted}
-                        />
-                      </View>
-
-                      <View style={styles.paxDetails}>
-                        <View style={styles.paxNameRow}>
-                          <Text style={styles.paxName}>{p.name}</Text>
-                          <View style={styles.roleBadge}>
-                            <Text style={styles.roleBadgeText}>{p.role}</Text>
-                          </View>
-                        </View>
-                        <View style={styles.paxStatusRow}>
-                          {p.seat ? (
-                            <Text style={styles.paxSeat}>Seat {p.seat}</Text>
-                          ) : null}
-                          <Ionicons
-                            name={isChecked ? "checkmark-circle" : "ellipse-outline"}
-                            size={14}
-                            color={
-                              isChecked
-                                ? Colors.success.checkIcon
-                                : Colors.neutral.textMuted
-                            }
-                            style={styles.statusDotIcon}
-                          />
-                          <Text
-                            style={[
-                              styles.paxStatusText,
-                              isChecked
-                                ? styles.statusCheckedInText
-                                : styles.statusNotBoardedText,
-                            ]}
-                          >
-                            {isChecked ? "Checked In" : "Not Boarded"}
-                            {isChecked && p.time ? ` • ${p.time}` : ""}
-                          </Text>
-                        </View>
-                      </View>
-
-                      {!isChecked && p.phone ? (
-                        <TouchableOpacity
-                          onPress={() => Linking.openURL(`tel:${p.phone}`)}
-                          style={styles.callBtn}
-                          activeOpacity={0.7}
-                        >
-                          <Ionicons
-                            name="call-outline"
-                            size={18}
-                            color={Colors.primary.main}
-                          />
-                        </TouchableOpacity>
-                      ) : null}
-                    </TouchableOpacity>
-                  );
-                })}
+                <FamilyAttendanceSection
+                  vehicleId={selectedLeg.id}
+                  transportType={selectedLeg.transport_type as any}
+                />
               </View>
 
-              {/* Full Trip transport timeline */}
               <TransportTimeline
                 legs={allLegs}
                 currentLegId={selectedLeg.id}
@@ -455,53 +254,7 @@ export default function VehicleAttendanceScreen() {
           )}
         </ScrollView>
 
-        {/* Floating Confirm Button */}
-        {selectedLeg && (
-          <View style={styles.footerContainer}>
-            <TouchableOpacity
-              onPress={handleConfirmAttendance}
-              style={[styles.confirmBtn, Shadows.md]}
-              activeOpacity={0.9}
-            >
-              <Ionicons name="checkmark-circle" size={22} color="white" />
-              <Text style={styles.confirmBtnText}>
-                Confirm Boarding ({checkedCount})
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
 
-        {/* Confirmation Modal */}
-        {isModalVisible && (
-          <View style={styles.modalOverlay}>
-            <View style={[styles.modalContent, Shadows.md]}>
-              <View style={styles.modalCheckCircle}>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={64}
-                  color={Colors.success.checkIcon}
-                />
-              </View>
-
-              <Text style={styles.modalTitle}>Attendance Confirmed!</Text>
-              <Text style={styles.modalSub}>
-                Your travellers ({checkedCount}) have been marked as ready for
-                departure.
-              </Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  setIsModalVisible(false);
-                  navigation.goBack();
-                }}
-                style={styles.modalBtn}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.modalBtnText}>Great</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
       </SafeAreaView>
     </View>
   );
@@ -525,7 +278,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   headerBar: {
     height: Spacing.headerHeight,
@@ -547,10 +300,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   headerRightPlaceholder: {
     width: 40,
+    fontFamily: fonts.regular,
   },
   tabsContainer: {
     backgroundColor: Colors.neutral.headerBg,
@@ -577,11 +331,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   dayTabTextActive: {
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   scrollView: {
     flex: 1,
@@ -592,6 +346,7 @@ const styles = StyleSheet.create({
   timerSection: {
     marginHorizontal: 16,
     marginTop: 16,
+    fontFamily: fonts.regular,
   },
   checkinWrapper: {
     marginHorizontal: 16,
@@ -605,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 12,
   },
   paxCard: {
@@ -617,6 +372,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 0.5,
     borderColor: Colors.neutral.border,
+    fontFamily: fonts.regular,
   },
   checkbox: {
     width: 24,
@@ -636,24 +392,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   paxIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F4F5F7",
     marginRight: 10,
     justifyContent: "center",
     alignItems: "center",
   },
   paxDetails: {
     flex: 1,
+    fontFamily: fonts.regular,
   },
   paxNameRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 2,
     gap: 8,
+    fontFamily: fonts.regular,
   },
   paxName: {
     fontSize: 15,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   roleBadge: {
     backgroundColor: Colors.neutral.pageBackground,
@@ -661,36 +423,81 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
+  primaryRoleBadge: {
+    backgroundColor: Colors.primary.lightBg,
+  },
+  secondaryRoleBadge: {
+    backgroundColor: Colors.neutral.pageBackground,
+  },
   roleBadgeText: {
     color: Colors.neutral.textSecondary,
     fontSize: 8,
     fontWeight: "700",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: "uppercase",
+  },
+  primaryRoleText: {
+    color: Colors.primary.main,
+  },
+  secondaryRoleText: {
+    color: Colors.neutral.textSecondary,
+  },
+  seatBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.primary.lightBg,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    gap: 4,
+  },
+  seatBadgeText: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: Colors.primary.main,
+    fontFamily: fonts.semiBold,
+  },
+  paxBerthText: {
+    fontSize: 12,
+    color: Colors.neutral.textMuted,
+    fontFamily: fonts.regular,
   },
   paxStatusRow: {
     flexDirection: "row",
     alignItems: "center",
+    fontFamily: fonts.regular,
   },
   paxSeat: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginRight: 8,
   },
   statusDotIcon: {
     marginRight: 4,
+    fontFamily: fonts.regular,
   },
   paxStatusText: {
     fontSize: 12,
     fontWeight: "700",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   statusCheckedInText: {
     color: Colors.success.checkIcon,
+    fontFamily: fonts.regular,
   },
   statusNotBoardedText: {
     color: Colors.neutral.textMuted,
+    fontFamily: fonts.regular,
+  },
+  statusAbsentText: {
+    color: Colors.urgent.main,
+    fontFamily: fonts.regular,
+  },
+  paxDot: {
+    fontSize: 12,
+    color: Colors.neutral.textMuted,
+    fontFamily: fonts.regular,
   },
   callBtn: {
     width: 36,
@@ -729,7 +536,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "600",
     fontSize: 15,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   modalOverlay: {
     position: "absolute",
@@ -760,14 +567,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 8,
     textAlign: "center",
   },
   modalSub: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 24,
@@ -784,7 +591,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 15,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   emptyContainer: {
     flex: 1,
@@ -796,6 +603,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
 });

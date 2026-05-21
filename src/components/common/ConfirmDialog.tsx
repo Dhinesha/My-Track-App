@@ -1,4 +1,5 @@
 import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { fonts, textStyles } from '../../constants/theme';
 
 interface Props {
   visible: boolean;

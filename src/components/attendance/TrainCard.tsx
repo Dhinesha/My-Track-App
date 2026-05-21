@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import { Colors, Typography } from "../../constants/theme";
+import { Colors, Typography, fonts, textStyles } from '../../constants/theme';
 import { TransportLeg } from "../../hooks/useAttendance";
 
 interface Props {
@@ -126,12 +126,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   trainNumber: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   routeRow: {
     flexDirection: "row",
@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   timeText: {
     fontSize: 18,
     fontWeight: "800",
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginTop: 4,
   },
   routeArrow: {
@@ -171,20 +171,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 16,
-  },
+    fontFamily: fonts.regular,},
   pnrLabel: {
     fontSize: 9,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
     letterSpacing: 1,
-  },
+    fontFamily: fonts.bold,},
   pnrValue: {
     fontSize: 22,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
     letterSpacing: 3,
     marginTop: 2,
-  },
+    fontFamily: fonts.extraBold,},
   copyBtn: {
     width: 36,
     height: 36,
@@ -210,11 +210,11 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
-  },
+    fontFamily: fonts.bold,},
   cellValue: {
     fontSize: 13,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
     marginTop: 4,
-  },
+    fontFamily: fonts.bold,},
 });

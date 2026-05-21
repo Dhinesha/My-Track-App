@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTripStore } from "../../store/tripStore";
-import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 interface Contact {
   label: string;
@@ -225,11 +225,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   headerRightPlaceholder: {
     width: 40,
-  },
+    fontFamily: fonts.regular,},
   scrollView: {
     flex: 1,
   },
@@ -273,20 +273,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginTop: 4,
   },
   sosHeading: {
     fontSize: 18,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginTop: 20,
   },
   sosSub: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     paddingHorizontal: 24,
     marginTop: 6,
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     marginBottom: 12,
   },
   shareCard: {
@@ -330,17 +330,17 @@ const styles = StyleSheet.create({
   },
   shareTextCol: {
     flex: 1,
-  },
+    fontFamily: fonts.regular,},
   shareTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   shareSub: {
     fontSize: 12,
     color: Colors.primary.medium,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginTop: 2,
   },
   contactCard: {
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '700',
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
     marginBottom: 2,
   },
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   callBtn: {
     width: 40,
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginBottom: 16,
@@ -414,13 +414,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   localNumber: {
     fontSize: 15,
     fontWeight: '700',
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   localDivider: {
     height: 0.5,

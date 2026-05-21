@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 export type NotifType =
   | "general"
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     lineHeight: 20,
   },
   unreadMessage: {
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     color: Colors.neutral.textPrimary,
     fontWeight: "700",
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 11,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   unreadDot: {
     width: 8,

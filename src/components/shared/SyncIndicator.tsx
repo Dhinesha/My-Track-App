@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fonts, textStyles } from '../../constants/theme';
 import { Colors } from "../../theme/colors";
 import { Spacing } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: Spacing.md,
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: Colors.text.secondary,
   },
 });

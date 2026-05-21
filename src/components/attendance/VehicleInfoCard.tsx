@@ -1,4 +1,5 @@
 import React from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import {
   View,
   Text,
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   },
   vehicleName: {
     fontSize: 20,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: "#111827",
   },
   row: {
@@ -86,18 +87,18 @@ const styles = StyleSheet.create({
     width: 80,
     fontSize: 14,
     color: "#9CA3AF",
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     marginRight: 8,
   },
   value: {
     fontSize: 14,
     color: "#1F2937",
-    fontFamily: "PlusJakartaSans-SemiBold",
+    fontFamily: fonts.semiBold,
   },
   driverLink: {
     fontSize: 14,
     color: "#0F766E",
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     textDecorationLine: "underline",
   },
 });

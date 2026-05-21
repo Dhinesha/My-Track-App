@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 import {
   MarkAllReadButton,
   NotificationItem,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   scrollView: {
     flex: 1,
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.sectionLabel,
     fontWeight: '700',
     color: Colors.primary.medium,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginBottom: 12,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   catchUpText: {
     fontSize: 12,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     color: Colors.neutral.textMuted,
   },
   bottomNav: {
@@ -262,13 +262,13 @@ const styles = StyleSheet.create({
   navLabelActive: {
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     color: Colors.primary.main,
   },
   navLabelInactive: {
     fontSize: 10,
     fontWeight: '500',
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     color: Colors.neutral.textMuted,
   },
 });

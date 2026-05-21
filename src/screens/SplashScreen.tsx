@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import { useAuthStore } from "../store/authStore";
 import TrackMyTripLogo from "../components/shared/TrackMyTripLogo";
+import { fonts } from "../constants/theme";
 
 // Brand colours (matching splashscreen.html)
 const PRIMARY = "#0EA5E9";
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "800",
     color: PRIMARY,
-    fontFamily: "PlusJakartaSans-ExtraBold",
+    fontFamily: fonts.extraBold,
     textAlign: "center",
     letterSpacing: -0.5,
   },
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     color: GRAY,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     textAlign: "center",
   },
   spinnerWrap: {

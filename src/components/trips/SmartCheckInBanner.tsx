@@ -6,7 +6,7 @@ import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { useAuthStore } from '../../store/authStore';
 import { differenceInMinutes, parseISO, differenceInDays } from 'date-fns';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 type BannerType = 'urgent' | 'warning' | 'family' | 'missed' | null;
 
@@ -169,17 +169,17 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-  },
+    fontFamily: fonts.regular,},
   bannerText: {
     fontSize: Typography.fontSizes.body,
     color: Colors.warning.textOnAmber,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     lineHeight: 20,
   },
   boldText: {
     fontWeight: '700',
     color: '#7A3F00',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   button: {
     backgroundColor: Colors.primary.main,
@@ -193,6 +193,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
 });

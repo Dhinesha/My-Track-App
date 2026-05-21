@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, ImageBackground, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -104,19 +105,19 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1,
-  },
+    fontFamily: fonts.extraBold,},
   tripTitle: {
     color: '#FFFFFF',
     fontSize: 26,
     fontWeight: '800',
     marginBottom: 4,
-  },
+    fontFamily: fonts.extraBold,},
   dayText: {
     color: '#FFFFFFCC',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 16,
-  },
+    fontFamily: fonts.semiBold,},
   progressTrack: {
     height: 2,
     backgroundColor: '#FFFFFF40',
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
-  },
+    fontFamily: fonts.semiBold,},
   viewTripButton: {
     backgroundColor: '#FFFFFF20',
     paddingHorizontal: 16,
@@ -156,5 +157,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
-  },
+    fontFamily: fonts.bold,},
 });

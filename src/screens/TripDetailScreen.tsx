@@ -26,6 +26,7 @@ import {
   SmartCheckInBanner,
   InTripWeatherWidget,
   TripMemoriesCard,
+  ReservationsAttachments,
 } from "../components/trips";
 import { EmergencyFAB } from "../components/common";
 
@@ -192,6 +193,7 @@ export default function TripDetailScreen() {
               endDate="2023-10-20" 
               paxId="demo-pax-1" 
             />
+            <ReservationsAttachments tripId={tripId} tripName={tripName} />
             <SmartCheckInBanner />
             <InTripWeatherWidget />
             <WhatsHappeningNowCard />

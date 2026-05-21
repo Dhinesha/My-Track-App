@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { fonts, textStyles } from '../../constants/theme';
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
@@ -72,7 +73,7 @@ export const Badge: React.FC<BadgeProps> = ({
       <Text
         style={{
           fontSize: sizeStyle.fontSize,
-          fontFamily: "PlusJakartaSans-SemiBold",
+          fontFamily: fonts.semiBold,
           color: variantStyle.text,
           marginLeft: icon ? Spacing.sm : 0,
         }}

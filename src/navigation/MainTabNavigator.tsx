@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Platform } from "react-native";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../theme/colors";
+import { fonts } from "../constants/theme";
 
 // Tab screens
 import { TripHomeScreen } from "../screens/home/TripHomeScreen";
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 10,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     marginTop: 2,
     letterSpacing: 0.5,
   },

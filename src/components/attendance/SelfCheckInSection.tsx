@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSyncStore } from "../../store/syncStore";

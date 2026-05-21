@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
+import { fonts, textStyles } from '../../constants/theme';
 
 interface Props {
   type: "free" | "agency" | "self";
@@ -49,6 +50,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
 });

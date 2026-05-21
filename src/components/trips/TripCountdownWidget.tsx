@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text } from 'react-native';
 import { differenceInDays, differenceInHours, parseISO, format } from 'date-fns';
 

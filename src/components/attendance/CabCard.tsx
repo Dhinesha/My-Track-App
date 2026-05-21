@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography } from "../../constants/theme";
+import { Colors, Typography, fonts, textStyles } from '../../constants/theme';
 import { TransportLeg } from "../../hooks/useAttendance";
 
 interface Props {
@@ -149,12 +149,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   cabType: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   routeRow: {
     flexDirection: "row",
@@ -170,12 +170,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral.textMuted,
     marginBottom: 4,
-  },
+    fontFamily: fonts.bold,},
   placeText: {
     fontSize: 13,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   timeSection: {
     flexDirection: "row",
@@ -186,11 +186,11 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 13,
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.regular,},
   boldText: {
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-  },
+    fontFamily: fonts.bold,},
   divider: {
     height: 0.5,
     backgroundColor: Colors.neutral.border,
@@ -219,17 +219,17 @@ const styles = StyleSheet.create({
     color: "#D97706",
     fontSize: 12,
     fontWeight: "bold",
-  },
+    fontFamily: fonts.bold,},
   driverLabel: {
     fontSize: 8,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
-  },
+    fontFamily: fonts.bold,},
   driverName: {
     fontSize: 14,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-  },
+    fontFamily: fonts.bold,},
   callButton: {
     backgroundColor: "#1D9E75", // Green call driver button
     paddingHorizontal: 12,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
   registrationRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -253,11 +253,11 @@ const styles = StyleSheet.create({
   registrationText: {
     fontSize: 13,
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.regular,},
   boldReg: {
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-  },
+    fontFamily: fonts.bold,},
   sharingBanner: {
     backgroundColor: "#FFFBEB",
     borderColor: "#FDE68A",
@@ -272,5 +272,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#B45309",
     fontWeight: "600",
-  },
+    fontFamily: fonts.semiBold,},
 });

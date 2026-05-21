@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import {
   NativeSyntheticEvent,
   TextInput,

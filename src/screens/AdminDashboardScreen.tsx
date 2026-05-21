@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../theme/colors";
 import { Typography, Radius, Spacing } from "../theme/typography";
+import { fonts } from "../constants/theme";
 
 const ACTIONS = [
   {
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.muted,
     marginBottom: 12,
     letterSpacing: 1,
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: 13,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
     textAlign: "center",
   },
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: Colors.text.muted,
   },
   summaryCard: {
@@ -274,12 +275,12 @@ const styles = StyleSheet.create({
   },
   statName: {
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: Colors.text.secondary,
   },
   statValue: {
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
   },
   progressContainer: {
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
   },
   progressBarBg: {
@@ -321,12 +322,12 @@ const styles = StyleSheet.create({
   },
   tripListName: {
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
   },
   tripListPax: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: Colors.text.secondary,
   },
 });

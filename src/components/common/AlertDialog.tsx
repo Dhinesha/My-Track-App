@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
+import { fonts, textStyles } from '../../constants/theme';
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
@@ -90,12 +91,12 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: Spacing.md,
     color: Colors.text.primary,
-  },
+    fontFamily: fonts.regular,},
   message: {
     marginBottom: Spacing.xl,
     color: Colors.text.secondary,
     lineHeight: 20,
-  },
+    fontFamily: fonts.regular,},
   buttonContainer: {
     flexDirection: "row",
     gap: Spacing.md,

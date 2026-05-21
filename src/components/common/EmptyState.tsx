@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fonts, textStyles } from '../../constants/theme';
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
@@ -67,12 +68,12 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: Spacing.md,
     textAlign: "center",
-  },
+    fontFamily: fonts.regular,},
   description: {
     marginBottom: Spacing.xl,
     textAlign: "center",
     color: Colors.text.secondary,
-  },
+    fontFamily: fonts.regular,},
   button: {
     backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.xl,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.white,
-    fontFamily: "PlusJakartaSans-SemiBold",
+    fontFamily: fonts.semiBold,
     fontSize: 14,
   },
 });

@@ -1,4 +1,5 @@
 import React from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, StyleSheet } from "react-native";
 
 interface Props {
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   label: {
     color: "#9CA3AF",
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     textTransform: "uppercase",
     letterSpacing: 1.2,
     marginBottom: 4,
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     color: "#111827",
     fontSize: 40,
     lineHeight: 44,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
   },
   metaRow: {
     flexDirection: "row",
@@ -57,6 +58,6 @@ const styles = StyleSheet.create({
   metaText: {
     color: "#6B7280",
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
 });

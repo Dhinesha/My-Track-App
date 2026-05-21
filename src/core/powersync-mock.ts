@@ -1,5 +1,13 @@
 import { differenceInDays, parseISO } from 'date-fns';
 
+// ─── In-memory attendance store so check-ins persist within a session ───────
+const _attendanceStore: Record<string, {
+  pax_id: string; vehicle_id: string; checked_in_at: string | null;
+  status: string; via_rep: number;
+}> = {};
+
+const _attendanceKey = (paxId: string, vehicleId: string) => `${paxId}::${vehicleId}`;
+
 export const usePowerSync = () => {
   return {
     getAll: async (query: string, params: any[] = []): Promise<any[]> => {
@@ -88,12 +96,64 @@ export const usePowerSync = () => {
         ];
       }
 
-      // 4. Pax query
-      if (q.includes('select id') && q.includes('from pax')) {
-        return [{ id: 'demo-pax-1', primary_id: null, trip_id: 'kyoto-1' }];
+      // 4. Pax query — simple id lookup (used by SmartCheckInBanner etc.)
+      if (q.includes('select id') && q.includes('from pax') && !q.includes('left join')) {
+        return [{ id: 'pax-1', primary_id: null, trip_id: 'kyoto-1' }];
       }
 
-      // 5. Attendance query
+      // 4b. Family-attendance JOIN query used by useFamilyAttendance hook
+      //     SELECT p.id AS paxId, p.name, ... FROM pax p
+      //     LEFT JOIN pax_vehicles pv ... LEFT JOIN attendance a ...
+      //     WHERE (p.primary_id = ? OR p.id = ?) AND p.trip_id = ?
+      if (
+        q.includes('from pax p') &&
+        q.includes('left join pax_vehicles') &&
+        q.includes('left join attendance')
+      ) {
+        const vehicleId: string = (params[0] as string) ?? 'leg-1-2';
+
+        // Build seat data per vehicle
+        const isFlight = vehicleId.includes('1-2');
+        const isTrain  = vehicleId.includes('2-1');
+
+        const seats = isFlight
+          ? ['12A', '12B', '12C', '12D', '12E']
+          : isTrain
+          ? ['Seat 24', 'Seat 25', 'Seat 26', 'Seat 27', 'Seat 28']
+          : ['Seat 1', 'Seat 2', 'Seat 3', 'Seat 4', 'Seat 5'];
+
+        const pnr = isFlight ? 'FLIGHT123' : isTrain ? 'TRAIN456' : '';
+
+        const memberDefs = [
+          // PRIMARY members (primary_id = null)
+          { paxId: 'pax-1', name: 'Raj G',     phone: '+91 98765 43210', primary_id: null,    seat: seats[0] },
+          { paxId: 'pax-2', name: 'Priya G',   phone: '+91 98765 43211', primary_id: null,    seat: seats[1] },
+          // SECONDARY members
+          { paxId: 'pax-3', name: 'Dhinesha G',phone: '+91 98765 43212', primary_id: 'pax-1', seat: seats[2] },
+          { paxId: 'pax-4', name: 'Ananya G',  phone: '+91 98765 43213', primary_id: 'pax-2', seat: seats[3] },
+          { paxId: 'pax-5', name: 'Rahul G',   phone: '+91 98765 43214', primary_id: 'pax-1', seat: seats[4] },
+        ];
+
+        return memberDefs.map((m) => {
+          const stored = _attendanceStore[_attendanceKey(m.paxId, vehicleId)];
+          return {
+            paxId:            m.paxId,
+            name:             m.name,
+            phone:            m.phone,
+            primary_id:       m.primary_id,
+            seatNumber:       m.seat,
+            berthNumber:      isTrain ? 'Upper' : null,
+            pnrNumber:        pnr,
+            meal:             'Veg Meal',
+            role:             m.primary_id === null ? 'PRIMARY' : 'SECONDARY',
+            attendanceStatus: stored?.status ?? 'Not Boarded',
+            checkedInAt:      stored?.checked_in_at ?? null,
+            viaRep:           stored?.via_rep ?? 0,
+          };
+        });
+      }
+
+      // 5. Attendance query — simple id lookup (SmartCheckInBanner)
       if (q.includes('select id') && q.includes('from attendance')) {
         // Return empty so the user is not checked in yet (shows warning/boarding timer)
         return [];
@@ -290,38 +350,88 @@ export const usePowerSync = () => {
         return [
           {
             id: 'pax-1',
-            name: 'Dhinesha G',
-            role: 'PRIMARY',
+            pax_id: 'pax-1',
+            pax_name: 'Raj G',
+            name: 'Raj G',
+            primary_id: null,
             seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12A' :
                          vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 24' : 'Seat 1',
             berth_number: 'Upper',
             pnr_number: pnr,
             status: 'Checked In',
-            time: '09:45 AM',
-            phone: '+919876543210'
+            checked_in_at: '09:45 AM',
+            phone: '+91 98765 43210',
+            pax_phone: '+91 98765 43210',
+            meal_preference: 'Veg Meal',
+            meal: 'Veg Meal'
           },
           {
             id: 'pax-2',
-            name: 'Ananya G',
-            role: 'SPOUSE',
+            pax_id: 'pax-2',
+            pax_name: 'Priya G',
+            name: 'Priya G',
+            primary_id: null,
             seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12B' :
                          vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 25' : 'Seat 2',
-            berth_number: 'Middle',
-            pnr_number: pnr,
-            status: 'Not Boarded',
-            phone: '+919876543211'
-          },
-          {
-            id: 'pax-3',
-            name: 'Rahul G',
-            role: 'CHILD',
-            seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12C' :
-                         vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 26' : 'Seat 3',
             berth_number: 'Lower',
             pnr_number: pnr,
             status: 'Checked In',
-            time: '10:15 AM',
-            phone: '+919876543212'
+            checked_in_at: '09:50 AM',
+            phone: '+91 98765 43211',
+            pax_phone: '+91 98765 43211',
+            meal_preference: 'Veg Meal',
+            meal: 'Veg Meal'
+          },
+          {
+            id: 'pax-3',
+            pax_id: 'pax-3',
+            pax_name: 'Dhinesha G',
+            name: 'Dhinesha G',
+            primary_id: 'pax-1',
+            seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12C' :
+                         vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 26' : 'Seat 3',
+            berth_number: 'Upper',
+            pnr_number: pnr,
+            status: 'Checked In',
+            checked_in_at: '10:15 AM',
+            phone: '+91 98765 43212',
+            pax_phone: '+91 98765 43212',
+            meal_preference: 'Veg Meal',
+            meal: 'Veg Meal'
+          },
+          {
+            id: 'pax-4',
+            pax_id: 'pax-4',
+            pax_name: 'Ananya G',
+            name: 'Ananya G',
+            primary_id: 'pax-2',
+            seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12D' :
+                         vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 27' : 'Seat 4',
+            berth_number: 'Middle',
+            pnr_number: pnr,
+            status: 'Checked In',
+            checked_in_at: '10:30 AM',
+            phone: '+91 98765 43213',
+            pax_phone: '+91 98765 43213',
+            meal_preference: 'Veg Meal',
+            meal: 'Veg Meal'
+          },
+          {
+            id: 'pax-5',
+            pax_id: 'pax-5',
+            pax_name: 'Rahul G',
+            name: 'Rahul G',
+            primary_id: 'pax-1',
+            seat_number: vehicleId.includes('flight') || vehicleId.includes('1-2') ? '12E' :
+                         vehicleId.includes('train') || vehicleId.includes('2-1') ? 'Seat 28' : 'Seat 5',
+            berth_number: 'Lower',
+            pnr_number: pnr,
+            status: 'Checked In',
+            checked_in_at: '10:35 AM',
+            phone: '+91 98765 43214',
+            pax_phone: '+91 98765 43214',
+            meal_preference: 'Veg Meal',
+            meal: 'Veg Meal'
           }
         ];
       }
@@ -334,6 +444,48 @@ export const usePowerSync = () => {
         return () => {};
       }
     }),
-    execute: async () => ({}),
+    execute: async (sql: string, params: any[] = []) => {
+      const s = sql.toLowerCase().trim();
+      // Persist attendance inserts/replaces so the UI reflects check-in state.
+      // The hook uses 3 different INSERT patterns — we detect which by reading
+      // the hardcoded literal in the SQL string rather than guessing param index.
+      if (s.includes('insert') && s.includes('into attendance')) {
+        const pax_id    = params[0] as string | undefined;
+        const vehicle_id = params[1] as string | undefined;
+
+        if (pax_id && vehicle_id) {
+          let status: string;
+          let checked_in_at: string | null;
+          let via_rep: number;
+
+          if (s.includes("'checked in'")) {
+            // Pattern: VALUES (?, ?, ?, 'Checked In', ?)  ← 4 params
+            // [pax_id, vehicle_id, timestamp, viaRepVal]
+            status        = 'Checked In';
+            checked_in_at = (params[2] as string) ?? null;
+            via_rep       = (params[3] as number) ?? 0;
+
+          } else if (s.includes("'absent'")) {
+            // Pattern: VALUES (?, ?, NULL, 'Absent', 0)   ← 2 params
+            // [pax_id, vehicle_id]
+            status        = 'Absent';
+            checked_in_at = null;
+            via_rep       = 0;
+
+          } else {
+            // Pattern: VALUES (?, ?, ?, ?, ?)             ← 5 params (updateMemberStatus)
+            // [pax_id, vehicle_id, checked_in_at, status, viaRepVal]
+            checked_in_at = (params[2] as string) ?? null;
+            status        = (params[3] as string) ?? 'Not Boarded';
+            via_rep       = (params[4] as number) ?? 0;
+          }
+
+          _attendanceStore[_attendanceKey(pax_id, vehicle_id)] = {
+            pax_id, vehicle_id, checked_in_at, status, via_rep,
+          };
+        }
+      }
+      return {};
+    },
   };
 };

@@ -4,6 +4,7 @@ import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
 import { getInitials } from "../../utils/formatters";
+import { fonts } from "../../constants/theme";
 
 interface AvatarProps {
   name: string;
@@ -67,7 +68,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       <Text
         style={{
           fontSize: sizeStyle.fontSize,
-          fontFamily: "PlusJakartaSans-Bold",
+          fontFamily: fonts.bold,
           color: textColor,
         }}
       >

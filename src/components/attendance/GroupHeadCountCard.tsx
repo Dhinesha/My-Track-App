@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { fonts, textStyles } from '../../constants/theme';
 import { Svg, Circle } from 'react-native-svg';
 import { useEffect, useState } from 'react';
 import { usePowerSync } from '@powersync/react-native';
@@ -72,14 +73,14 @@ export function GroupHeadCountCard() {
             strokeLinecap="round" transform="rotate(-90 55 55)" />
         </Svg>
         <View className="absolute items-center">
-          <Text className="text-2xl font-bold text-gray-900">{checked}</Text>
-          <Text className="text-xs text-gray-400">of {total}</Text>
+          <Text className="text-2xl text-gray-900" style={{ fontFamily: fonts.extraBold, fontSize: 28 }}>{checked}</Text>
+          <Text className="text-xs text-gray-400" style={{ fontFamily: fonts.regular, fontSize: 13 }}>of {total}</Text>
         </View>
       </View>
-      <Text className={`text-sm font-medium ${remaining === 0 ? 'text-green-700' : 'text-gray-600'}`}>{statusText}</Text>
+      <Text className={`text-sm ${remaining === 0 ? 'text-green-700' : 'text-gray-600'}`} style={{ fontFamily: fonts.semiBold, fontSize: 14 }}>{statusText}</Text>
       <View className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border
         ${familyDone ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
-        <Text className={`text-xs font-semibold ${familyDone ? 'text-green-700' : 'text-amber-700'}`}>
+        <Text className={`text-xs ${familyDone ? 'text-green-700' : 'text-amber-700'}`} style={{ fontFamily: fonts.semiBold, fontSize: 12 }}>
           Your family: {familyChecked}/{familyTotal} {familyDone ? '✓' : ''}
         </Text>
       </View>

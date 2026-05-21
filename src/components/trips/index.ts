@@ -8,3 +8,5 @@ export * from "./TodaySummaryCard";
 export * from "./SmartCheckInBanner";
 export * from "./InTripWeatherWidget";
 export * from "./TripMemoriesCard";
+export * from "./ReservationsAttachments";
+

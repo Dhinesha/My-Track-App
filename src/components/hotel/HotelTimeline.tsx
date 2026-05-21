@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, LayoutAnimation, Platform, UIManager } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography, Spacing, Shadows } from "../../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 import { Hotel } from "../../hooks/useHotel";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   timelineContainer: {
     paddingHorizontal: 16,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "800",
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   connectorLine: {
     width: 2,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   starsRow: {
     flexDirection: "row",
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 12,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   timingsGrid: {
     flexDirection: "row",
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
     color: Colors.neutral.textMuted,
     fontWeight: "700",
     letterSpacing: 0.8,
-  },
+    fontFamily: fonts.bold,},
   timingValue: {
     fontSize: 11,
     fontWeight: "600",
     color: Colors.neutral.textSecondary,
     marginTop: 2,
-  },
+    fontFamily: fonts.semiBold,},
   timingDivider: {
     width: 1,
     height: 24,
@@ -286,6 +286,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 9,
     fontWeight: "800",
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
 });

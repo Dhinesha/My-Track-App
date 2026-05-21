@@ -1,4 +1,5 @@
 import React from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, StyleSheet } from "react-native";
 import { differenceInDays, format } from "date-fns";
 
@@ -40,6 +41,6 @@ const styles = StyleSheet.create({
   text: {
     color: "#1E3A8A",
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
 });

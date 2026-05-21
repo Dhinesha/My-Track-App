@@ -10,6 +10,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInUp, FadeOutUp, Layout } from "react-native-reanimated";
+import { fonts } from "../../constants/theme";
 
 interface Props {
   isVisible: boolean;
@@ -144,13 +145,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: "#991B1B", // Red 800
     marginBottom: 4,
   },
   description: {
     fontSize: 13,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: "#B91C1C", // Red 700
     lineHeight: 18,
   },
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: "#FFFFFF",
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
   },
   secondaryButton: {
     backgroundColor: "#FFFFFF",
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: "#DC2626", // Red 600
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
   },
   closeButton: {
     position: "absolute",

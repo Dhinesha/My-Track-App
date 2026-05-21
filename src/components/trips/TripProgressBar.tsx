@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { fonts, textStyles } from '../../constants/theme';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { differenceInDays, parseISO } from 'date-fns';

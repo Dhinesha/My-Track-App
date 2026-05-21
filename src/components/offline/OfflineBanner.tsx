@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { Animated, Text, View, Platform } from "react-native";
 import { useOffline } from "../../hooks/useOffline";
 import { useSyncStore } from "../../store/syncStore";

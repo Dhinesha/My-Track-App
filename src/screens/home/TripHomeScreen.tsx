@@ -15,18 +15,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../store/authStore';
 import { useTripStore } from '../../store/tripStore';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { useProfileStore } from '../../store/profileStore';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 import { EmergencyFAB } from '../../components/common';
 
 export const TripHomeScreen = () => {
   const { user } = useAuthStore();
   const navigation = useNavigation<any>();
   const { setActiveTrip, activeTripId } = useTripStore();
+  const profile = useProfileStore();
   
   const [loading, setLoading] = useState(true);
   const [ongoingTrip, setOngoingTrip] = useState<any>(null);
 
   useEffect(() => {
+    profile.loadProfile();
     const trip = {
       id: 'kyoto-1',
       name: 'Kyoto Spring Adventure',
@@ -62,7 +65,7 @@ export const TripHomeScreen = () => {
             activeOpacity={0.7}
           >
             <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' }} 
+              source={{ uri: profile.photo }} 
               style={styles.profileImg}
             />
           </TouchableOpacity>
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: Colors.primary.main,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   headerRight: {
     flexDirection: 'row',
@@ -319,13 +322,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 8,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   quickActionLabel: {
     fontSize: 11,
     fontWeight: '600',
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     textAlign: 'center',
   },
   heroWrapper: {
@@ -355,14 +358,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: 1.2,
   },
   heroTripTitle: {
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 4,
   },
   heroDayBadge: {
@@ -377,7 +380,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   heroDivider: {
     height: 1,
@@ -397,7 +400,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 15,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   heroArrowBtn: {
     width: 32,
@@ -421,13 +424,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   seeAllText: {
     color: Colors.primary.medium,
     fontWeight: '600',
     fontSize: 14,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   upcomingScrollView: {
     width: '100%',
@@ -456,13 +459,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 4,
   },
   upcomingCardDate: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginBottom: 10,
   },
   upcomingBadge: {
@@ -476,7 +479,7 @@ const styles = StyleSheet.create({
     color: Colors.info.text,
     fontSize: 9,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: 1,
   },
 });

@@ -41,6 +41,7 @@ import EmergencyScreen from "./src/screens/emergency/EmergencyScreen";
 import FeedbackScreen from "./src/screens/feedback/FeedbackScreen";
 import PackingChecklistScreen from "./src/screens/trips/PackingChecklistScreen";
 import BudgetTrackerScreen from "./src/screens/trips/BudgetTrackerScreen";
+import PersonalInformationScreen from "./src/screens/PersonalInformationScreen";
 import { StoreTestPanel } from "./src/components/shared/StoreTestPanel";
 import { OfflineBanner } from "./src/components/offline";
 
@@ -64,6 +65,7 @@ export type RootStackParamList = {
   Feedback: { tripId: string; tripName: string; paxId: string };
   PackingChecklist: { tripId: string; tripName: string; tripType: string };
   BudgetTracker: { tripId: string; totalDays: number };
+  PersonalInformation: undefined;
 };
 
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
@@ -72,6 +74,11 @@ const JSStack = createStackNavigator<RootStackParamList>();
 function AppNavigator() {
   console.log("AppNavigator rendering...");
   const [fontsLoaded] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
     "PlusJakartaSans-Regular": PlusJakartaSans_400Regular,
     "PlusJakartaSans-Medium": PlusJakartaSans_500Medium,
     "PlusJakartaSans-SemiBold": PlusJakartaSans_600SemiBold,
@@ -114,7 +121,7 @@ function AppNavigator() {
           style={{
             color: "white",
             marginTop: 20,
-            fontFamily: "PlusJakartaSans-Bold",
+            fontFamily: "PlusJakartaSans_700Bold",
           }}
         >
           Loading Premium Experience...
@@ -151,6 +158,7 @@ function AppNavigator() {
       <Stack.Screen name="Feedback" component={FeedbackScreen} />
       <Stack.Screen name="PackingChecklist" component={PackingChecklistScreen} />
       <Stack.Screen name="BudgetTracker" component={BudgetTrackerScreen} />
+      <Stack.Screen name="PersonalInformation" component={PersonalInformationScreen} />
     </Stack.Navigator>
   );
 }

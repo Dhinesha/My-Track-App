@@ -41,6 +41,12 @@
    - Analysis tools used
    - Scope and limitations
 
+6. **[VEHICLE_ATTENDANCE.md](VEHICLE_ATTENDANCE.md)** - Vehicle and Attendance tracking system
+   - System architecture & components breakdown
+   - Real-time departure timer & color-coded urgency states
+   - Persistence data structures & entity mappings
+   - Detailed troubleshooting of UI thread lockup loop
+
 ---
 
 ## 🎯 Quick Reference by Role
@@ -158,6 +164,19 @@
 - Recommendations
 
 **When to use:** Understanding how the audit was conducted
+
+---
+
+### VEHICLE_ATTENDANCE.md
+
+**What:** Comprehensive system and developer guide for transport schedules and travelers boarding checklist tracking:
+
+- Real-time countdown animations and safety thresholds.
+- Dynamic vehicle ticket representation (Buses, Trains, Flights, Cabs).
+- SQLite DB structures & entity diagrams.
+- Thread-locking infinite loop resolution analysis.
+
+**When to use:** Developing transportation cards, testing offline storage syncing, or reviewing core timer animations.
 
 ---
 

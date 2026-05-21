@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from '../../App';
-import { Colors, Typography, Spacing, Shadows } from '../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 import { TripProgressBar, TripCountdownWidget } from '../components/trips';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   plusBtn: {
     width: 40,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     fontSize: Typography.fontSizes.body,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     color: Colors.neutral.textPrimary,
   },
   filtersWrapper: {
@@ -278,14 +278,14 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   filterTextActive: {
     color: '#FFFFFF',
-  },
+    fontFamily: fonts.regular,},
   filterTextInactive: {
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.regular,},
   scrollView: {
     flex: 1,
   },
@@ -313,19 +313,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-  },
+    fontFamily: fonts.regular,},
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 0.5,
     borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
+    fontFamily: fonts.regular,},
   statusBadgeText: {
     color: '#FFFFFF',
     fontSize: 9,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
@@ -336,13 +336,13 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.cardTitle,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 4,
   },
   cardGroup: {
     fontSize: Typography.fontSizes.smallLabel,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 12,
     textTransform: 'uppercase',
   },
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   progressSection: {
     marginTop: 4,
@@ -371,12 +371,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
+    fontFamily: fonts.regular,},
   viewDetailsText: {
     color: Colors.primary.medium,
     fontWeight: '700',
     fontSize: 12,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   pastSection: {
     flexDirection: 'row',
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   pastText: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   recapBtn: {
     backgroundColor: Colors.neutral.pageBackground,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.textPrimary,
     fontSize: 12,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -422,12 +422,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 4,
   },
   emptySub: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
 });

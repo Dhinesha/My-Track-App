@@ -5,7 +5,7 @@ import { usePowerSync } from '@powersync/react-native';
 import { useEffect, useState } from 'react';
 import { useTripStore } from '../../store/tripStore';
 import { useAuthStore } from '../../store/authStore';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 interface Props { isSelfCheckedIn: boolean; }
 
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     textAlign: 'center',
   },
 });

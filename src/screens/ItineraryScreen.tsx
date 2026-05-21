@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 
 export default function ItineraryScreen() {
   const navigation = useNavigation<any>();
@@ -173,9 +173,8 @@ export default function ItineraryScreen() {
           <Ionicons name="arrow-back" size={22} color={Colors.neutral.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Itinerary</Text>
-        <TouchableOpacity style={styles.headerMoreBtn} activeOpacity={0.7}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={Colors.neutral.textPrimary} />
-        </TouchableOpacity>
+        {/* Spacer to keep title centered */}
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView 
@@ -349,13 +348,10 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: '600',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
-  headerMoreBtn: {
+  headerSpacer: {
     width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
@@ -379,7 +375,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     lineHeight: 28,
   },
   dateRow: {
@@ -391,7 +387,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   takeoffIconContainer: {
     height: 50,
@@ -434,14 +430,14 @@ const styles = StyleSheet.create({
   dayChipText: {
     fontSize: 14,
     fontWeight: '700',
-  },
+    fontFamily: fonts.bold,},
   dayChipTextActive: {
     color: '#FFFFFF',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   dayChipTextInactive: {
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   timelineSection: {
     paddingHorizontal: Spacing.screenPaddingH,
@@ -451,7 +447,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.sectionLabel,
     fontWeight: '700',
     color: Colors.primary.medium,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
     marginBottom: 20,
@@ -511,7 +507,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.cardTitle,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     lineHeight: 20,
   },
   timeBadge: {
@@ -526,7 +522,7 @@ const styles = StyleSheet.create({
     color: Colors.info.text,
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   locationRow: {
     flexDirection: 'row',
@@ -537,12 +533,12 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: Typography.fontSizes.smallLabel,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   noteText: {
     fontSize: Typography.fontSizes.smallLabel,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     fontStyle: 'italic',
     lineHeight: 18,
   },
@@ -564,7 +560,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     color: Colors.warning.textOnAmber,
     lineHeight: 16,
   },
@@ -614,13 +610,13 @@ const styles = StyleSheet.create({
   navLabelActive: {
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     color: Colors.primary.main,
   },
   navLabelInactive: {
     fontSize: 10,
     fontWeight: '500',
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     color: Colors.neutral.textMuted,
   },
 });

@@ -64,6 +64,7 @@ export const AppSchema = new Schema({
     vehicle_id: column.text,
     checked_in_at: column.text,
     status: column.text,
+    via_rep: column.integer,
   }),
   hotels: new Table({
     trip_id: column.text,

@@ -60,6 +60,75 @@ export const Typography = {
   },
 };
 
+export const fonts = {
+  regular:   'PlusJakartaSans_400Regular',
+  medium:    'PlusJakartaSans_500Medium',
+  semiBold:  'PlusJakartaSans_600SemiBold',
+  bold:      'PlusJakartaSans_700Bold',
+  extraBold: 'PlusJakartaSans_800ExtraBold',
+};
+
+export const textStyles = {
+  screenTitle: {
+    fontFamily: fonts.semiBold,
+    fontSize: 18,
+    color: '#111111',
+  },
+  heroTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 26,
+    color: '#FFFFFF',
+  },
+  sectionLabel: {
+    fontFamily: fonts.bold,
+    fontSize: 11,
+    color: '#1D9E75',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase' as const,
+  },
+  cardTitle: {
+    fontFamily: fonts.semiBold,
+    fontSize: 16,
+    color: '#111111',
+  },
+  body: {
+    fontFamily: fonts.regular,
+    fontSize: 15,
+    color: '#222222',
+  },
+  bodyBold: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    color: '#111111',
+  },
+  label: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: '#888888',
+  },
+  button: {
+    fontFamily: fonts.semiBold,
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  pnr: {
+    fontFamily: fonts.extraBold,
+    fontSize: 22,
+    letterSpacing: 3,
+    color: '#111111',
+  },
+  roomNumber: {
+    fontFamily: fonts.extraBold,
+    fontSize: 40,
+    color: '#111111',
+  },
+  sectionHeading: {
+    fontFamily: fonts.bold,
+    fontSize: 20,
+    color: '#111111',
+  },
+};
+
 export const Spacing = {
   screenPaddingH: 16,
   gap: 16,

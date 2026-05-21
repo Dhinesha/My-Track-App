@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePowerSync } from '@powersync/react-native';
 import { useTripStore } from '../../store/tripStore';
 import { differenceInDays, parseISO, format } from 'date-fns';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 export function TodaySummaryCard() {
   const [expanded, setExpanded] = useState(false);
@@ -145,12 +145,12 @@ const styles = StyleSheet.create({
   sunEmoji: {
     fontSize: 20,
     marginRight: 8,
-  },
+    fontFamily: fonts.regular,},
   headerTitle: {
     fontSize: Typography.fontSizes.cardTitle,
     fontWeight: '600',
     color: Colors.warning.textOnAmber,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   divider: {
     height: 1,
@@ -171,12 +171,12 @@ const styles = StyleSheet.create({
   rowText: {
     fontSize: 14,
     color: '#333333',
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   boldText: {
     fontWeight: '700',
     color: '#111111',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   noteCard: {
     backgroundColor: '#FFFFFF',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: Colors.warning.textOnAmber,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     fontStyle: 'italic',
     lineHeight: 18,
   },

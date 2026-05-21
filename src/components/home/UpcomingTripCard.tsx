@@ -1,4 +1,5 @@
 import React from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -68,13 +69,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 4,
-  },
+    fontFamily: fonts.bold,},
   dates: {
     fontSize: 12,
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 12,
-  },
+    fontFamily: fonts.medium,},
   badge: {
     backgroundColor: '#F3F4F6',
     paddingHorizontal: 10,
@@ -87,5 +88,5 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#2B8CEE',
     letterSpacing: 0.5,
-  },
+    fontFamily: fonts.extraBold,},
 });

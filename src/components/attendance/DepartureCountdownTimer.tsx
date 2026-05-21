@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, StyleSheet } from 'react-native';
 import Animated, { useSharedValue, withRepeat, withSequence, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import { differenceInSeconds } from 'date-fns';
@@ -30,7 +31,7 @@ export function DepartureCountdownTimer({ departureISO, transportType = "bus" }:
       withTiming(0.4, { duration: speed }),
       withTiming(1, { duration: speed })
     ), -1);
-  }, [secsLeft <= 900, secsLeft <= 1800]);
+  }, [secsLeft <= 0, secsLeft <= 900]);
 
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontSize: 13,
     textAlign: "center",
-  },
+    fontFamily: fonts.regular,},
   baseContainer: {
     borderRadius: 12,
     padding: 16,
@@ -169,28 +170,28 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "700",
     letterSpacing: 1.2,
-  },
+    fontFamily: fonts.bold,},
   normalText: {
     color: "#047857",
-  },
+    fontFamily: fonts.regular,},
   warningText: {
     color: "#B45309",
-  },
+    fontFamily: fonts.regular,},
   urgentText: {
     color: "#B91C1C",
-  },
+    fontFamily: fonts.regular,},
   labelSubText: {
     fontSize: 12,
     marginTop: 4,
     fontWeight: "500",
-  },
+    fontFamily: fonts.medium,},
   normalLabel: {
     color: "#059669",
-  },
+    fontFamily: fonts.regular,},
   warningLabel: {
     color: "#D97706",
-  },
+    fontFamily: fonts.regular,},
   urgentLabel: {
     color: "#EF4444",
-  },
+    fontFamily: fonts.regular,},
 });

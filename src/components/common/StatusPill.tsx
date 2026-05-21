@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
+import { fonts } from "../../constants/theme";
 
 type StatusPillStatus =
   | "checked-in"
@@ -121,7 +122,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
       <Text
         style={{
           fontSize: sizeStyle.fontSize,
-          fontFamily: "PlusJakartaSans-SemiBold",
+          fontFamily: fonts.semiBold,
           color: config.color,
           marginLeft: Spacing.sm,
         }}

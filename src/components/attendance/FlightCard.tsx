@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import { Colors, Typography, Spacing } from "../../constants/theme";
+import { Colors, Typography, Spacing, fonts, textStyles } from '../../constants/theme';
 import { TransportLeg } from "../../hooks/useAttendance";
 
 interface Props {
@@ -166,12 +166,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   flightNo: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
   },
   routeRow: {
     flexDirection: "row",
@@ -186,13 +186,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
   placeSub: {
     fontSize: 11,
     color: Colors.neutral.textSecondary,
     marginTop: 2,
-  },
+    fontFamily: fonts.regular,},
   planeIconContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 16,
-  },
+    fontFamily: fonts.regular,},
   timeCol: {
     flex: 1,
   },
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.semiBold,},
   durationBadge: {
     backgroundColor: Colors.neutral.pageBackground,
     paddingHorizontal: 8,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.neutral.textSecondary,
     fontWeight: "500",
-  },
+    fontFamily: fonts.medium,},
   divider: {
     height: 0.5,
     backgroundColor: Colors.neutral.border,
@@ -246,20 +246,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 16,
-  },
+    fontFamily: fonts.regular,},
   pnrLabel: {
     fontSize: 9,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
     letterSpacing: 1,
-  },
+    fontFamily: fonts.bold,},
   pnrValue: {
     fontSize: 22,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
     letterSpacing: 3,
     marginTop: 2,
-  },
+    fontFamily: fonts.extraBold,},
   copyBtn: {
     width: 36,
     height: 36,
@@ -280,13 +280,13 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
-  },
+    fontFamily: fonts.bold,},
   detailVal: {
     fontSize: 14,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
     marginTop: 4,
-  },
+    fontFamily: fonts.bold,},
   mealBadge: {
     backgroundColor: "#F3F4F6",
     paddingHorizontal: 10,
@@ -298,5 +298,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.semiBold,},
 });

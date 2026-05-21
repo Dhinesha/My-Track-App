@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import { Colors, Typography } from "../../constants/theme";
+import { Colors, Typography, fonts, textStyles } from '../../constants/theme';
 
 interface Props {
   pnrNumber: string;
@@ -71,20 +71,20 @@ const styles = StyleSheet.create({
   },
   pnrSection: {
     alignItems: "center",
-  },
+    fontFamily: fonts.regular,},
   label: {
     fontSize: 10,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
     letterSpacing: 1,
-  },
+    fontFamily: fonts.bold,},
   pnrText: {
     fontSize: 20,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
     letterSpacing: 2,
     marginTop: 2,
-  },
+    fontFamily: fonts.extraBold,},
   btnRow: {
     flexDirection: "row",
     gap: 12,
@@ -105,15 +105,15 @@ const styles = StyleSheet.create({
   },
   statusBtn: {
     backgroundColor: Colors.primary.main,
-  },
+    fontFamily: fonts.regular,},
   copyText: {
     color: Colors.primary.main,
     fontSize: 13,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
   statusText: {
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
 });

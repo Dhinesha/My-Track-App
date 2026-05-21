@@ -1,7 +1,8 @@
 import React from "react";
-import { View, StyleSheet, ViewStyle, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ViewStyle, TouchableOpacity, Text } from "react-native";
 import { Colors } from "../../theme/colors";
 import { Spacing, Radius } from "../../theme/spacing";
+import { fonts } from "../../constants/theme";
 
 interface SegmentedControlProps {
   options: string[];
@@ -46,7 +47,7 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
                     index === selectedIndex
                       ? Colors.white
                       : Colors.text.secondary,
-                  fontFamily: "PlusJakartaSans-SemiBold",
+                  fontFamily: fonts.semiBold,
                   fontSize: 12,
                 },
               ]}
@@ -59,8 +60,6 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
     </View>
   );
 };
-
-import { Text } from "react-native";
 
 const styles = StyleSheet.create({
   container: {

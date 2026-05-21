@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 
 interface Props {
@@ -65,6 +66,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
 });

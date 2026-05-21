@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Typography, Spacing, Shadows } from "../constants/theme";
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 import { useHotel, Hotel } from "../hooks/useHotel";
 import { useSyncStore } from "../store/syncStore";
 import { HotelDayTabs } from "../components/hotel/HotelDayTabs";
@@ -499,11 +499,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.screenTitle,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   headerRightPlaceholder: {
     width: 40,
-  },
+    fontFamily: fonts.regular,},
   scrollView: {
     flex: 1,
   },
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.neutral.textSecondary,
     textAlign: "center",
-  },
+    fontFamily: fonts.regular,},
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -548,12 +548,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary.lightBg,
     alignItems: "center",
     justifyContent: "center",
-  },
+    fontFamily: fonts.regular,},
   imagePlaceholderText: {
     fontSize: 48,
     fontWeight: "bold",
     color: Colors.primary.main,
-  },
+    fontFamily: fonts.bold,},
   hotelDetails: {
     padding: 16,
   },
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginBottom: 6,
   },
   starsRow: {
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     flex: 1,
   },
   divider: {
@@ -605,37 +605,37 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.8,
-  },
+    fontFamily: fonts.semiBold,},
   timingValue: {
     fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginTop: 4,
   },
   roomCard: {
     borderLeftWidth: 4,
     borderLeftColor: Colors.primary.main,
     padding: 16,
-  },
+    fontFamily: fonts.regular,},
   roomLabel: {
     fontSize: 11,
     fontWeight: "700",
     color: Colors.neutral.textMuted,
     textTransform: "uppercase",
     letterSpacing: 1.2,
-  },
+    fontFamily: fonts.bold,},
   roomNumber: {
     fontSize: 40,
     fontWeight: "800",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     marginTop: 4,
   },
   roomMeta: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   roommatesSection: {
@@ -643,11 +643,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.5,
     borderTopColor: Colors.neutral.border,
     paddingTop: 12,
-  },
+    fontFamily: fonts.regular,},
   roommatesLabel: {
     fontSize: 12,
     color: Colors.neutral.textMuted,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     marginBottom: 8,
   },
   chipsRow: {
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
   roommateChip: {
     alignItems: "center",
     gap: 4,
-  },
+    fontFamily: fonts.regular,},
   avatarCircle: {
     width: 32,
     height: 32,
@@ -669,11 +669,11 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "bold",
-  },
+    fontFamily: fonts.bold,},
   roommateName: {
     fontSize: 10,
     color: Colors.neutral.textSecondary,
-  },
+    fontFamily: fonts.regular,},
   interactiveSection: {
     marginHorizontal: Spacing.screenPaddingH,
     marginTop: 16,
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
   disabledBtn: {
     opacity: 0.5,
   },
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.textMuted,
     textAlign: "center",
     marginTop: 6,
-  },
+    fontFamily: fonts.regular,},
   confirmedBanner: {
     backgroundColor: "#E8F5EE",
     borderRadius: 14,
@@ -713,12 +713,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#1D9E75",
-  },
+    fontFamily: fonts.bold,},
   confirmedTime: {
     fontSize: 13,
     color: Colors.neutral.textMuted,
     marginTop: 2,
-  },
+    fontFamily: fonts.regular,},
   familyCard: {
     padding: 16,
   },
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
     marginBottom: 12,
   },
   familyRow: {
@@ -753,11 +753,11 @@ const styles = StyleSheet.create({
   familyAvatarText: {
     color: Colors.primary.main,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
   familyName: {
     fontSize: 14,
     color: Colors.neutral.textPrimary,
-  },
+    fontFamily: fonts.regular,},
   familyMemberRight: {
     flexDirection: "row",
     alignItems: "center",
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,
-  },
+    fontFamily: fonts.regular,},
   pillConfirmed: {
     backgroundColor: "#ECFDF5",
   },
@@ -777,13 +777,13 @@ const styles = StyleSheet.create({
   familyStatusText: {
     fontSize: 11,
     fontWeight: "600",
-  },
+    fontFamily: fonts.semiBold,},
   textConfirmed: {
     color: "#059669",
-  },
+    fontFamily: fonts.regular,},
   textPending: {
     color: "#D97706",
-  },
+    fontFamily: fonts.regular,},
   smallConfirmBtn: {
     backgroundColor: Colors.primary.main,
     paddingHorizontal: 12,
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "700",
-  },
+    fontFamily: fonts.bold,},
   bulkConfirmBtn: {
     borderColor: Colors.primary.main,
     borderWidth: 1,
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
     color: Colors.primary.main,
     fontWeight: "700",
     fontSize: 14,
-  },
+    fontFamily: fonts.bold,},
   shareWrapper: {
     marginHorizontal: Spacing.screenPaddingH,
     marginTop: 16,
@@ -833,5 +833,5 @@ const styles = StyleSheet.create({
     color: Colors.primary.main,
     fontWeight: "700",
     fontSize: 14,
-  },
+    fontFamily: fonts.bold,},
 });

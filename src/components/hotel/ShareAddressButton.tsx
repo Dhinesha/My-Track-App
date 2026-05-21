@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, Share, StyleSheet } from "react-native";
+import { fonts } from "../../constants/theme";
 
 interface Props {
   hotelName: string;
@@ -38,6 +39,6 @@ const styles = StyleSheet.create({
   text: {
     color: "#0F766E",
     fontSize: 14,
-    fontFamily: "PlusJakartaSans-SemiBold",
+    fontFamily: fonts.semiBold,
   },
 });

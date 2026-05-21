@@ -11,6 +11,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
+import { fonts, textStyles } from '../../constants/theme';
 import { Colors } from "../../theme/colors";
 import { RootStackParamList } from "../../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
   },
   content: {
@@ -207,13 +208,13 @@ const styles = StyleSheet.create({
   tripName: {
     fontSize: 24,
     lineHeight: 30,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
   },
   subtitle: {
     fontSize: 15,
     color: Colors.text.secondary,
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: fonts.regular,
   },
   starsRow: {
     flexDirection: "row",
@@ -223,13 +224,13 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 40,
-  },
+    fontFamily: fonts.regular,},
   starFilled: {
     color: "#F59E0B",
-  },
+    fontFamily: fonts.regular,},
   starEmpty: {
     color: "#CBD5E1",
-  },
+    fontFamily: fonts.regular,},
   commentWrap: {
     gap: 8,
   },
@@ -240,37 +241,37 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     fontSize: 15,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
     color: Colors.text.primary,
   },
   counter: {
     fontSize: 12,
     color: Colors.text.muted,
     textAlign: "right",
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: fonts.regular,
   },
   submitButton: {
     height: 54,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-  },
+    fontFamily: fonts.regular,},
   submitButtonActive: {
     backgroundColor: Colors.primary,
-  },
+    fontFamily: fonts.regular,},
   submitButtonDisabled: {
     backgroundColor: "#E2E8F0",
-  },
+    fontFamily: fonts.regular,},
   submitText: {
     fontSize: 16,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
   },
   submitTextActive: {
     color: "#FFFFFF",
-  },
+    fontFamily: fonts.regular,},
   submitTextDisabled: {
     color: "#94A3B8",
-  },
+    fontFamily: fonts.regular,},
   skipButton: {
     alignItems: "center",
     paddingVertical: 8,
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     color: Colors.text.muted,
     fontSize: 14,
     textDecorationLine: "underline",
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
   successContent: {
     flex: 1,
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontSize: 28,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
     color: Colors.text.primary,
     textAlign: "center",
   },
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: Colors.text.secondary,
     textAlign: "center",
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: fonts.regular,
     paddingHorizontal: 20,
   },
   doneButton: {
@@ -324,6 +325,6 @@ const styles = StyleSheet.create({
   doneButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontFamily: fonts.bold,
   },
 });

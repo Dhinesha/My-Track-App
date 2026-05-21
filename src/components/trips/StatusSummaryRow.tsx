@@ -1,4 +1,5 @@
 import React from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { View, Text, StyleSheet } from "react-native";
 
 interface Props {
@@ -76,8 +77,10 @@ const styles = StyleSheet.create({
   dotPending: { backgroundColor: "#F59E0B" },
   chipText: {
     fontSize: 12,
-    fontFamily: "PlusJakartaSans-Medium",
+    fontFamily: fonts.medium,
   },
-  chipTextDone: { color: "#065F46" },
-  chipTextPending: { color: "#92400E" },
+  chipTextDone: { color: "#065F46",
+    fontFamily: fonts.regular,},
+  chipTextPending: { color: "#92400E",
+    fontFamily: fonts.regular,},
 });

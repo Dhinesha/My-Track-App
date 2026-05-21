@@ -4,7 +4,7 @@ import * as Linking from 'expo-linking';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
-import { Colors } from '../../constants/theme';
+import { Colors, fonts, textStyles } from '../../constants/theme';
 
 interface Props { onPress: () => void; }
 
@@ -80,6 +80,6 @@ const styles = StyleSheet.create({
   toastText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: fonts.medium,
   },
 });

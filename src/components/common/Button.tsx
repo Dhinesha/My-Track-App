@@ -1,4 +1,5 @@
 import React from "react";
+import { fonts, textStyles } from '../../constants/theme';
 import { TouchableOpacity, Text, ActivityIndicator, View } from "react-native";
 
 type ButtonVariant =

@@ -18,7 +18,7 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import { useAuthStore } from '../../store/authStore';
-import { Colors, Typography, Spacing, Shadows } from '../../constants/theme';
+import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../../constants/theme';
 
 // Illustrations
 import Slide1Illustration from '../../components/onboarding/Slide1Illustration';
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral.textMuted,
     fontSize: 15,
     fontWeight: '600',
-    fontFamily: Typography.fontFamilies.semibold,
+    fontFamily: fonts.semiBold,
   },
   listContainer: {
     flex: 1,
@@ -219,12 +219,12 @@ const styles = StyleSheet.create({
   textBox: {
     paddingHorizontal: 36,
     alignItems: 'center',
-  },
+    fontFamily: fonts.regular,},
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: Colors.neutral.textPrimary,
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
     textAlign: 'center',
     lineHeight: 32,
     letterSpacing: -0.5,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: Colors.neutral.textSecondary,
-    fontFamily: Typography.fontFamilies.regular,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     marginTop: 12,
     lineHeight: 22,
@@ -259,6 +259,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
-    fontFamily: Typography.fontFamilies.bold,
+    fontFamily: fonts.bold,
   },
 });
