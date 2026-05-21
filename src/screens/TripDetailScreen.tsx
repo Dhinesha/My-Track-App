@@ -36,7 +36,8 @@ type Route = RouteProp<RootStackParamList, "TripDetail">;
 export default function TripDetailScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
-  const { tripId, tripName } = route.params;
+  const { tripId, tripName, tripStatus } = route.params;
+  const isUpcoming = tripStatus === 'upcoming';
   const [isSelfCheckedIn, setIsSelfCheckedIn] = React.useState(false);
 
   React.useEffect(() => {
@@ -152,19 +153,21 @@ export default function TripDetailScreen() {
           />
           
           <View style={styles.heroContent}>
-            {/* Top Row: Pill and Underway text */}
+            {/* Top Row: Pill and status text */}
             <View style={styles.heroTopRow}>
-              <View style={styles.heroPill}>
-                <Text style={styles.heroPillText}>Day 2 of 9</Text>
+              <View style={[styles.heroPill, isUpcoming && styles.heroPillUpcoming]}>
+                <Text style={styles.heroPillText}>{isUpcoming ? 'Upcoming' : 'Day 2 of 9'}</Text>
               </View>
               <View style={styles.underwayContainer}>
-                <View style={styles.underwayDot} />
-                <Text style={styles.underwayText}>Underway</Text>
+                <View style={[styles.underwayDot, isUpcoming && styles.underwayDotUpcoming]} />
+                <Text style={[styles.underwayText, isUpcoming && styles.underwayTextUpcoming]}>
+                  {isUpcoming ? 'Not started yet' : 'Underway'}
+                </Text>
               </View>
             </View>
 
             {/* Trip Name */}
-            <Text style={styles.heroTripName}>Family Kyoto Retreat</Text>
+            <Text style={styles.heroTripName}>{tripName}</Text>
             
             {/* Location Row */}
             <View style={styles.heroLocationRow}>
@@ -182,49 +185,69 @@ export default function TripDetailScreen() {
           </View>
         </View>
 
-        {/* Content wrapper for screen padding */}
-        <View style={styles.paddedContent}>
-          {/* Dynamic Banners */}
-          <View style={styles.bannerContainer}>
-            <TripMemoriesCard 
-              tripId={tripId} 
-              tripName={tripName} 
-              startDate="2023-10-12" 
-              endDate="2023-10-20" 
-              paxId="demo-pax-1" 
-            />
-            <ReservationsAttachments tripId={tripId} tripName={tripName} />
-            <SmartCheckInBanner />
-            <InTripWeatherWidget />
-            <WhatsHappeningNowCard />
-            <TodaySummaryCard />
+        {/* Content wrapper for screen padding — only show banners for ongoing trips */}
+        {!isUpcoming && (
+          <View style={styles.paddedContent}>
+            {/* Dynamic Banners */}
+            <View style={styles.bannerContainer}>
+              <TripMemoriesCard 
+                tripId={tripId} 
+                tripName={tripName} 
+                startDate="2023-10-12" 
+                endDate="2023-10-20" 
+                paxId="demo-pax-1" 
+              />
+              <ReservationsAttachments tripId={tripId} tripName={tripName} />
+              <SmartCheckInBanner />
+              <InTripWeatherWidget />
+              <WhatsHappeningNowCard />
+              <TodaySummaryCard />
+            </View>
           </View>
-        </View>
+        )}
 
-        {/* Quick Actions Row */}
-        <QuickActionsRow isSelfCheckedIn={isSelfCheckedIn} />
+        {/* Quick Actions Row — only for ongoing trips */}
+        {!isUpcoming && <QuickActionsRow isSelfCheckedIn={isSelfCheckedIn} />}
 
         <View style={styles.paddedContent}>
+          {/* Upcoming Trip Info Banner */}
+          {isUpcoming && (
+            <View style={styles.upcomingBanner}>
+              <Ionicons name="time-outline" size={20} color={Colors.info.text} />
+              <View style={styles.upcomingBannerText}>
+                <Text style={styles.upcomingBannerTitle}>Trip hasn't started yet</Text>
+                <Text style={styles.upcomingBannerSub}>Check-in will be available when the trip begins. You can view and update other details now.</Text>
+              </View>
+            </View>
+          )}
+
           {/* Self Check-In Section */}
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionHeading}>Self Check-In</Text>
-              {isSelfCheckedIn && (
+              {!isUpcoming && isSelfCheckedIn && (
                 <View style={styles.completedBadge}>
                   <Ionicons name="checkmark-circle" size={12} color={Colors.success.checkIcon} />
                   <Text style={styles.completedBadgeText}>Completed</Text>
                 </View>
               )}
+              {isUpcoming && (
+                <View style={styles.upcomingChip}>
+                  <Ionicons name="lock-closed-outline" size={11} color={Colors.neutral.textMuted} />
+                  <Text style={styles.upcomingChipText}>Locked</Text>
+                </View>
+              )}
             </View>
             
             <TouchableOpacity 
-              activeOpacity={0.8}
+              activeOpacity={isUpcoming ? 1 : 0.8}
+              disabled={isUpcoming}
               style={[
                 styles.primaryButton,
-                isSelfCheckedIn ? styles.disabledButton : styles.activeButton
+                isUpcoming || isSelfCheckedIn ? styles.disabledButton : styles.activeButton
               ]}
               onPress={async () => {
-                if (!isSelfCheckedIn) {
+                if (!isSelfCheckedIn && !isUpcoming) {
                   await AsyncStorage.setItem(`checkin_${tripId}`, 'true');
                   setIsSelfCheckedIn(true);
                 }
@@ -232,9 +255,9 @@ export default function TripDetailScreen() {
             >
               <Text style={[
                 styles.primaryButtonText,
-                isSelfCheckedIn ? styles.disabledButtonText : styles.activeButtonText
+                isUpcoming || isSelfCheckedIn ? styles.disabledButtonText : styles.activeButtonText
               ]}>
-                {isSelfCheckedIn ? 'Already Checked In' : 'Check In'}
+                {isUpcoming ? 'Available when trip starts' : isSelfCheckedIn ? 'Already Checked In' : 'Check In'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -583,5 +606,63 @@ const styles = StyleSheet.create({
     color: Colors.neutral.textMuted,
     fontFamily: Typography.fontFamilies.regular,
     textAlign: 'center',
+  },
+
+  // ── Upcoming trip styles ────────────────────────
+  heroPillUpcoming: {
+    backgroundColor: Colors.warning.main,
+  },
+  underwayDotUpcoming: {
+    backgroundColor: Colors.warning.main,
+  },
+  underwayTextUpcoming: {
+    color: '#FFFFFF',
+  },
+  upcomingBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    backgroundColor: Colors.info.lightBg,
+    borderWidth: 0.5,
+    borderColor: '#C5DDF5',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  upcomingBannerText: {
+    flex: 1,
+  },
+  upcomingBannerTitle: {
+    fontFamily: Typography.fontFamilies.bold,
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.info.text,
+    marginBottom: 4,
+  },
+  upcomingBannerSub: {
+    fontFamily: Typography.fontFamilies.regular,
+    fontSize: 12,
+    color: Colors.info.text,
+    lineHeight: 18,
+    opacity: 0.8,
+  },
+  upcomingChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: Colors.neutral.divider,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: Colors.neutral.border,
+  },
+  upcomingChipText: {
+    fontFamily: Typography.fontFamilies.bold,
+    fontSize: 10,
+    fontWeight: '700',
+    color: Colors.neutral.textMuted,
+    textTransform: 'uppercase',
   },
 });

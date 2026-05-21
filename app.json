@@ -35,6 +35,12 @@
         "projectId": "01f6a8e8-b219-4985-ae1c-945c5fc4bf95"
       }
     },
-    "owner": "dhinesha"
+    "owner": "dhinesha",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/01f6a8e8-b219-4985-ae1c-945c5fc4bf95"
+    }
   }
 }

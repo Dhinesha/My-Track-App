@@ -9,155 +9,187 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors, Typography, Spacing, Shadows, fonts, textStyles } from '../constants/theme';
 
+/* ── Per-trip itinerary data ─────────────────────── */
+type Activity = {
+  id: string;
+  time: string;
+  title: string;
+  location: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  note?: string;
+  alert?: string;
+};
+
+type TripItinerary = {
+  title: string;
+  dateLabel: string;
+  days: string[];
+  dailyActivities: Record<number, Activity[]>;
+};
+
+const TRIP_ITINERARIES: Record<string, TripItinerary> = {
+  'kyoto-1': {
+    title: 'Kyoto Spring Adventure',
+    dateLabel: 'Oct 12 - Oct 20, 2023',
+    days: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9'],
+    dailyActivities: {
+      0: [
+        { id: 'k1-1', time: '08:00 AM', title: 'Breakfast at Hotel', location: 'Main Lobby', icon: 'restaurant-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Meet near the concierge desk.' },
+        { id: 'k1-2', time: '10:00 AM', title: 'Sightseeing Bus Tour', location: 'Station A, Pickup Point', icon: 'bus-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main, alert: 'Note: Bring water bottles & sunscreen.' },
+        { id: 'k1-3', time: '01:00 PM', title: 'Lunch at Ramen Street', location: 'Tokyo Station', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber },
+        { id: 'k1-4', time: '04:00 PM', title: 'Check-in to Ryokan', location: 'Hakone', icon: 'bed-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main, note: 'Booking Ref: #JP-8829' },
+      ],
+      1: [
+        { id: 'k2-1', time: '09:00 AM', title: 'Fushimi Inari Shrine', location: 'Kyoto', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, note: 'Wear comfortable walking shoes.' },
+        { id: 'k2-2', time: '12:30 PM', title: 'Traditional Kaiseki Lunch', location: 'Gion District', icon: 'restaurant-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.medium },
+        { id: 'k2-3', time: '03:00 PM', title: 'Bamboo Forest Walk', location: 'Arashiyama', icon: 'leaf-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text },
+      ],
+      2: [
+        { id: 'k3-1', time: '10:00 AM', title: 'Universal Studios Japan', location: 'Osaka', icon: 'star-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main, alert: 'Express Passes are in your digital vault.' },
+        { id: 'k3-2', time: '07:00 PM', title: 'Street Food Tour', location: 'Dotonbori', icon: 'fast-food-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber },
+      ],
+      3: [
+        { id: 'k4-1', time: '09:00 AM', title: 'Nara Deer Park', location: 'Nara', icon: 'heart-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, note: 'Purchase deer crackers at the entrance.' },
+        { id: 'k4-2', time: '01:00 PM', title: 'Todai-ji Temple Visit', location: 'Nara', icon: 'business-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main },
+      ],
+      4: [
+        { id: 'k5-1', time: '08:00 AM', title: 'Kiyomizu-dera Temple', location: 'Kyoto', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, note: 'Best morning light for photos.' },
+        { id: 'k5-2', time: '12:00 PM', title: 'Nishiki Market Lunch', location: 'Kyoto', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'k5-3', time: '03:00 PM', title: 'Tea Ceremony Experience', location: 'Kyoto', icon: 'cafe-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text },
+      ],
+      5: [
+        { id: 'k6-1', time: '09:00 AM', title: 'Kinkaku-ji Golden Temple', location: 'Kyoto', icon: 'star-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'k6-2', time: '02:00 PM', title: 'Kimono Rental & Walk', location: 'Gion District', icon: 'shirt-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main },
+      ],
+      6: [
+        { id: 'k7-1', time: '07:00 AM', title: 'Tsukiji Fish Market', location: 'Tokyo', icon: 'fish-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text },
+        { id: 'k7-2', time: '11:00 AM', title: 'Senso-ji Temple', location: 'Asakusa', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main },
+        { id: 'k7-3', time: '04:00 PM', title: 'Akihabara Electronics Tour', location: 'Tokyo', icon: 'hardware-chip-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.medium },
+      ],
+      7: [
+        { id: 'k8-1', time: '09:00 AM', title: 'Mount Fuji Day Trip', location: 'Fuji-Hakone', icon: 'trail-sign-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text, alert: 'Pack warm clothing — temperature drops.' },
+        { id: 'k8-2', time: '06:00 PM', title: 'Farewell Dinner', location: 'Tokyo', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main, note: 'Group photo at the restaurant.' },
+      ],
+      8: [
+        { id: 'k9-1', time: '08:00 AM', title: 'Last Minute Shopping', location: 'Shinjuku', icon: 'cart-outline', iconBg: Colors.neutral.divider, iconColor: Colors.neutral.textSecondary },
+        { id: 'k9-2', time: '02:00 PM', title: 'Airport Transfer', location: 'Narita Airport', icon: 'airplane-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Flight departs at 05:30 PM' },
+      ],
+    },
+  },
+  'goa-1': {
+    title: 'Goa Beach Party',
+    dateLabel: 'Dec 15 - Dec 22, 2023',
+    days: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8'],
+    dailyActivities: {
+      0: [
+        { id: 'g1-1', time: '10:00 AM', title: 'Arrive at Goa Airport', location: 'Dabolim Airport', icon: 'airplane-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Cab pickup arranged at Gate 3.' },
+        { id: 'g1-2', time: '12:30 PM', title: 'Check-in to Beach Resort', location: 'Calangute', icon: 'bed-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main, note: 'Booking Ref: #GOA-4421' },
+        { id: 'g1-3', time: '04:00 PM', title: 'Sunset Beach Walk', location: 'Baga Beach', icon: 'sunny-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'g1-4', time: '08:00 PM', title: 'Welcome Dinner at Shack', location: 'Tito\'s Lane', icon: 'restaurant-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main },
+      ],
+      1: [
+        { id: 'g2-1', time: '09:00 AM', title: 'Watersports Adventure', location: 'Calangute Beach', icon: 'water-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main, alert: 'Jet ski, parasailing & banana ride included.' },
+        { id: 'g2-2', time: '01:00 PM', title: 'Seafood Lunch', location: 'Fisherman\'s Wharf', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber },
+        { id: 'g2-3', time: '04:00 PM', title: 'Fort Aguada Visit', location: 'North Goa', icon: 'business-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.medium },
+      ],
+      2: [
+        { id: 'g3-1', time: '08:30 AM', title: 'Dudhsagar Waterfalls Trip', location: 'South Goa', icon: 'water-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, alert: 'Jeep ride — carry waterproof bags.' },
+        { id: 'g3-2', time: '05:00 PM', title: 'Spice Plantation Visit', location: 'Ponda', icon: 'leaf-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text },
+      ],
+      3: [
+        { id: 'g4-1', time: '10:00 AM', title: 'Old Goa Heritage Walk', location: 'Old Goa', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, note: 'Visit Basilica of Bom Jesus.' },
+        { id: 'g4-2', time: '02:00 PM', title: 'Flea Market Shopping', location: 'Anjuna Market', icon: 'cart-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'g4-3', time: '07:00 PM', title: 'Beach Bonfire Night', location: 'Vagator Beach', icon: 'bonfire-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main },
+      ],
+      4: [
+        { id: 'g5-1', time: '09:00 AM', title: 'Dolphin Watching Cruise', location: 'Sinquerim Jetty', icon: 'boat-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main },
+        { id: 'g5-2', time: '01:00 PM', title: 'Goan Thali Lunch', location: 'Panjim', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'g5-3', time: '04:00 PM', title: 'Casino Evening', location: 'Casino Pride', icon: 'diamond-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main },
+      ],
+      5: [
+        { id: 'g6-1', time: '10:00 AM', title: 'Kayaking at Sal Backwaters', location: 'South Goa', icon: 'water-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text },
+        { id: 'g6-2', time: '03:00 PM', title: 'Palolem Beach Relax', location: 'Palolem', icon: 'sunny-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+      ],
+      6: [
+        { id: 'g7-1', time: '09:00 AM', title: 'Pool Day at Resort', location: 'Calangute', icon: 'water-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main, note: 'Pool-side DJ party at 11 AM.' },
+        { id: 'g7-2', time: '07:00 PM', title: 'Farewell Gala Dinner', location: 'Taj Exotica', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber, note: 'Dress code: Smart casuals.' },
+      ],
+      7: [
+        { id: 'g8-1', time: '08:00 AM', title: 'Souvenir Shopping', location: 'Mapusa Market', icon: 'cart-outline', iconBg: Colors.neutral.divider, iconColor: Colors.neutral.textSecondary },
+        { id: 'g8-2', time: '01:00 PM', title: 'Airport Transfer', location: 'Dabolim Airport', icon: 'airplane-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Flight departs at 04:15 PM' },
+      ],
+    },
+  },
+  'paris-1': {
+    title: 'Paris Getaway',
+    dateLabel: 'Jan 05 - Jan 12, 2024',
+    days: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8'],
+    dailyActivities: {
+      0: [
+        { id: 'p1-1', time: '09:00 AM', title: 'Arrive at Charles de Gaulle', location: 'CDG Airport', icon: 'airplane-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Private shuttle to hotel arranged.' },
+        { id: 'p1-2', time: '12:00 PM', title: 'Check-in & Freshen Up', location: 'Hotel Le Marais', icon: 'bed-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main, note: 'Booking Ref: #PAR-9912' },
+        { id: 'p1-3', time: '03:00 PM', title: 'Seine River Cruise', location: 'Pont Neuf', icon: 'boat-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main },
+        { id: 'p1-4', time: '07:30 PM', title: 'French Dinner Experience', location: 'Le Procope', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main, note: 'Reservation confirmed for 8 guests.' },
+      ],
+      1: [
+        { id: 'p2-1', time: '09:00 AM', title: 'Eiffel Tower Visit', location: 'Champ de Mars', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, alert: 'Summit tickets — take warm jacket.' },
+        { id: 'p2-2', time: '01:00 PM', title: 'Lunch at Café de Flore', location: 'Saint-Germain', icon: 'cafe-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber },
+        { id: 'p2-3', time: '03:30 PM', title: 'Arc de Triomphe', location: 'Champs-Élysées', icon: 'business-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.medium },
+      ],
+      2: [
+        { id: 'p3-1', time: '09:30 AM', title: 'Louvre Museum', location: 'Louvre', icon: 'image-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, alert: 'Skip-the-line passes in your wallet.' },
+        { id: 'p3-2', time: '02:00 PM', title: 'Tuileries Garden Walk', location: 'Tuileries', icon: 'leaf-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text },
+        { id: 'p3-3', time: '06:00 PM', title: 'Montmartre Evening Walk', location: 'Sacré-Cœur', icon: 'walk-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main },
+      ],
+      3: [
+        { id: 'p4-1', time: '10:00 AM', title: 'Palace of Versailles', location: 'Versailles', icon: 'business-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main, note: 'Coach departs from hotel at 9:30 AM.' },
+        { id: 'p4-2', time: '05:00 PM', title: 'Versailles Garden Tour', location: 'Versailles', icon: 'leaf-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text },
+      ],
+      4: [
+        { id: 'p5-1', time: '09:00 AM', title: 'Musée d\'Orsay', location: 'Orsay', icon: 'image-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.main },
+        { id: 'p5-2', time: '01:00 PM', title: 'Latin Quarter Food Tour', location: 'Latin Quarter', icon: 'restaurant-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'p5-3', time: '04:00 PM', title: 'Notre-Dame Area Walk', location: 'Île de la Cité', icon: 'location-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main },
+      ],
+      5: [
+        { id: 'p6-1', time: '08:00 AM', title: 'Day Trip to Giverny', location: 'Giverny', icon: 'color-palette-outline', iconBg: Colors.success.lightBg, iconColor: Colors.success.text, note: 'Monet\'s Garden — cameras recommended.' },
+        { id: 'p6-2', time: '06:00 PM', title: 'Paris Night Illuminations', location: 'Bus Tour', icon: 'moon-outline', iconBg: Colors.primary.lightBg, iconColor: Colors.primary.main },
+      ],
+      6: [
+        { id: 'p7-1', time: '10:00 AM', title: 'Shopping at Galeries Lafayette', location: 'Boulevard Haussmann', icon: 'cart-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.main },
+        { id: 'p7-2', time: '03:00 PM', title: 'Patisserie Workshop', location: 'Le Cordon Bleu', icon: 'restaurant-outline', iconBg: Colors.urgent.lightBg, iconColor: Colors.urgent.main, note: 'Learn to make macarons & croissants.' },
+        { id: 'p7-3', time: '08:00 PM', title: 'Farewell Dinner Cruise', location: 'Seine River', icon: 'boat-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text },
+      ],
+      7: [
+        { id: 'p8-1', time: '09:00 AM', title: 'Final Souvenirs & Café', location: 'Le Marais', icon: 'cafe-outline', iconBg: Colors.warning.lightBg, iconColor: Colors.warning.textOnAmber },
+        { id: 'p8-2', time: '01:00 PM', title: 'Airport Transfer', location: 'CDG Airport', icon: 'airplane-outline', iconBg: Colors.info.lightBg, iconColor: Colors.info.text, note: 'Flight departs at 04:45 PM' },
+      ],
+    },
+  },
+};
+
+// Default fallback = Kyoto data
+const DEFAULT_TRIP_ID = 'kyoto-1';
+
+type ItineraryRouteParams = {
+  Itinerary: { tripId: string; tripName: string };
+};
+
 export default function ItineraryScreen() {
   const navigation = useNavigation<any>();
+  const route = useRoute<RouteProp<ItineraryRouteParams, 'Itinerary'>>();
+  const { tripId, tripName } = route.params ?? { tripId: DEFAULT_TRIP_ID, tripName: '' };
   const [activeDay, setActiveDay] = useState(0);
 
-  const days = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"];
-  
-  const dailyActivities: Record<number, any[]> = {
-    0: [ // Day 1
-      {
-        id: "1-1",
-        time: "08:00 AM",
-        title: "Breakfast at Hotel",
-        location: "Main Lobby",
-        icon: "restaurant-outline",
-        iconBg: Colors.info.lightBg,
-        iconColor: Colors.info.text,
-        note: "Meet near the concierge desk.",
-      },
-      {
-        id: "1-2",
-        time: "10:00 AM",
-        title: "Sightseeing Bus Tour",
-        location: "Station A, Pickup Point",
-        icon: "bus-outline",
-        iconBg: Colors.warning.lightBg,
-        iconColor: Colors.warning.main,
-        alert: "Note: Bring water bottles & sunscreen.",
-      },
-      {
-        id: "1-3",
-        time: "01:00 PM",
-        title: "Lunch at Ramen Street",
-        location: "Tokyo Station",
-        icon: "restaurant-outline",
-        iconBg: Colors.warning.lightBg,
-        iconColor: Colors.warning.textOnAmber,
-      },
-      {
-        id: "1-4",
-        time: "04:00 PM",
-        title: "Check-in to Ryokan",
-        location: "Hakone",
-        icon: "bed-outline",
-        iconBg: Colors.primary.lightBg,
-        iconColor: Colors.primary.main,
-        note: "Booking Ref: #JP-8829",
-      },
-    ],
-    1: [ // Day 2
-      {
-        id: "2-1",
-        time: "09:00 AM",
-        title: "Fushimi Inari Shrine",
-        location: "Kyoto",
-        icon: "location-outline",
-        iconBg: Colors.urgent.lightBg,
-        iconColor: Colors.urgent.main,
-        note: "Wear comfortable walking shoes.",
-      },
-      {
-        id: "2-2",
-        time: "12:30 PM",
-        title: "Traditional Kaiseki Lunch",
-        location: "Gion District",
-        icon: "restaurant-outline",
-        iconBg: Colors.primary.lightBg,
-        iconColor: Colors.primary.medium,
-      },
-      {
-        id: "2-3",
-        time: "03:00 PM",
-        title: "Bamboo Forest Walk",
-        location: "Arashiyama",
-        icon: "leaf-outline",
-        iconBg: Colors.success.lightBg,
-        iconColor: Colors.success.text,
-      },
-    ],
-    2: [ // Day 3
-      {
-        id: "3-1",
-        time: "10:00 AM",
-        title: "Universal Studios Japan",
-        location: "Osaka",
-        icon: "star-outline",
-        iconBg: Colors.warning.lightBg,
-        iconColor: Colors.warning.main,
-        alert: "Express Passes are in your digital vault.",
-      },
-      {
-        id: "3-2",
-        time: "07:00 PM",
-        title: "Street Food Tour",
-        location: "Dotonbori",
-        icon: "fast-food-outline",
-        iconBg: Colors.warning.lightBg,
-        iconColor: Colors.warning.textOnAmber,
-      },
-    ],
-    3: [ // Day 4
-      {
-        id: "4-1",
-        time: "09:00 AM",
-        title: "Nara Deer Park",
-        location: "Nara",
-        icon: "heart-outline",
-        iconBg: Colors.urgent.lightBg,
-        iconColor: Colors.urgent.main,
-        note: "Purchase deer crackers at the entrance.",
-      },
-      {
-        id: "4-2",
-        time: "01:00 PM",
-        title: "Todai-ji Temple Visit",
-        location: "Nara",
-        icon: "business-outline",
-        iconBg: Colors.info.lightBg,
-        iconColor: Colors.info.main,
-      },
-    ],
-    4: [ // Day 5
-      {
-        id: "5-1",
-        time: "08:00 AM",
-        title: "Last Minute Shopping",
-        location: "Shinjuku",
-        icon: "cart-outline",
-        iconBg: Colors.neutral.divider,
-        iconColor: Colors.neutral.textSecondary,
-      },
-      {
-        id: "5-2",
-        time: "02:00 PM",
-        title: "Airport Transfer",
-        location: "Narita Airport",
-        icon: "airplane-outline",
-        iconBg: Colors.info.lightBg,
-        iconColor: Colors.info.text,
-        note: "Flight departs at 05:30 PM",
-      },
-    ],
-  };
-
-  const activities = dailyActivities[activeDay] || [];
+  const tripData = TRIP_ITINERARIES[tripId] ?? TRIP_ITINERARIES[DEFAULT_TRIP_ID];
+  const days = tripData.days;
+  const activities = tripData.dailyActivities[activeDay] || [];
 
   return (
     <SafeAreaView style={styles.root} edges={["top"]}>
@@ -185,10 +217,10 @@ export default function ItineraryScreen() {
         {/* Trip Headline */}
         <View style={styles.headlineRow}>
           <View style={styles.headlineLeft}>
-            <Text style={styles.tripTitle}>Tokyo Family Adventure</Text>
+            <Text style={styles.tripTitle}>{tripData.title}</Text>
             <View style={styles.dateRow}>
               <Ionicons name="calendar-outline" size={16} color={Colors.warning.main} />
-              <Text style={styles.dateText}>Oct 12 - Oct 20, 2023</Text>
+              <Text style={styles.dateText}>{tripData.dateLabel}</Text>
             </View>
           </View>
           <LinearGradient

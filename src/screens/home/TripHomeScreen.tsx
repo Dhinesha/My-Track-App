@@ -170,7 +170,11 @@ export const TripHomeScreen = () => {
             snapToInterval={272}
             snapToAlignment="start"
           >
-            <View style={[styles.upcomingCard, Shadows.sm]}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'kyoto-1', tripName: 'Kyoto Spring Adventure', tripStatus: 'upcoming' })}
+              style={[styles.upcomingCard, Shadows.sm]}
+            >
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80' }} 
                 style={styles.upcomingCardImg}
@@ -182,9 +186,13 @@ export const TripHomeScreen = () => {
                   <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
-            <View style={[styles.upcomingCard, Shadows.sm]}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'goa-1', tripName: 'Goa Beach Party', tripStatus: 'upcoming' })}
+              style={[styles.upcomingCard, Shadows.sm]}
+            >
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80' }} 
                 style={styles.upcomingCardImg}
@@ -196,9 +204,13 @@ export const TripHomeScreen = () => {
                   <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
             
-            <View style={[styles.upcomingCard, Shadows.sm]}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => navigation.navigate('TripDetail', { tripId: 'paris-1', tripName: 'Paris Getaway', tripStatus: 'upcoming' })}
+              style={[styles.upcomingCard, Shadows.sm]}
+            >
               <Image 
                 source={{ uri: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80' }} 
                 style={styles.upcomingCardImg}
@@ -210,7 +222,7 @@ export const TripHomeScreen = () => {
                   <Text style={styles.upcomingBadgeText}>UPCOMING</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </ScrollView>

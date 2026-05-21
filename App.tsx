@@ -54,7 +54,7 @@ export type RootStackParamList = {
   Login: undefined;
   Onboarding: undefined;
   Main: undefined;
-  TripDetail: { tripId: string; tripName: string };
+  TripDetail: { tripId: string; tripName: string; tripStatus?: string };
   Itinerary: { tripId: string; tripName: string };
   Hotel: { tripId: string };
   VehicleAttendance: { tripId: string };
